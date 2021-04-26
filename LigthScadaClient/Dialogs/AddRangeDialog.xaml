@@ -1,0 +1,31 @@
+﻿<Window x:Class="LigthScadaClient.AddRangeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LigthScadaClient"
+        mc:Ignorable="d"
+        Title="AddRangeDialog"  Height="400" Width="400"
+        ResizeMode="NoResize" WindowStartupLocation="CenterOwner" WindowStyle="None">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.ColumnSpan="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"
+               Content="{DynamicResource addRange}"/>
+        <TextBox x:Name="RegisterStartTextBox" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Grid.Row="1" Grid.Column="0"  Margin="30" PreviewTextInput="Handle_PreviewTextInput"/>
+        <Label Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="50">-</Label>
+        <TextBox x:Name="RegisterEndTextBox" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Grid.Row="1" Grid.Column="1"  Margin="30" PreviewTextInput="Handle_PreviewTextInput"/>
+        <Button x:Name="CancelButton" Content="{DynamicResource cancel}" Grid.Column="0" Grid.Row="2" Margin="5" Click="CancelButton_Click"/>
+        <Button x:Name="ConfirmButton" Content="{DynamicResource ok}" Grid.Column="1" Grid.Row="2" Margin="5" Click="ConfirmButton_Click"/>
+
+    </Grid>
+</Window>

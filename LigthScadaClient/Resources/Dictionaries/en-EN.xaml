@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    <!-- MainWindow -->
+    <system:String x:Key="status">Status</system:String>
+    <system:String x:Key="coils">Coils</system:String>
+    <system:String x:Key="discreteInputs">Discrete inputs</system:String>
+    <system:String x:Key="inputRegisters">Input registers</system:String>
+    <system:String x:Key="holdingRegisters">Holding registers</system:String>
+    
+    <!-- Add register dialog -->
+    <system:String x:Key="ok">Confirm</system:String>
+    <system:String x:Key="cancel">Cancel</system:String>
+    <system:String x:Key="emptyFieldMessage">Please enter register number within range 1-9999</system:String>
+    <system:String x:Key="startBiggerThanEndMessage">Start register has to be smaller than end register</system:String>
+
+    <!-- Registers pages -->
+    <system:String x:Key="addSingle">Add single register</system:String>
+    <system:String x:Key="addRange">Add range of registers</system:String>
+    <system:String x:Key="registerNo">Register no.</system:String>
+    <system:String x:Key="value">Value</system:String>
+    <system:String x:Key="duplicate">Register already on list!</system:String>
+    
+</ResourceDictionary>

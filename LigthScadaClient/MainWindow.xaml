@@ -1,0 +1,27 @@
+﻿<Window x:Class="LigthScadaClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LigthScadaClient"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Closing="MainWindow_Closing"
+        Loaded="Window_Loaded">
+    <TabControl x:Name="MainTabControl">
+        <TabItem Header="{DynamicResource status}">
+            <Frame x:Name="StatusPageFrame" Source="/Pages/StatusPage.xaml"/>
+        </TabItem>
+        <TabItem Header="{DynamicResource coils}">
+            <Frame x:Name="CoilsFrame" Source="/Pages/CoilRegistersPage.xaml"/>
+        </TabItem>
+        <TabItem Header="{DynamicResource discreteInputs}">
+            <Frame x:Name="DiscreteInputsFrame" Source="/Pages/DiscreteInputsPage.xaml"/>
+        </TabItem>
+        <TabItem Header="{DynamicResource inputRegisters}">
+            <Frame x:Name="InputRegistersFrame" Source="/Pages/InputRegistersPage.xaml"/>
+        </TabItem>
+        <TabItem Header="{DynamicResource holdingRegisters}">
+            <Frame x:Name="HoldingRegistersFrame" Source="/Pages/HoldingRegistersPage.xaml"/>
+        </TabItem>
+    </TabControl>
+</Window>
