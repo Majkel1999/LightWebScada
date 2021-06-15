@@ -35,7 +35,8 @@
                    Content="{DynamicResource value}"/>
         </Grid>
         
-        <ListBox Grid.Row="2" Margin="5 0 5 5" ItemsSource="{Binding InputRegisters}" HorizontalContentAlignment="Stretch">
+        <ListBox x:Name="RegistersListBox" Grid.Row="2" Margin="5 0 5 5" ItemsSource="{Binding InputRegisters}" HorizontalContentAlignment="Stretch"
+                 SelectionMode="Extended" PreviewKeyDown="ListBox_KeyDown">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>

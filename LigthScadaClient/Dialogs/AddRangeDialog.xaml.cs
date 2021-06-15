@@ -1,8 +1,8 @@
-﻿using LigthScadaClient.DataModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using LigthScadaClient.DataModels;
 
 namespace LigthScadaClient
 {
@@ -13,13 +13,11 @@ namespace LigthScadaClient
 
         private int m_startRegister = -1;
         private int m_endRegister = -1;
-        public AddRangeDialog()
-        {
-            InitializeComponent();
-        }
+        public AddRangeDialog() => InitializeComponent();
 
-        public bool ShowDialog(bool isDiscrete, out List<Register> registers)
+        public bool ShowDialog(bool isDiscrete, out List<Register> registers, Window owner = null)
         {
+            this.Owner = owner ?? App.Current.MainWindow;
             ShowDialog();
             if (m_startRegister == -1 || m_endRegister == -1)
             {
@@ -30,7 +28,7 @@ namespace LigthScadaClient
             if (isDiscrete)
             {
                 registers = new List<Register>();
-                for(int i = m_startRegister; i <= m_endRegister; i++)
+                for (int i = m_startRegister; i <= m_endRegister; i++)
                 {
                     registers.Add(new DiscreteRegister
                     {
@@ -55,7 +53,7 @@ namespace LigthScadaClient
             }
         }
 
-        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        private void Confirm()
         {
             bool LengthCheck = RegisterStartTextBox.Text.Length > 0 && RegisterEndTextBox.Text.Length > 0;
             if (LengthCheck)
@@ -73,6 +71,11 @@ namespace LigthScadaClient
                 MessageBox.Show(Application.Current.Resources.MergedDictionaries[0]["emptyFieldMessage"].ToString());
         }
 
+        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            Confirm();
+        }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
@@ -81,6 +84,14 @@ namespace LigthScadaClient
         private void Handle_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             e.Handled = !regex.IsMatch((sender as TextBox).Text + e.Text);
+        }
+
+        private void RegisterEndTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                Confirm();
+            }
         }
     }
 }

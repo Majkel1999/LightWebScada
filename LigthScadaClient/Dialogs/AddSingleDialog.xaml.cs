@@ -1,8 +1,8 @@
-﻿using LigthScadaClient.DataModels;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using LigthScadaClient.DataModels;
 
 
 namespace LigthScadaClient
@@ -12,13 +12,11 @@ namespace LigthScadaClient
         private static readonly Regex regex = new Regex("^(?:[1-9][0-9]{3}|[1-9][0-9]{2}|[1-9][0-9]|[1-9])$");
 
         private int m_registerNumber = -1;
-        public AddSingleDialog()
-        {
-            InitializeComponent();
-        }
+        public AddSingleDialog() => InitializeComponent();
 
-        public bool ShowDialog(bool isDiscrete, out Register register)
+        public bool ShowDialog(bool isDiscrete, out Register register, Window owner = null)
         {
+            this.Owner = owner ?? App.Current.MainWindow;
             ShowDialog();
             if (m_registerNumber == -1)
             {
@@ -39,6 +37,17 @@ namespace LigthScadaClient
 
         }
 
+        private void Confirm()
+        {
+            if (RegisterNumberTextBox.Text.Length > 0)
+            {
+                m_registerNumber = int.Parse(RegisterNumberTextBox.Text);
+                Close();
+            }
+            else
+                MessageBox.Show(Application.Current.Resources.MergedDictionaries[0]["emptyFieldMessage"].ToString());
+        }
+
         private void RegisterNumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !regex.IsMatch((sender as TextBox).Text + e.Text);
@@ -51,13 +60,15 @@ namespace LigthScadaClient
 
         private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            if (RegisterNumberTextBox.Text.Length > 0)
+            Confirm();
+        }
+
+        private void RegisterNumberTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
             {
-                m_registerNumber = int.Parse(RegisterNumberTextBox.Text);
-                Close();
+                Confirm();
             }
-            else
-                MessageBox.Show(Application.Current.Resources.MergedDictionaries[0]["emptyFieldMessage"].ToString());
         }
     }
 }

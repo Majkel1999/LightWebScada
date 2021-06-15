@@ -1,9 +1,12 @@
-﻿using LigthScadaClient.DataModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using LigthScadaClient.DataModels;
+using LigthScadaClient.Logic;
 
 namespace LigthScadaClient.Pages
 {
@@ -11,20 +14,19 @@ namespace LigthScadaClient.Pages
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private List<ValueRegister> m_holdingRegisters;
+        private ObservableCollection<ValueRegister> m_holdingRegisters;
 
         public List<ValueRegister> HoldingRegisters
         {
-            get { return m_holdingRegisters.OrderBy(x => x.RegisterNumber).ToList(); }
-            set { m_holdingRegisters = value; }
+            get => m_holdingRegisters.OrderBy(x => x.RegisterNumber).ToList();
         }
 
         public HoldingRegistersPage()
         {
             InitializeComponent();
-            m_holdingRegisters = new List<ValueRegister>();
+            m_holdingRegisters = LocalConfig.HoldingRegisters;
             DataContext = this;
-            MainWindow.DataLoaded += DataLoaded;
+            LocalConfig.DataLoaded += DataLoaded;
         }
 
         private void DataLoaded()
@@ -71,6 +73,29 @@ namespace LigthScadaClient.Pages
                 }
                 Notify("HoldingRegisters");
             }
+        }
+
+        private void ListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                DeleteItemsFromList();
+            }
+        }
+
+        private void DeleteItemsFromList()
+        {
+            if (RegistersListBox.SelectedItems.Count > 0)
+            {
+                var items = RegistersListBox.SelectedItems;
+                int count = items.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    m_holdingRegisters.Remove((ValueRegister)items[0]);
+                    items.RemoveAt(0);
+                }
+            }
+            Notify("HoldingRegisters");
         }
     }
 }

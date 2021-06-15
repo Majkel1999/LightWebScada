@@ -21,4 +21,7 @@
     <system:String x:Key="value">Value</system:String>
     <system:String x:Key="duplicate">Register already on list!</system:String>
     
+    <!-- Utility dialogs -->
+    <system:String x:Key="saveFileDialog">Current config has changed. Do you want to save it?</system:String>
+    
 </ResourceDictionary>

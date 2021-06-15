@@ -1,9 +1,12 @@
 ﻿using LigthScadaClient.DataModels;
+using LigthScadaClient.Logic;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace LigthScadaClient.Pages
 {
@@ -11,20 +14,19 @@ namespace LigthScadaClient.Pages
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private List<ValueRegister> m_inputRegisters;
+        private ObservableCollection<ValueRegister> m_inputRegisters;
 
         public List<ValueRegister> InputRegisters
         {
             get { return m_inputRegisters.OrderBy(x => x.RegisterNumber).ToList(); }
-            set { m_inputRegisters = value; }
         }
 
         public InputRegistersPage()
         {
             InitializeComponent();
-            m_inputRegisters = new List<ValueRegister>();
+            m_inputRegisters = LocalConfig.InputRegisters;
             DataContext = this;
-            MainWindow.DataLoaded += DataLoaded;
+            LocalConfig.DataLoaded += DataLoaded;
         }
 
         private void DataLoaded()
@@ -71,6 +73,29 @@ namespace LigthScadaClient.Pages
                 }
                 Notify("InputRegisters");
             }
+        }
+
+        private void ListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                DeleteItemsFromList();
+            }
+        }
+
+        private void DeleteItemsFromList()
+        {
+            if (RegistersListBox.SelectedItems.Count > 0)
+            {
+                var items = RegistersListBox.SelectedItems;
+                int count = items.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    m_inputRegisters.Remove((ValueRegister)items[0]);
+                    items.RemoveAt(0);
+                }
+            }
+            Notify("InputRegisters");
         }
     }
 }
