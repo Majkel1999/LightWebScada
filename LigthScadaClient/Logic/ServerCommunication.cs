@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Data;
 using System.Net.Http;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace LigthScadaClient.Logic
 {

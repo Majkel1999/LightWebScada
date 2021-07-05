@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
-using LigthScadaClient.DataModels;
+using DataRegisters;
 using Newtonsoft.Json;
 
 namespace LigthScadaClient.Logic

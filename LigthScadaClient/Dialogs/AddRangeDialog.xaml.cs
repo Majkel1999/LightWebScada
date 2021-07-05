@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using LigthScadaClient.DataModels;
+using DataRegisters;
 
 namespace LigthScadaClient
 {
