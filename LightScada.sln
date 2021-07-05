@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LigthScadaClient", "LigthSc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrontEnd", "FrontEnd\FrontEnd.csproj", "{D39E59D6-D9CE-4A68-99F7-84A83FA3B098}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataRegisters", "DataRegisters\DataRegisters.csproj", "{95D8AD9A-AD1E-46AC-A153-6CB22FC926C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D39E59D6-D9CE-4A68-99F7-84A83FA3B098}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D39E59D6-D9CE-4A68-99F7-84A83FA3B098}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D39E59D6-D9CE-4A68-99F7-84A83FA3B098}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95D8AD9A-AD1E-46AC-A153-6CB22FC926C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D8AD9A-AD1E-46AC-A153-6CB22FC926C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D8AD9A-AD1E-46AC-A153-6CB22FC926C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D8AD9A-AD1E-46AC-A153-6CB22FC926C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
