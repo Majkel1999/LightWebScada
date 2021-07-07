@@ -1,7 +1,10 @@
 @page "/login/{error:int?}"
+@using FrontEnd.Access.Authentication
 @using FrontEnd.DataModels
 @using FrontEnd.Access
+
 @inject NavigationManager NavManager
+
 <div class="container" style="max-width:500px">
 
     <div class="text-center font-weight-bolder" style="font-size:32px">Panel logowania</div>
@@ -40,13 +43,17 @@
     public int Error { get; set; }
     public User userLogin { get; set; } = new User();
 
-    private void Submit()
+    private async void Submit()
     {
-        if (!UserCredentialHelper.UserExists(userLogin.Username))
+        UserStore userStore = new UserStore();
+        if (await userStore.CheckUserExistsAsync(userLogin.Username))
             NavManager.NavigateTo("/login/1");
-        if (UserCredentialHelper.CheckUserPassword(userLogin.Username, userLogin.Password))
-            NavManager.NavigateTo("/");
+            
+        if (!UserCredentialHelper.CheckUserPassword(userLogin.Username, userLogin.Password))
+            NavManager.NavigateTo("/login/1");
         else
-            NavManager.NavigateTo("/login/2");
+        {
+            NavManager.NavigateTo("/");
+        }
     }
 }

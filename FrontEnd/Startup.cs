@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FrontEnd.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace FrontEnd
 {
@@ -22,11 +23,24 @@ namespace FrontEnd
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(option =>
+            {
+                option.LoginPath = "/Login";
+                option.AccessDeniedPath = "/Forbidden";
+            });
         }
 
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            CookiePolicyOptions cookiePolicyOptions = new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Strict,
+                HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
+                Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always
+            };
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -36,6 +50,11 @@ namespace FrontEnd
                 app.UseExceptionHandler("/Utility/Error");
                 app.UseHsts();
             }
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseCookiePolicy(cookiePolicyOptions);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

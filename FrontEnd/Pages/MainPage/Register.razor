@@ -1,4 +1,5 @@
 ﻿@page "/register/{error:int?}"
+@using FrontEnd.Access.Authentication
 @using FrontEnd.DataModels
 @using FrontEnd.Access
 @inject NavigationManager NavManager
@@ -50,14 +51,16 @@
     public int Error { get; set; }
     public UserRegistration userRegistration { get; set; } = new UserRegistration();
 
-    public void Submit()
+    public async void Submit()
     {
-        if (UserCredentialHelper.UserExists(userRegistration.Username))
+        UserStore userStore = new UserStore();
+        if (await userStore.CheckUserExistsAsync(userRegistration.Username))
             NavManager.NavigateTo("/register/1");
         else
         {
-            UserCredentialHelper.RegisterUser(userRegistration);
-            NavManager.NavigateTo("/register/success");
+            if (await userStore.RegisterUserAsync(userRegistration) == ActionResult.Success)
+                NavManager.NavigateTo("/register/success");
+            NavManager.NavigateTo("/error");
         }
     }
 }
