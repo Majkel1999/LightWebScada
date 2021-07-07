@@ -1,4 +1,4 @@
-﻿@page "/register"
+﻿@page "/register/{error:int?}"
 @using FrontEnd.DataModels
 @using FrontEnd.Access
 @inject NavigationManager NavManager
@@ -7,6 +7,12 @@
     <div class="text-center font-weight-bolder" style="font-size:32px">Rejestracja</div>
 
     <div class="border" style="padding:20px">
+        @if (Error != 0)
+        {
+            <div class="alert alert-danger" role="alert">
+                Placeholder error message!
+            </div>
+        }
         <EditForm Model="@userRegistration" OnValidSubmit="@Submit">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -40,14 +46,14 @@
 </div>
 
 @code {
+    [Parameter]
+    public int Error { get; set; }
     public UserRegistration userRegistration { get; set; } = new UserRegistration();
 
     public void Submit()
     {
-        if (UserCredentialHelper.IsUsernameTaken(userRegistration.Username))
-        {
-            NavManager.NavigateTo("/");
-        }
+        if (UserCredentialHelper.UserExists(userRegistration.Username))
+            NavManager.NavigateTo("/register/1");
         else
         {
             UserCredentialHelper.RegisterUser(userRegistration);
