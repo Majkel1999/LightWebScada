@@ -2,7 +2,10 @@
 @using FrontEnd.Access.Authentication
 @using FrontEnd.DataModels
 @using FrontEnd.Access
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavManager
 
 <div class="container" style="max-width:500px">
@@ -21,19 +24,20 @@
             <div class="form-group">
                 <label for="username"><b>Nazwa użytkownika</b></label>
                 <InputText id="username" @bind-Value="userLogin.Username" class="form-control" required
-                    placeholder="Nazwa użytkownika..." />
+                           placeholder="Nazwa użytkownika..." />
             </div>
             <div class="form-group">
                 <label for="email"><b>Hasło</b></label>
                 <InputText type="password" id="pw" @bind-Value="userLogin.Password" class="form-control" required
-                    placeholder="Hasło..." />
+                           placeholder="Hasło..." />
             </div>
 
 
             <button class="btn btn-success" type="submit">Zaloguj</button>
             <a class="btn btn-danger" type="button" href="/">Anuluj</a>
 
-            <a class="btn btn-primary" type="button" href="/register">Nie posiadasz konta?</a>
+            <br />
+            <a href="/register">Nie posiadasz konta? Zarejestruj się!</a>
         </EditForm>
     </div>
 </div>
@@ -41,18 +45,21 @@
 @code {
     [Parameter]
     public int Error { get; set; }
-    public User userLogin { get; set; } = new User();
+    public UserLogin userLogin { get; set; } = new UserLogin();
 
     private async void Submit()
     {
         UserStore userStore = new UserStore();
         if (await userStore.CheckUserExistsAsync(userLogin.Username))
             NavManager.NavigateTo("/login/1");
-            
+
         if (!UserCredentialHelper.CheckUserPassword(userLogin.Username, userLogin.Password))
             NavManager.NavigateTo("/login/1");
         else
         {
+            var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = state.User;
+            user.AddIdentity(new ClaimsIdentity("Basic", userLogin.Username, "User"));
             NavManager.NavigateTo("/");
         }
     }

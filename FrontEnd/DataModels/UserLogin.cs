@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FrontEnd.DataModels
 {
-    public class User
+    public class UserLogin
     {
         [Required(ErrorMessage = "Musisz podać login aby się zalogować!")]
         [DataType(DataType.Text)]

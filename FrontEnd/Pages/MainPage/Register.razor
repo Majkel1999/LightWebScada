@@ -21,23 +21,23 @@
             <div class="form-group">
                 <label for="email"><b>Nazwa użytkownika</b></label>
                 <InputText id="username" @bind-Value="userRegistration.Username" class="form-control" required
-                    placeholder="Nazwa użytkownika..." />
+                           placeholder="Nazwa użytkownika..." />
             </div>
             <div class="form-group">
                 <label for="email"><b>Adres e-mail</b></label>
                 <InputText id="email" @bind-Value="userRegistration.Email" class="form-control" required
-                    placeholder="Adres e-mail..." />
+                           placeholder="Adres e-mail..." />
             </div>
             <div class="form-group">
                 <label for="email"><b>Hasło</b></label>
 
                 <InputText type="password" id="pw" @bind-Value="userRegistration.Password" class="form-control" required
-                    placeholder="Hasło..." />
+                           placeholder="Hasło..." />
             </div>
             <div class="form-group">
                 <label for="email"><b>Powtórz hasło</b></label>
                 <InputText type="password" id="pw2" @bind-Value="userRegistration.ConfirmPassword" class="form-control"
-                    required placeholder="Hasło..." />
+                           required placeholder="Hasło..." />
             </div>
 
             <button class="btn btn-primary" type="submit">Załóż konto</button>
@@ -60,7 +60,8 @@
         {
             if (await userStore.RegisterUserAsync(userRegistration) == ActionResult.Success)
                 NavManager.NavigateTo("/register/success");
-            NavManager.NavigateTo("/error");
+            else
+                NavManager.NavigateTo("/error");
         }
     }
 }
