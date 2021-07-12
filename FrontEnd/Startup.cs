@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity.UI;
 using FrontEnd.DataModels.DatabaseModels;
 using FrontEnd.Access.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using FrontEnd.DatabaseConnection;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd
 {
@@ -31,16 +33,8 @@ namespace FrontEnd
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            //services.AddDefaultIdentity<User>()
-              //  .AddDefaultTokenProviders();
-            services.AddAuthentication(x =>
-            {
-                x.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(IdentityConstants.ApplicationScheme);
-
-            services.AddTransient<IUserStore<User>, UserStore>();
+            services.AddDbContext<UserContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
         }
 
 
