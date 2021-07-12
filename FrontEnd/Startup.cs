@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FrontEnd.DatabaseConnection;
-using Microsoft.EntityFrameworkCore;
+using FrontEnd.Areas.Organizations.Data;
 
 namespace FrontEnd
 {
@@ -24,6 +25,9 @@ namespace FrontEnd
             services.AddServerSideBlazor();
 
             services.AddDbContext<UserContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
+
+            services.AddDbContext<OrganizationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
         }
 

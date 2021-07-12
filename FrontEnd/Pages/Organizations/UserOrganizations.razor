@@ -1,0 +1,47 @@
+﻿@page "/Account/Organizations"
+@using FrontEnd.Areas.Organizations.Data;
+@inject OrganizationContext organizationContext;
+@inject AuthenticationStateProvider authState;
+<h3>Twoje organizacje</h3>
+
+@if (m_organizations is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var org in m_organizations)
+            {
+                <tr>
+                    <td>@org.OrganizationId</td>
+                    <td>@org.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Organization> m_organizations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authState.GetAuthenticationStateAsync()).User;
+        List<int> m_idList = organizationContext.Members
+            .Where(x => x.UserName == user.Identity.Name.Normalize())
+            .Select(x => x.OrganizationId).ToList();
+        m_organizations = organizationContext.Organizations
+            .Where(x => m_idList.Contains(x.OrganizationId)).ToList();
+    }
+}
+
+
+    Chcesz założyć własną organizacje? <a href="/organizations/create">Kliknij tutaj!</a>

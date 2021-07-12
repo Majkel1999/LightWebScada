@@ -1,0 +1,61 @@
+﻿@page "/organizations/create/{error:int?}"
+@using FrontEnd.DataModels
+@using FrontEnd.Areas.Organizations.Data;
+
+@inject OrganizationContext organizationContext;
+@inject NavigationManager Navigation;
+@inject AuthenticationStateProvider AuthState;
+
+<div class="container" style="max-width:500px">
+    <div class="text-center font-weight-bolder" style="font-size:32px">Rejestracja organizacji</div>
+
+    <div class="border" style="padding:20px">
+        @if (Error != 0)
+        {
+            <div class="alert alert-danger" role="alert">
+                Placeholder error message!
+            </div>
+        }
+        <EditForm Model="@organizationRegistrationModel" OnValidSubmit="@Submit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="organization name"><b>Nazwa organizacji</b></label>
+                <InputText id="username" @bind-Value="organizationRegistrationModel.OrganizationName" class="form-control" required
+                           placeholder="Nazwa organizacji..." />
+            </div>
+
+            <button class="btn btn-primary" type="submit">Stwórz organizacje</button>
+            <a class="btn btn-danger" type="button" href="/">Anuluj</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Error { get; set; }
+
+    public OrganizationRegistrationModel organizationRegistrationModel { get; set; } = new OrganizationRegistrationModel();
+
+    private async void Submit()
+    {
+        if (organizationContext.Organizations.Where(x => x.Name == organizationRegistrationModel.OrganizationName).Any())
+            Navigation.NavigateTo("/organizations/create/1");
+        var user = (await AuthState.GetAuthenticationStateAsync()).User;
+        var organization = new Organization
+        {
+            Name = organizationRegistrationModel.OrganizationName
+        };
+        organizationContext.Organizations.Add(organization);
+        organizationContext.Members.Add(new OrganizationMember
+        {
+            Organization=organization,
+            OrganizationId = organization.OrganizationId,
+            isAdmin=true,
+            UserName = user.Identity.Name
+        });
+        await organizationContext.SaveChangesAsync();
+        Navigation.NavigateTo("/");
+    }
+}
