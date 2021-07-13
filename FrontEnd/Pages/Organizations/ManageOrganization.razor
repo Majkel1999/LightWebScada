@@ -1,0 +1,14 @@
+﻿@page "/organizations/manage/{organizationId:int}"
+
+@using FrontEnd.Areas.Organizations.Data; 
+
+@inject OrganizationContext OrganizationContext;
+
+<h3>ManageOrganization</h3>
+
+@code {
+    [Parameter]
+    public int organizationId { get; set; }
+
+
+}

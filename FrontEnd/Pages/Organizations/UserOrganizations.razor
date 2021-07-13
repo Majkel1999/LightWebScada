@@ -10,19 +10,20 @@
 }
 else
 {
-    <table class="table">
+    <table class="table table-striped table-bordered">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Name</th>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var org in m_organizations)
             {
                 <tr>
-                    <td>@org.OrganizationId</td>
+                    <th scope="row">@org.OrganizationId</th>
                     <td>@org.Name</td>
+                    <td><a href=@String.Concat("/organizations/manage/",@org.OrganizationId)>Manage</a> </td>
                 </tr>
             }
         </tbody>
@@ -36,12 +37,12 @@ else
     {
         var user = (await authState.GetAuthenticationStateAsync()).User;
         List<int> m_idList = organizationContext.Members
-            .Where(x => x.UserName == user.Identity.Name.Normalize())
-            .Select(x => x.OrganizationId).ToList();
+        .Where(x => x.UserName == user.Identity.Name.Normalize())
+        .Select(x => x.OrganizationId).ToList();
         m_organizations = organizationContext.Organizations
-            .Where(x => m_idList.Contains(x.OrganizationId)).ToList();
+        .Where(x => m_idList.Contains(x.OrganizationId)).ToList();
     }
 }
 
 
-    Chcesz założyć własną organizacje? <a href="/organizations/create">Kliknij tutaj!</a>
+Chcesz założyć własną organizacje? <a class="btn btn-link" href="/organizations/create">Kliknij tutaj!</a>
