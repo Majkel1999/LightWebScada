@@ -1,13 +1,17 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@using FrontEnd.Areas.Identity.Data
+
 @inject NavigationManager Navigation
+@inject TokenProvider TokenProvider
 
 <AuthorizeView>
     <Authorized>
         <a href="Identity/Account/Manage/Index">
             Hello, @context.User.Identity.Name!
         </a>
-        <form action="/Identity/Account/Logout?returnUrl=%2F" method="post">
+        <form action="Identity/Account/LogOut" method="post">
             <button class="nav-link btn btn-link" type="submit">Logout</button>
+            <input name="__RequestVerificationToken" type="hidden"
+                   value="@TokenProvider.XsrfToken">
         </form>
     </Authorized>
     <NotAuthorized>

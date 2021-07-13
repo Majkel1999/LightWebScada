@@ -6,6 +6,8 @@
 @inject NavigationManager Navigation;
 @inject AuthenticationStateProvider AuthState;
 
+@attribute [Authorize]
+
 <div class="container" style="max-width:500px">
     <div class="text-center font-weight-bolder" style="font-size:32px">Rejestracja organizacji</div>
 
@@ -26,7 +28,7 @@
                            placeholder="Nazwa organizacji..." />
             </div>
 
-            <button class="btn btn-primary" type="submit">Stwórz organizacje</button>
+            <button class="btn btn-primary" type="submit">➕ Stwórz organizacje</button>
             <a class="btn btn-danger" type="button" href="/">Anuluj</a>
         </EditForm>
     </div>
@@ -50,9 +52,9 @@
         organizationContext.Organizations.Add(organization);
         organizationContext.Members.Add(new OrganizationMember
         {
-            Organization=organization,
+            Organization = organization,
             OrganizationId = organization.OrganizationId,
-            isAdmin=true,
+            isAdmin = true,
             UserName = user.Identity.Name
         });
         await organizationContext.SaveChangesAsync();

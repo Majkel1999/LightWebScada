@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FrontEnd.DatabaseConnection;
 using FrontEnd.Areas.Organizations.Data;
+using FrontEnd.Areas.Identity.Data;
 
 namespace FrontEnd
 {
@@ -23,6 +24,8 @@ namespace FrontEnd
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddHttpClient();
+            services.AddScoped<TokenProvider>();
 
             services.AddDbContext<UserContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));

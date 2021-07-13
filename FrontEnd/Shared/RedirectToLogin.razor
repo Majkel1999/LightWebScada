@@ -2,7 +2,6 @@
 @code {
     protected override void OnInitialized()
     {
-        Navigation.NavigateTo("Identity/Account/Login?returnUrl=" +
-            Uri.EscapeDataString(Navigation.Uri), true);
+        Navigation.NavigateTo("Identity/Account/Login?returnUrl=~/" + Navigation.ToBaseRelativePath(Navigation.Uri), true);
     }
 }

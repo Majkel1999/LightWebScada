@@ -1,10 +1,15 @@
 ﻿@page "/Account/Organizations"
+
 @using FrontEnd.Areas.Organizations.Data;
-@inject OrganizationContext organizationContext;
-@inject AuthenticationStateProvider authState;
+
+@inject OrganizationContext organizationContext
+@inject AuthenticationStateProvider authState
+
+@attribute [Authorize]
+
 <h3>Twoje organizacje</h3>
 
-@if (m_organizations is null)
+@if (m_adminOrganizations is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -18,7 +23,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var org in m_organizations)
+            @foreach (var org in m_adminOrganizations)
             {
                 <tr>
                     <th scope="row">@org.OrganizationId</th>
@@ -26,21 +31,40 @@ else
                     <td><a href=@String.Concat("/organizations/manage/",@org.OrganizationId)>Manage</a> </td>
                 </tr>
             }
+            @foreach (var org in m_memberOrganizations)
+            {
+                <tr>
+                    <th scope="row">@org.OrganizationId</th>
+                    <td>@org.Name</td>
+                </tr>
+            }
         </tbody>
     </table>
 }
 
 @code {
-    List<Organization> m_organizations;
+    List<Organization> m_adminOrganizations;
+    List<Organization> m_memberOrganizations;
 
     protected override async Task OnInitializedAsync()
     {
         var user = (await authState.GetAuthenticationStateAsync()).User;
-        List<int> m_idList = organizationContext.Members
-        .Where(x => x.UserName == user.Identity.Name.Normalize())
-        .Select(x => x.OrganizationId).ToList();
-        m_organizations = organizationContext.Organizations
-        .Where(x => m_idList.Contains(x.OrganizationId)).ToList();
+
+        List<int> m_adminList = organizationContext.Members
+            .Where(x => x.isAdmin)
+            .Where(x => x.UserName == user.Identity.Name.Normalize())
+            .Select(x => x.OrganizationId).ToList();
+
+        List<int> m_memberList = organizationContext.Members
+            .Where(x => !x.isAdmin)
+            .Where(x => x.UserName == user.Identity.Name.Normalize())
+            .Select(x => x.OrganizationId).ToList();
+
+        m_adminOrganizations = organizationContext.Organizations
+            .Where(x => m_adminList.Contains(x.OrganizationId)).ToList();
+
+        m_memberOrganizations = organizationContext.Organizations
+            .Where(x => m_memberList.Contains(x.OrganizationId)).ToList();
     }
 }
 

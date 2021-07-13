@@ -1,0 +1,9 @@
+﻿namespace FrontEnd.Areas.Organizations.Data
+{
+    public class ClientConfigEntity
+    {
+        public int ID { get; set; }
+        public int OrganizationId { get; set; }
+        public string ConfigJson { get; set; }
+    }
+}

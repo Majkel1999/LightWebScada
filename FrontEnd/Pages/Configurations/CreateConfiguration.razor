@@ -1,0 +1,9 @@
+﻿@page "/configurations/edit/{organizationId:int}"
+
+@attribute [Authorize]
+<h3>CreateConfiguration</h3>
+
+@code {
+    [Parameter]
+    public int organizationId { get; set; }
+}

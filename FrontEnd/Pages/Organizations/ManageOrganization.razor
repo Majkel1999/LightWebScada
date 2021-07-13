@@ -1,14 +1,110 @@
 ﻿@page "/organizations/manage/{organizationId:int}"
 
-@using FrontEnd.Areas.Organizations.Data; 
+@using FrontEnd.Areas.Organizations.Data;
+@using FrontEnd.DataModels;
 
-@inject OrganizationContext OrganizationContext;
+@inject NavigationManager NavManager
+@inject OrganizationContext OrganizationContext
+@inject AuthenticationStateProvider authState
 
-<h3>ManageOrganization</h3>
+@attribute [Authorize]
+
+<h3 class="text-center">ManageOrganization - @m_organizationName </h3>
+
+<div class="container" style="max-width:500px">
+    <div class="border" style="padding: 20px; margin: 10px">
+        <h4 class="text-center">Info</h4>
+        <EditForm Model="@OrganizationRegistration" OnSubmit="ChangeOrganizationName">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="organization name"><b>Nazwa organizacji</b></label>
+                <InputText id="username" @bind-Value="OrganizationRegistration.OrganizationName" class="form-control" required
+                           placeholder="Nazwa organizacji..." />
+            </div>
+            @m_nameChangeError
+            <button class="btn btn-primary" type="submit">Zmień nazwę</button>
+
+        </EditForm>
+
+    </div>
+</div>
+<br />
+
+<div class="container" style="max-width:500px">
+    <div class="border overflow-auto" style="padding:20px;margin:10px">
+        <h4 class="text-center">Konfiguracje</h4>
+        <table>
+            <tbody>
+                <tr>
+                    <td><a class="oi oi-share-boxed" href="/" /></td>
+                    <td>Config1</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center">
+            <a class="btn btn-success" href=@String.Concat("/configs/create/",OrganizationId)>➕ Stwórz nową konfiguracje</a>
+        </div>
+    </div>
+</div>
+
+<div class="container" style="max-width:500px">
+    <div class="border overflow-auto" style="padding:20px;margin:10px">
+        <h4 class="text-center">Usuń organizacje</h4>
+        <div class="text-center">
+            <button type="button" class="btn btn-danger" @onclick="() => DeleteOrganization()">
+                ❗ 🗙 Usuń organizacje ❗
+            </button>
+        </div>
+    </div>
+</div>
+
 
 @code {
     [Parameter]
-    public int organizationId { get; set; }
+    public int OrganizationId { get; set; }
 
+    public OrganizationRegistrationModel OrganizationRegistration { get; set; } = new OrganizationRegistrationModel();
+
+    private string m_organizationName;
+    private string m_nameChangeError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //var user = (await authState.GetAuthenticationStateAsync()).User;
+        //if (!OrganizationContext.Members.Where(x => x.isAdmin).Any(x => x.UserName == user.Identity.Name))
+
+        m_organizationName = OrganizationContext.Organizations
+            .Where(x => x.OrganizationId == OrganizationId)
+            .Select(x => x.Name)
+            .FirstOrDefault();
+        OrganizationRegistration.OrganizationName = m_organizationName;
+    }
+
+    private void ChangeOrganizationName()
+    {
+        if (OrganizationRegistration.OrganizationName.Trim() == m_organizationName.Trim())
+            m_nameChangeError = "Nazwa jest taka sama!";
+        else if (OrganizationContext.Organizations.Any(x => x.Name == OrganizationRegistration.OrganizationName.Trim()))
+            m_nameChangeError = "Inna organizacja ma już taką samą nazwe!";
+        else
+        {
+            OrganizationContext.Organizations
+                .Where(x => x.OrganizationId == OrganizationId)
+                .FirstOrDefault().Name = OrganizationRegistration.OrganizationName.Trim();
+            OrganizationContext.SaveChanges();
+            OnInitializedAsync().Wait();
+            m_nameChangeError = String.Empty;
+        }
+    }
+
+    private void DeleteOrganization()
+    {
+        var organization = OrganizationContext.Organizations.Where(x => x.OrganizationId == OrganizationId).FirstOrDefault();
+        OrganizationContext.Organizations.Remove(organization);
+        OrganizationContext.SaveChanges();
+        NavManager.NavigateTo("/Account/Organizations");
+    }
 
 }

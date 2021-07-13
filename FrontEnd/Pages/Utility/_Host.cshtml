@@ -4,8 +4,17 @@
 @{
     Layout = null;
 }
+@using Microsoft.AspNetCore.Authentication
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 
-
+@{
+    var tokens = new InitialApplicationState
+    {
+        AccessToken = await HttpContext.GetTokenAsync("access_token"),
+        RefreshToken = await HttpContext.GetTokenAsync("refresh_token"),
+        XsrfToken = Xsrf.GetAndStoreTokens(HttpContext).RequestToken
+    };
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +28,7 @@
     <link href="FrontEnd.styles.css" rel="stylesheet" />
 </head>
 <body>
-    <component type="typeof(App)" render-mode="ServerPrerendered" />
+    <component type="typeof(App)" param-InitialState="tokens"  render-mode="ServerPrerendered" />
 
     <div id="blazor-error-ui">
         <environment include="Staging,Production">

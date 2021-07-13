@@ -1,6 +1,7 @@
 ﻿using FrontEnd.Areas.Identity.Data;
 using FrontEnd.DatabaseConnection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,8 @@ namespace FrontEnd.Areas.Identity
                         context.Configuration.GetConnectionString("UserContextConnection")));
 
                 services.AddDefaultIdentity<FrontEndUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                    .AddEntityFrameworkStores<UserContext>();
+                    .AddEntityFrameworkStores<UserContext>()
+                    .AddTokenProvider<DataProtectorTokenProvider<FrontEndUser>>("default");
             });
         }
     }
