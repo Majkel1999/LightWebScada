@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using FrontEnd.DatabaseConnection;
 using FrontEnd.Areas.Organizations.Data;
 using FrontEnd.Areas.Identity.Data;
+using FrontEnd.DataHandlers;
 
 namespace FrontEnd
 {
@@ -32,6 +33,8 @@ namespace FrontEnd
 
             services.AddDbContext<OrganizationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
+
+            services.AddSingleton<ConfigHandler>();
         }
 
 

@@ -1,9 +1,187 @@
-﻿@page "/configurations/edit/{organizationId:int}"
+﻿@page "/configurations/create/{organizationId:int}"
+
+@using Areas.Organizations.Data
+@using DataModels
+@using DataRegisters
+@using DataHandlers
+
+@inject OrganizationContext organizationContext
+@inject ConfigHandler configHandler
+@inject NavigationManager NavManager
 
 @attribute [Authorize]
-<h3>CreateConfiguration</h3>
+
+<div class="container" style="max-width:500px">
+    <div class="border" style="padding: 20px; margin: 10px">
+        @if (!String.IsNullOrEmpty(m_registerError))
+        {
+            <br />
+            <div class="alert alert-danger" role="alert">
+                @m_registerError
+            </div>
+            <br />
+        }
+        <EditForm Model="ValueModel" OnSubmit="AddToConfig">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label for="organization name"><b>Typ rejestru</b></label>
+                <InputSelect id="type" @bind-Value="ValueModel.Type" class="form-control" required>
+                    @foreach (var value in Enum.GetValues(typeof(DataRegisters.RegisterType)))
+                    {
+                        <option>@value</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label for="organization name"><b>Numer rejestru z zakresu 0-9999</b></label>
+                <InputNumber id="registerNumber" @bind-Value="ValueModel.RegisterNumber" class="form-control" required
+                             placeholder="Numer rejestru..." />
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">Dodaj rejestr</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+<div class="container overflow-auto" style="max-width:500px; max-height:500px">
+    <div class="border overflow-auto" style="padding:20px;margin:10px">
+        <h4 class="text-center">Konfiguracja</h4>
+        @if (!String.IsNullOrEmpty(m_configError))
+        {
+            <br />
+            <div class="alert alert-danger" role="alert">
+                @m_configError
+            </div>
+            <br />
+        }
+        <EditForm Model="m_config" OnSubmit="SaveConfig">
+            <div class="form-group">
+                <label for="organization name"><b>Nazwa</b></label>
+                <InputText id="configName" @bind-Value="m_config.Name" class="form-control" required
+                           placeholder="Nazwa konfiguracji..." />
+            </div>
+            <div class="form-group">
+                <label for="organization name"><b>Protokół</b></label>
+                <InputSelect id="configProtocol" @bind-Value="m_config.Protocol" class="form-control" required>
+                    @foreach (var value in Enum.GetValues(typeof(DataRegisters.Protocol)))
+                    {
+                        <option>@value</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-success" type="submit">Zapisz konfigurację</button>
+            </div>
+        </EditForm>
+        <br />
+        <h6 class="text-center">Coil Registers</h6>
+        <table class="table table-bordered">
+            <tbody>
+                @foreach (var line in m_config.Registers.CoilRegisters.OrderBy(x => x.RegisterNumber))
+                {
+                    <tr>
+                        <td>Register: @line.RegisterNumber</td>
+                        <td>
+                            <button class="btn btn-danger"
+                                    @onclick="() => RemoveFromConfig(line,RegisterType.CoilRegister)">
+                                🗙
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <h6 class="text-center">Discrete Inputs</h6>
+        <table class="table table-bordered">
+            <tbody>
+                @foreach (var line in m_config.Registers.DiscreteInputs.OrderBy(x => x.RegisterNumber))
+                {
+                    <tr>
+                        <td>Register: @line.RegisterNumber</td>
+                        <td>
+                            <button class="btn btn-danger"
+                                    @onclick="() => RemoveFromConfig(line,RegisterType.DiscreteInput)">
+                                🗙
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <h6 class="text-center">Input Registers</h6>
+        <table class="table table-bordered">
+            <tbody>
+                @foreach (var line in m_config.Registers.InputRegisters.OrderBy(x => x.RegisterNumber))
+                {
+                    <tr>
+                        <td>Register: @line.RegisterNumber</td>
+                        <td>
+                            <button class="btn btn-danger"
+                                    @onclick="() => RemoveFromConfig(line,RegisterType.InputRegister)">
+                                🗙
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <h6 class="text-center">Holding Registers</h6>
+        <table class="table table-bordered">
+            <tbody>
+                @foreach (var line in m_config.Registers.HoldingRegisters.OrderBy(x => x.RegisterNumber))
+                {
+                    <tr>
+                        <td>Register: @line.RegisterNumber</td>
+                        <td>
+                            <button class="btn btn-danger"
+                                    @onclick="() => RemoveFromConfig(line,RegisterType.HoldingRegister)">
+                                🗙
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 @code {
     [Parameter]
-    public int organizationId { get; set; }
+    public int OrganizationId { get; set; }
+
+    public ConfigValueModel ValueModel { get; set; } = new ConfigValueModel();
+
+    private ClientConfig m_config = new ClientConfig();
+    private string m_configError = "";
+    private string m_registerError = "";
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    private void AddToConfig()
+    {
+        configHandler.TryAddRegister(ref m_config, ValueModel.Type, ValueModel.RegisterNumber, out m_registerError);
+    }
+
+    private void RemoveFromConfig(Register register, RegisterType type)
+    {
+        configHandler.TryRemoveRegister(ref m_config, type, register.RegisterNumber);
+    }
+
+    private void SaveConfig()
+    {
+        string json = configHandler.ConfigToJson(m_config);
+        var entry = organizationContext.Configurations.Add(new ClientConfigEntity
+        {
+            OrganizationId = OrganizationId,
+            ConfigJson = json
+        });
+        organizationContext.SaveChanges();
+        NavManager.NavigateTo("/configurations/edit/" + entry.Entity.ID);
+    }
 }

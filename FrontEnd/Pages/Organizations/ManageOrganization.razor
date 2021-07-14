@@ -44,7 +44,7 @@
             </tbody>
         </table>
         <div class="text-center">
-            <a class="btn btn-success" href=@String.Concat("/configs/create/",OrganizationId)>➕ Stwórz nową konfiguracje</a>
+            <a class="btn btn-success" href=@String.Concat("/configurations/create/",OrganizationId)>➕ Stwórz nową konfiguracje</a>
         </div>
     </div>
 </div>
@@ -72,9 +72,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //var user = (await authState.GetAuthenticationStateAsync()).User;
-        //if (!OrganizationContext.Members.Where(x => x.isAdmin).Any(x => x.UserName == user.Identity.Name))
-
         m_organizationName = OrganizationContext.Organizations
             .Where(x => x.OrganizationId == OrganizationId)
             .Select(x => x.Name)
