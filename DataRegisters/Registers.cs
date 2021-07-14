@@ -1,9 +1,18 @@
 ﻿namespace DataRegisters
 {
+    public enum RegisterType
+    {
+        CoilRegister,
+        DiscreteInput,
+        InputRegister,
+        HoldingRegister
+    }
+
     public class Register
     {
         public int RegisterNumber { get; set; }
     }
+
     public class DiscreteRegister : Register
     {
         public bool CurrentValue { get; set; }

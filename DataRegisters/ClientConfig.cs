@@ -2,7 +2,8 @@
 {
     public class ClientConfig
     {
-        public Protocol Protocol;
-        public DataSet Registers;
+        public string Name { get; set; }
+        public Protocol Protocol { get; set; }
+        public DataSet Registers { get; set; } = new DataSet();
     }
 }
