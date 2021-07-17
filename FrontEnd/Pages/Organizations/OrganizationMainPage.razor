@@ -1,4 +1,4 @@
-@page "/organization/{organizationId:int}"
+@page "/organizations/{organizationId:int}"
 
 @using Areas.Organizations.Data
 
@@ -6,19 +6,26 @@
 
 <h3 class="text-center">@m_organizationName</h3>
 
-@code{
+<div class="container" style="max-width:1000px">
+    <div class="border" style="padding: 20px; margin: 10px">
+        <div class="text-center">
+            <h5>Widoki</h5>
+        </div>
+    </div>
+</div>
+
+@code {
     [Parameter]
-    public int organizationId {get;set;}
+    public int organizationId { get; set; }
 
     private string m_organizationName;
 
-    protected override Task OnInitializedAsync()
+    protected override void OnParametersSet()
     {
         m_organizationName = organizationContext.Organizations
             .Where(o => o.OrganizationId == organizationId)
             .Select(o => o.Name)
             .FirstOrDefault();
-        return base.OnInitializedAsync();
     }
 
 }

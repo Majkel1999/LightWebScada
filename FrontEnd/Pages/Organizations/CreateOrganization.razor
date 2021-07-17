@@ -58,6 +58,6 @@
             UserName = user.Identity.Name
         });
         await organizationContext.SaveChangesAsync();
-        Navigation.NavigateTo("/");
+        Navigation.NavigateTo("/organizations/"+organization.OrganizationId,true);
     }
 }
