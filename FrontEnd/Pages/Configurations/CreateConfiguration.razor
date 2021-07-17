@@ -85,7 +85,7 @@
                     <tr>
                         <td>Register: @line.RegisterNumber</td>
                         <td>
-                            <button class="btn btn-danger"
+                            <button class="btn btn-link text-danger"
                                     @onclick="() => RemoveFromConfig(line,RegisterType.CoilRegister)">
                                 🗙
                             </button>
@@ -102,7 +102,7 @@
                     <tr>
                         <td>Register: @line.RegisterNumber</td>
                         <td>
-                            <button class="btn btn-danger"
+                            <button
                                     @onclick="() => RemoveFromConfig(line,RegisterType.DiscreteInput)">
                                 🗙
                             </button>
@@ -119,7 +119,7 @@
                     <tr>
                         <td>Register: @line.RegisterNumber</td>
                         <td>
-                            <button class="btn btn-danger"
+                            <button
                                     @onclick="() => RemoveFromConfig(line,RegisterType.InputRegister)">
                                 🗙
                             </button>
@@ -136,7 +136,7 @@
                     <tr>
                         <td>Register: @line.RegisterNumber</td>
                         <td>
-                            <button class="btn btn-danger"
+                            <button
                                     @onclick="() => RemoveFromConfig(line,RegisterType.HoldingRegister)">
                                 🗙
                             </button>
@@ -179,9 +179,10 @@
         var entry = organizationContext.Configurations.Add(new ClientConfigEntity
         {
             OrganizationId = OrganizationId,
+            ConfigName = m_config.Name,
             ConfigJson = json
         });
         organizationContext.SaveChanges();
-        NavManager.NavigateTo("/configurations/edit/" + entry.Entity.ID);
+        NavManager.NavigateTo("/organizations/manage/"+OrganizationId,true);
     }
 }

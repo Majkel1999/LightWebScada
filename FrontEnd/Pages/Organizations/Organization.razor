@@ -1,0 +1,24 @@
+@page "/organization/{organizationId:int}"
+
+@using Areas.Organizations.Data
+
+@inject OrganizationContext organizationContext
+
+<h3 class="text-center">@m_organizationName</h3>
+
+@code{
+    [Parameter]
+    public int organizationId {get;set;}
+
+    private string m_organizationName;
+
+    protected override Task OnInitializedAsync()
+    {
+        m_organizationName = organizationContext.Organizations
+            .Where(o => o.OrganizationId == organizationId)
+            .Select(o => o.Name)
+            .FirstOrDefault();
+        return base.OnInitializedAsync();
+    }
+
+}
