@@ -1,8 +1,9 @@
 ﻿@page "/organizations/create/{error:int?}"
 
-@inject OrganizationContext organizationContext;
-@inject NavigationManager Navigation;
-@inject AuthenticationStateProvider AuthState;
+@inject OrganizationContext organizationContext
+@inject NavigationManager Navigation
+@inject ApiKeyGenerator apiKeyGenerator  
+@inject AuthenticationStateProvider AuthState
 
 @attribute [Authorize]
 
@@ -45,7 +46,8 @@
         var user = (await AuthState.GetAuthenticationStateAsync()).User;
         var organization = new Organization
         {
-            Name = m_organizationRegistrationModel.OrganizationName
+            Name = m_organizationRegistrationModel.OrganizationName,
+            ApiKey = apiKeyGenerator.GenerateNewApiKey()
         };
         organizationContext.Organizations.Add(organization);
         organizationContext.Members.Add(new OrganizationMember

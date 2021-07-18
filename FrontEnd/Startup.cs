@@ -27,15 +27,16 @@ namespace FrontEnd
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHttpClient();
+
             services.AddScoped<TokenProvider>();
+            services.AddScoped<ApiKeyGenerator>();
+            services.AddSingleton<ConfigHandler>();
 
             services.AddDbContext<UserContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
 
             services.AddDbContext<OrganizationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
-
-            services.AddSingleton<ConfigHandler>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

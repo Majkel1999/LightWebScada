@@ -1,6 +1,7 @@
 ﻿@page "/organizations/{organizationId:int}"
 
 @inject OrganizationContext organizationContext
+@inject ApiKeyGenerator apiKeyGenerator
 
 @attribute [Authorize]
 
@@ -19,8 +20,10 @@
     <div class="border" style="padding: 20px; margin: 10px">
         <div class="d-flex justify-content-between">
             <h4>Administrators</h4>
-            <a href=@String.Concat("/organizations/users/add/",organizationId) class="btn-link">➕ Add
-                user/administrator</a>
+            <a href=@String.Concat("/organizations/users/add/",organizationId) class="btn-link">
+                ➕ Add
+                user/administrator
+            </a>
         </div>
         <table class="table text-center">
             <tbody>
@@ -54,13 +57,17 @@
             <h4>Configurations</h4>
             <a href=@String.Concat("/configurations/create/",organizationId) class="btn-link">➕ Add configuration</a>
         </div>
+        <div class="text-center">
+            ApiKey: @m_apiKey
+        </div>
         <table class="table text-center">
             <tbody>
                 @foreach (ClientConfigEntity config in m_organizationConfigs)
                 {
                     <tr>
                         <td class="text-center">@config.ConfigName</td>
-                        <td><a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>Edytuj</a>
+                        <td>
+                            <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>Edytuj</a>
                         </td>
                     </tr>
                 }
@@ -78,6 +85,7 @@
     private List<ClientConfigEntity> m_organizationConfigs;
     private List<OrganizationMember> m_members;
     private string m_organizationName;
+    private string m_apiKey;
 
     protected override Task OnInitializedAsync()
     {
@@ -94,13 +102,26 @@
     private void InitParams()
     {
         m_organizationName = organizationContext.Organizations
-        .Where(x => x.OrganizationId == organizationId)
-        .Select(x => x.Name)
-        .FirstOrDefault();
+            .Where(x => x.OrganizationId == organizationId)
+            .Select(x => x.Name)
+            .FirstOrDefault();
         m_organizationConfigs = organizationContext.Configurations
-        .Where(x => x.OrganizationId == organizationId).ToList();
+            .Where(x => x.OrganizationId == organizationId).ToList();
         m_members = organizationContext.Members
-        .Where(x => x.OrganizationId == organizationId)
-        .ToList();
+            .Where(x => x.OrganizationId == organizationId)
+            .ToList();
+        m_apiKey = organizationContext.Organizations
+            .Where(x => x.OrganizationId == organizationId)
+            .Select(x => x.ApiKey)
+            .FirstOrDefault();
+        if (String.IsNullOrEmpty(m_apiKey))
+        {
+            m_apiKey = apiKeyGenerator.GenerateNewApiKey();
+            var organization = organizationContext.Organizations
+                .Where(x => x.OrganizationId == organizationId)
+                .FirstOrDefault();
+            organization.ApiKey = m_apiKey;
+            organizationContext.SaveChanges();
+        }
     }
 }
