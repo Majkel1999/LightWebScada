@@ -1,0 +1,80 @@
+﻿@page "/organizations/users/add/{organizationId:int}"
+
+@using System.Text.RegularExpressions
+
+@inject UserContext userContext
+@inject OrganizationContext organizationContext
+@inject NavigationManager navManager
+
+@attribute [Authorize]
+
+<div class="container" style="max-width:500px">
+    <div class="border" style="padding: 20px; margin: 10px">
+        @if (!String.IsNullOrEmpty(m_registerError))
+        {
+            <br />
+            <div class="alert alert-danger" role="alert">
+                @m_registerError
+            </div>
+            <br />
+        }
+        <EditForm Model="m_memberModel" OnValidSubmit="TryAddUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <InputText id="username" @bind-Value="m_memberModel.Username" class="form-control" required
+                           placeholder="Adres e-mail" />
+            </div>
+            <div class="d-flex justify-content-end">
+                <div>Give administrator rights</div>
+                <InputCheckbox id="isAdmin" @bind-Value="m_memberModel.Admin" class="form-control" required>
+                    Give administrator rights
+                </InputCheckbox>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">Add</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int organizationId { get; set; }
+
+    private string m_registerError;
+    private MemberModel m_memberModel = new MemberModel();
+
+    private void TryAddUser()
+    {
+        m_registerError = "";
+        try
+        {
+            if (!Regex.IsMatch(m_memberModel.Username,
+                @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)))
+            {
+                m_registerError = "The specified e-mail is in incorrect format";
+                return;
+            }
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            m_registerError = "The specified e-mail is in incorrect format";
+            return;
+        }
+        if (!userContext.Users.Where(x => x.UserName.ToLower() == m_memberModel.Username.ToLower()).Any())
+        {
+            m_registerError = "Specified user doesn't exist!";
+            return;
+        }
+        organizationContext.Members.Add(new OrganizationMember
+        {
+            UserName = m_memberModel.Username.Normalize(),
+            isAdmin = m_memberModel.Admin,
+            OrganizationId = organizationId
+        });
+        organizationContext.SaveChanges();
+        navManager.NavigateTo("/organizations/" + organizationId, true);
+    }
+}

@@ -183,6 +183,6 @@
             ConfigJson = json
         });
         organizationContext.SaveChanges();
-        NavManager.NavigateTo("/organizations/manage/"+OrganizationId,true);
+        NavManager.NavigateTo("/organizations/"+OrganizationId,true);
     }
 }

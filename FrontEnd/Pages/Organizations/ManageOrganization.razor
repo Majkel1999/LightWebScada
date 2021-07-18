@@ -34,26 +34,6 @@
 
 <div class="container" style="max-width:500px">
     <div class="border overflow-auto" style="padding:20px;margin:10px">
-        <h4 class="text-center">Konfiguracje</h4>
-        <table>
-            <tbody>
-                @foreach (ClientConfigEntity config in m_organizationConfigs)
-                {
-                    <tr>
-                        <td><a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID) /></td>
-                        <td>@config.ConfigName</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <div class="text-center">
-            <a class="btn btn-success" href=@String.Concat("/configurations/create/",OrganizationId)>➕ Stwórz nową konfiguracje</a>
-        </div>
-    </div>
-</div>
-
-<div class="container" style="max-width:500px">
-    <div class="border overflow-auto" style="padding:20px;margin:10px">
         <h4 class="text-center">Usuń organizacje</h4>
         <div class="text-center">
             <button type="button" class="btn btn-danger" @onclick="() => DeleteOrganization()">
@@ -93,8 +73,6 @@
             .Select(x => x.Name)
             .FirstOrDefault();
         OrganizationRegistration.OrganizationName = m_organizationName;
-        m_organizationConfigs = OrganizationContext.Configurations
-            .Where(x => x.OrganizationId == OrganizationId).ToList();
     }
 
     private void ChangeOrganizationName()
@@ -125,5 +103,4 @@
         OrganizationContext.SaveChanges();
         NavManager.NavigateTo("/Account/Organizations",true);
     }
-
 }

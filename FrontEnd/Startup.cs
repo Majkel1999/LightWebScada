@@ -13,13 +13,14 @@ namespace FrontEnd
 {
     public class Startup
     {
+        private static IConfiguration m_configuration;
+
+        public static IConfiguration Configuration => m_configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            m_configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
-
 
         public void ConfigureServices(IServiceCollection services)
         {

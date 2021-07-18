@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
@@ -14,7 +15,7 @@ namespace FrontEnd.Areas.Organizations.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseNpgsql("Server=serwer.lan;Port=45432;Database=ScadaData;User Id=Frontend;Password=front;");
+            options.UseNpgsql(Startup.Configuration.GetConnectionString("UserContextConnection"));
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

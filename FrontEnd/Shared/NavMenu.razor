@@ -31,11 +31,6 @@
                 </li>
             </NotAuthorized>
             <Authorized>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="account/organizations" Match="NavLinkMatch.All">
-                        <span class="oi oi-transfer" aria-hidden="true"></span> Your organizations
-                    </NavLink>
-                </li>
                 <li class="divider">
                     &nbsp
                 </li>
@@ -64,18 +59,21 @@
 @code {
     private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : "overflow-auto";
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
     private List<Organization> m_userOrganizations;
 
     protected override Task OnInitializedAsync()
     {
         var user = authStateProvider.GetAuthenticationStateAsync().Result.User;
-        List<int> m_organizationsList = organizationContext.Members
-        .Where(x => x.UserName == user.Identity.Name.Normalize())
-        .Select(x => x.OrganizationId).ToList();
-        m_userOrganizations = organizationContext.Organizations
-        .Where(x => m_organizationsList.Contains(x.OrganizationId))
-        .ToList();
+        if (user.Identity.IsAuthenticated)
+        {
+            List<int> m_organizationsList = organizationContext.Members
+            .Where(x => x.UserName == user.Identity.Name.Normalize())
+            .Select(x => x.OrganizationId).ToList();
+            m_userOrganizations = organizationContext.Organizations
+            .Where(x => m_organizationsList.Contains(x.OrganizationId))
+            .ToList();
+        }
         return base.OnInitializedAsync();
     }
 

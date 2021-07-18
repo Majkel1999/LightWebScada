@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FrontEnd.Areas.Identity.Data;
-using Microsoft.AspNetCore.Identity;
+﻿using FrontEnd.Areas.Identity.Data;
+using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +14,7 @@ namespace FrontEnd.DatabaseConnection
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Server=serwer.lan;Port=45432;Database=ScadaData;User Id=Frontend;Password=front;");
+            optionsBuilder.UseNpgsql(Startup.Configuration.GetConnectionString("UserContextConnection"));
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
