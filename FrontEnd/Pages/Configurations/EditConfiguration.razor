@@ -1,6 +1,5 @@
 ﻿@page "/configurations/edit/{configurationId:int}"
-@using Areas.Organizations.Data
-@using DataModels
+
 @using DataRegisters
 @using DataHandlers
 
@@ -20,12 +19,12 @@
             </div>
             <br />
         }
-        <EditForm Model="ValueModel" OnSubmit="AddToConfig">
+        <EditForm Model="m_valueModel" OnSubmit="AddToConfig">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="form-group">
                 <label for="organization name"><b>Typ rejestru</b></label>
-                <InputSelect id="type" @bind-Value="ValueModel.Type" class="form-control" required>
+                <InputSelect id="type" @bind-Value="m_valueModel.Type" class="form-control" required>
                     @foreach (var value in Enum.GetValues(typeof(DataRegisters.RegisterType)))
                     {
                         <option>@value</option>
@@ -34,7 +33,7 @@
             </div>
             <div class="form-group">
                 <label for="organization name"><b>Numer rejestru z zakresu 0-9999</b></label>
-                <InputNumber id="registerNumber" @bind-Value="ValueModel.RegisterNumber" class="form-control" required
+                <InputNumber id="registerNumber" @bind-Value="m_valueModel.RegisterNumber" class="form-control" required
                              placeholder="Numer rejestru..." />
             </div>
             <div class="text-center">
@@ -148,8 +147,7 @@
     [Parameter]
     public int ConfigurationId { get; set; }
 
-    public ConfigValueModel ValueModel { get; set; } = new ConfigValueModel();
-
+    private ConfigValueModel m_valueModel = new ConfigValueModel();
     private ClientConfig m_config;
     private string m_configError = "";
     private string m_registerError = "";
@@ -166,7 +164,7 @@
 
     private void AddToConfig()
     {
-        configHandler.TryAddRegister(ref m_config, ValueModel.Type, ValueModel.RegisterNumber, out m_registerError);
+        configHandler.TryAddRegister(ref m_config, m_valueModel.Type, m_valueModel.RegisterNumber, out m_registerError);
     }
 
     private void RemoveFromConfig(Register register, RegisterType type)

@@ -1,5 +1,5 @@
-﻿using DataRegisters;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using DataRegisters;
 
 namespace FrontEnd.DataModels
 {

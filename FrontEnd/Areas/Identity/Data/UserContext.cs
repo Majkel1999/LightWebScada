@@ -1,7 +1,7 @@
-﻿using FrontEnd.Areas.Identity.Data;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using FrontEnd.Areas.Identity.Data;
 
 namespace FrontEnd.DatabaseConnection
 {

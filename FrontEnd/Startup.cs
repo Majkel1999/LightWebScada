@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FrontEnd.DatabaseConnection;
-using FrontEnd.Areas.Organizations.Data;
 using FrontEnd.Areas.Identity.Data;
+using FrontEnd.Areas.Organizations.Data;
+using FrontEnd.DatabaseConnection;
 using FrontEnd.DataHandlers;
 
 namespace FrontEnd
@@ -38,13 +38,10 @@ namespace FrontEnd
             services.AddSingleton<ConfigHandler>();
         }
 
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
             {
                 app.UseExceptionHandler("/Utility/Error");

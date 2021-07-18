@@ -1,6 +1,4 @@
-﻿@using Areas.Organizations.Data
-
-@inject OrganizationContext organizationContext
+﻿@inject OrganizationContext organizationContext
 @inject AuthenticationStateProvider authStateProvider
 
 <div class="top-row pl-4 navbar navbar-dark">
@@ -57,9 +55,9 @@
 </div>
 
 @code {
-    private bool collapseNavMenu = true;
+    private bool m_collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string NavMenuCssClass => m_collapseNavMenu ? "collapse" : null;
     private List<Organization> m_userOrganizations;
 
     protected override Task OnInitializedAsync()
@@ -79,6 +77,6 @@
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+        m_collapseNavMenu = !m_collapseNavMenu;
     }
 }

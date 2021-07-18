@@ -1,7 +1,5 @@
 ﻿@page "/configurations/create/{organizationId:int}"
 
-@using Areas.Organizations.Data
-@using DataModels
 @using DataRegisters
 @using DataHandlers
 
@@ -21,12 +19,12 @@
             </div>
             <br />
         }
-        <EditForm Model="ValueModel" OnSubmit="AddToConfig">
+        <EditForm Model="m_valueModel" OnSubmit="AddToConfig">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="form-group">
                 <label for="organization name"><b>Typ rejestru</b></label>
-                <InputSelect id="type" @bind-Value="ValueModel.Type" class="form-control" required>
+                <InputSelect id="type" @bind-Value="m_valueModel.Type" class="form-control" required>
                     @foreach (var value in Enum.GetValues(typeof(DataRegisters.RegisterType)))
                     {
                         <option>@value</option>
@@ -35,8 +33,8 @@
             </div>
             <div class="form-group">
                 <label for="organization name"><b>Numer rejestru z zakresu 0-9999</b></label>
-                <InputNumber id="registerNumber" @bind-Value="ValueModel.RegisterNumber" class="form-control" required
-                             placeholder="Numer rejestru..." />
+                <InputNumber id="registerNumber" @bind-Value="m_valueModel.RegisterNumber" class="form-control" required
+                    placeholder="Numer rejestru..." />
             </div>
             <div class="text-center">
                 <button class="btn btn-primary" type="submit">Dodaj rejestr</button>
@@ -61,7 +59,7 @@
             <div class="form-group">
                 <label for="organization name"><b>Nazwa</b></label>
                 <InputText id="configName" @bind-Value="m_config.Name" class="form-control" required
-                           placeholder="Nazwa konfiguracji..." />
+                    placeholder="Nazwa konfiguracji..." />
             </div>
             <div class="form-group">
                 <label for="organization name"><b>Protokół</b></label>
@@ -86,7 +84,7 @@
                         <td>Register: @line.RegisterNumber</td>
                         <td>
                             <button class="btn btn-link text-danger"
-                                    @onclick="() => RemoveFromConfig(line,RegisterType.CoilRegister)">
+                            @onclick="() => RemoveFromConfig(line,RegisterType.CoilRegister)">
                                 🗙
                             </button>
                         </td>
@@ -102,8 +100,7 @@
                     <tr>
                         <td>Register: @line.RegisterNumber</td>
                         <td>
-                            <button
-                                    @onclick="() => RemoveFromConfig(line,RegisterType.DiscreteInput)">
+                            <button @onclick="() => RemoveFromConfig(line,RegisterType.DiscreteInput)">
                                 🗙
                             </button>
                         </td>
@@ -119,8 +116,7 @@
                     <tr>
                         <td>Register: @line.RegisterNumber</td>
                         <td>
-                            <button
-                                    @onclick="() => RemoveFromConfig(line,RegisterType.InputRegister)">
+                            <button @onclick="() => RemoveFromConfig(line,RegisterType.InputRegister)">
                                 🗙
                             </button>
                         </td>
@@ -136,8 +132,7 @@
                     <tr>
                         <td>Register: @line.RegisterNumber</td>
                         <td>
-                            <button
-                                    @onclick="() => RemoveFromConfig(line,RegisterType.HoldingRegister)">
+                            <button @onclick="() => RemoveFromConfig(line,RegisterType.HoldingRegister)">
                                 🗙
                             </button>
                         </td>
@@ -152,8 +147,7 @@
     [Parameter]
     public int OrganizationId { get; set; }
 
-    public ConfigValueModel ValueModel { get; set; } = new ConfigValueModel();
-
+    public ConfigValueModel m_valueModel = new ConfigValueModel();
     private ClientConfig m_config = new ClientConfig();
     private string m_configError = "";
     private string m_registerError = "";
@@ -165,7 +159,7 @@
 
     private void AddToConfig()
     {
-        configHandler.TryAddRegister(ref m_config, ValueModel.Type, ValueModel.RegisterNumber, out m_registerError);
+        configHandler.TryAddRegister(ref m_config, m_valueModel.Type, m_valueModel.RegisterNumber, out m_registerError);
     }
 
     private void RemoveFromConfig(Register register, RegisterType type)
@@ -183,6 +177,6 @@
             ConfigJson = json
         });
         organizationContext.SaveChanges();
-        NavManager.NavigateTo("/organizations/"+OrganizationId,true);
+        NavManager.NavigateTo("/organizations/" + OrganizationId, true);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+
 namespace FrontEnd.DataModels
 {
     public class MemberModel

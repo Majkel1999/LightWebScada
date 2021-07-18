@@ -1,6 +1,4 @@
 ﻿@page "/organizations/create/{error:int?}"
-@using FrontEnd.DataModels
-@using FrontEnd.Areas.Organizations.Data;
 
 @inject OrganizationContext organizationContext;
 @inject NavigationManager Navigation;
@@ -18,14 +16,14 @@
                 Placeholder error message!
             </div>
         }
-        <EditForm Model="@organizationRegistrationModel" OnValidSubmit="@Submit">
+        <EditForm Model="@m_organizationRegistrationModel" OnValidSubmit="@Submit">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <div class="form-group">
                 <label for="organization name"><b>Nazwa organizacji</b></label>
-                <InputText id="username" @bind-Value="organizationRegistrationModel.OrganizationName" class="form-control" required
-                           placeholder="Nazwa organizacji..." />
+                <InputText id="username" @bind-Value="m_organizationRegistrationModel.OrganizationName"
+                    class="form-control" required placeholder="Nazwa organizacji..." />
             </div>
 
             <button class="btn btn-primary" type="submit">➕ Stwórz organizacje</button>
@@ -38,16 +36,16 @@
     [Parameter]
     public int Error { get; set; }
 
-    public OrganizationRegistrationModel organizationRegistrationModel { get; set; } = new OrganizationRegistrationModel();
+    private OrganizationRegistrationModel m_organizationRegistrationModel = new OrganizationRegistrationModel();
 
     private async void Submit()
     {
-        if (organizationContext.Organizations.Where(x => x.Name == organizationRegistrationModel.OrganizationName).Any())
+        if (organizationContext.Organizations.Where(x => x.Name == m_organizationRegistrationModel.OrganizationName).Any())
             Navigation.NavigateTo("/organizations/create/1");
         var user = (await AuthState.GetAuthenticationStateAsync()).User;
         var organization = new Organization
         {
-            Name = organizationRegistrationModel.OrganizationName
+            Name = m_organizationRegistrationModel.OrganizationName
         };
         organizationContext.Organizations.Add(organization);
         organizationContext.Members.Add(new OrganizationMember
@@ -58,6 +56,6 @@
             UserName = user.Identity.Name
         });
         await organizationContext.SaveChangesAsync();
-        Navigation.NavigateTo("/organizations/"+organization.OrganizationId,true);
+        Navigation.NavigateTo("/organizations/" + organization.OrganizationId, true);
     }
 }

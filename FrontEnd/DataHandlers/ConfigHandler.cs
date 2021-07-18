@@ -1,6 +1,6 @@
-﻿using DataRegisters;
+﻿using System.Linq;
+using DataRegisters;
 using Newtonsoft.Json;
-using System.Linq;
 
 namespace FrontEnd.DataHandlers
 {

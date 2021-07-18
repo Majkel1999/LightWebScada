@@ -1,10 +1,10 @@
-﻿using FrontEnd.Areas.Identity.Data;
-using FrontEnd.DatabaseConnection;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using FrontEnd.Areas.Identity.Data;
+using FrontEnd.DatabaseConnection;
 
 [assembly: HostingStartup(typeof(FrontEnd.Areas.Identity.IdentityHostingStartup))]
 namespace FrontEnd.Areas.Identity
