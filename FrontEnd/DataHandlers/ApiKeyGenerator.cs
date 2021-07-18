@@ -1,7 +1,7 @@
-﻿using FrontEnd.Areas.Organizations.Data;
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
+using FrontEnd.Areas.Organizations.Data;
 
 namespace FrontEnd.DataHandlers
 {
