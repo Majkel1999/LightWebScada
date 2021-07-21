@@ -3,6 +3,7 @@
 @inject NavigationManager NavManager
 @inject OrganizationContext OrganizationContext
 @inject AuthenticationStateProvider authState
+@inject DatasetContext datasetContext
 
 @attribute [Authorize]
 
@@ -18,7 +19,7 @@
             <div class="form-group">
                 <label for="organization name"><b>Nazwa organizacji</b></label>
                 <InputText id="username" @bind-Value="m_organizationRegistration.OrganizationName" class="form-control"
-                    required placeholder="Nazwa organizacji..." />
+                           required placeholder="Nazwa organizacji..." />
             </div>
             @m_nameChangeError
             <button class="btn btn-primary" type="submit">Zmień nazwę</button>
@@ -90,11 +91,12 @@
     private void DeleteOrganization()
     {
         var organization = OrganizationContext.Organizations.Where(x => x.OrganizationId == OrganizationId).FirstOrDefault();
+        datasetContext.RemoveTable(organization);
         OrganizationContext.Organizations.Remove(organization);
         OrganizationContext.Configurations
-        .Where(x => x.OrganizationId == OrganizationId)
-        .ToList()
-        .ForEach((y) => OrganizationContext.Configurations.Remove(y));
+            .Where(x => x.OrganizationId == OrganizationId)
+            .ToList()
+            .ForEach((y) => OrganizationContext.Configurations.Remove(y));
         OrganizationContext.SaveChanges();
         NavManager.NavigateTo("/Account/Organizations", true);
     }

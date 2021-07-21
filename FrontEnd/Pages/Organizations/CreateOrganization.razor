@@ -1,9 +1,10 @@
-﻿@page "/organizations/create/{error:int?}"
+﻿@page "/organizations/create"
 
 @inject OrganizationContext organizationContext
 @inject NavigationManager Navigation
-@inject ApiKeyGenerator apiKeyGenerator  
+@inject ApiKeyGenerator apiKeyGenerator
 @inject AuthenticationStateProvider AuthState
+@inject DatasetContext datasetContext
 
 @attribute [Authorize]
 
@@ -11,20 +12,20 @@
     <div class="text-center font-weight-bolder" style="font-size:32px">Rejestracja organizacji</div>
 
     <div class="border" style="padding:20px">
-        @if (Error != 0)
+        @if (!String.IsNullOrEmpty(m_errorString))
         {
             <div class="alert alert-danger" role="alert">
-                Placeholder error message!
+                @m_errorString
             </div>
         }
-        <EditForm Model="@m_organizationRegistrationModel" OnValidSubmit="@Submit">
+        <EditForm Model="@m_organizationRegistrationModel" OnValidSubmit="@TryCreateOrganization">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <div class="form-group">
                 <label for="organization name"><b>Nazwa organizacji</b></label>
                 <InputText id="username" @bind-Value="m_organizationRegistrationModel.OrganizationName"
-                    class="form-control" required placeholder="Nazwa organizacji..." />
+                           class="form-control" required placeholder="Nazwa organizacji..." />
             </div>
 
             <button class="btn btn-primary" type="submit">➕ Stwórz organizacje</button>
@@ -34,15 +35,16 @@
 </div>
 
 @code {
-    [Parameter]
-    public int Error { get; set; }
-
     private OrganizationRegistrationModel m_organizationRegistrationModel = new OrganizationRegistrationModel();
+    private string m_errorString = "";
 
-    private async void Submit()
+    private async void TryCreateOrganization()
     {
         if (organizationContext.Organizations.Where(x => x.Name == m_organizationRegistrationModel.OrganizationName).Any())
-            Navigation.NavigateTo("/organizations/create/1");
+        {
+            m_errorString = "Organization with the same name already exists! Please pick another one";
+            return;
+        }
         var user = (await AuthState.GetAuthenticationStateAsync()).User;
         var organization = new Organization
         {
@@ -58,6 +60,8 @@
             UserName = user.Identity.Name
         });
         await organizationContext.SaveChangesAsync();
+        datasetContext.CreateNewTable(organization);
         Navigation.NavigateTo("/organizations/" + organization.OrganizationId, true);
     }
 }
+

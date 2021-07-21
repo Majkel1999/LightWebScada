@@ -8,6 +8,7 @@ using FrontEnd.Areas.Identity.Data;
 using FrontEnd.Areas.Organizations.Data;
 using FrontEnd.DatabaseConnection;
 using FrontEnd.DataHandlers;
+using FrontEnd.Areas.Datasets;
 
 namespace FrontEnd
 {
@@ -30,6 +31,7 @@ namespace FrontEnd
 
             services.AddScoped<TokenProvider>();
             services.AddScoped<ApiKeyGenerator>();
+            services.AddScoped<DatasetContext>();
             services.AddSingleton<ConfigHandler>();
 
             services.AddDbContext<UserContext>(options =>
