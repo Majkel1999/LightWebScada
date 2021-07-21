@@ -1,4 +1,4 @@
-namespace FrontEnd.Areas.Organizations.Data
+namespace DatabaseClasses
 {
     public class OrganizationMember
     {

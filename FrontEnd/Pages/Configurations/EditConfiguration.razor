@@ -43,103 +43,105 @@
 </div>
 
 
-<div class="container overflow-auto" style="max-width:500px; max-height:500px">
-    <div class="border overflow-auto" style="padding:20px;margin:10px">
-        <h4 class="text-center">Konfiguracja</h4>
-        @if (!String.IsNullOrEmpty(m_configError))
-        {
-            <br />
-            <div class="alert alert-danger" role="alert">
-                @m_configError
-            </div>
-            <br />
-        }
-        <EditForm Model="m_config" OnSubmit="SaveConfig">
-            <div class="form-group">
-                <label for="organization name"><b>Nazwa</b></label>
-                <InputText id="configName" @bind-Value="m_config.Name" class="form-control" required
-                           placeholder="Nazwa konfiguracji..." />
-            </div>
-            <div class="form-group">
-                <label for="organization name"><b>Protokół</b></label>
-                <InputSelect id="configProtocol" @bind-Value="m_config.Protocol" class="form-control" required>
-                    @foreach (var value in Enum.GetValues(typeof(DataRegisters.Protocol)))
-                    {
-                        <option>@value</option>
-                    }
-                </InputSelect>
-            </div>
-            <div class="text-center">
-                <button class="btn btn-success" type="submit">Zapisz konfigurację</button>
-            </div>
-        </EditForm>
+<div class="container overflow-auto border" style="max-width:500px; max-height:500px; padding:20px">
+    <h4 class="text-center">Konfiguracja</h4>
+    @if (!String.IsNullOrEmpty(m_configError))
+    {
         <br />
-        <h6 class="text-center">Coil Registers</h6>
-        <table class="table table-bordered">
-            <tbody>
-                @foreach (var line in m_config.Registers.CoilRegisters.OrderBy(x => x.RegisterNumber))
+        <div class="alert alert-danger" role="alert">
+            @m_configError
+        </div>
+        <br />
+    }
+    <EditForm Model="m_config" OnSubmit="SaveConfig">
+        <div class="form-group">
+            <label for="organization name"><b>Nazwa</b></label>
+            <InputText id="configName" @bind-Value="m_config.Name" class="form-control" required
+                       placeholder="Nazwa konfiguracji..." />
+        </div>
+        <div class="form-group">
+            <label for="organization name"><b>Protokół</b></label>
+            <InputSelect id="configProtocol" @bind-Value="m_config.Protocol" class="form-control" required>
+                @foreach (var value in Enum.GetValues(typeof(DataRegisters.Protocol)))
                 {
-                    <tr>
-                        <td>Register: @line.RegisterNumber</td>
-                        <td>
-                            <button class="btn btn-link text-danger"
-                                    @onclick="() => RemoveFromConfig(line,RegisterType.CoilRegister)">
-                                🗙
-                            </button>
-                        </td>
-                    </tr>
+                    <option>@value</option>
                 }
-            </tbody>
-        </table>
-        <h6 class="text-center">Discrete Inputs</h6>
-        <table class="table table-bordered">
-            <tbody>
-                @foreach (var line in m_config.Registers.DiscreteInputs.OrderBy(x => x.RegisterNumber))
-                {
-                    <tr>
-                        <td>Register: @line.RegisterNumber</td>
-                        <td>
-                            <button @onclick="() => RemoveFromConfig(line,RegisterType.DiscreteInput)">
-                                🗙
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <h6 class="text-center">Input Registers</h6>
-        <table class="table table-bordered">
-            <tbody>
-                @foreach (var line in m_config.Registers.InputRegisters.OrderBy(x => x.RegisterNumber))
-                {
-                    <tr>
-                        <td>Register: @line.RegisterNumber</td>
-                        <td>
-                            <button @onclick="() => RemoveFromConfig(line,RegisterType.InputRegister)">
-                                🗙
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <h6 class="text-center">Holding Registers</h6>
-        <table class="table table-bordered">
-            <tbody>
-                @foreach (var line in m_config.Registers.HoldingRegisters.OrderBy(x => x.RegisterNumber))
-                {
-                    <tr>
-                        <td>Register: @line.RegisterNumber</td>
-                        <td>
-                            <button @onclick="() => RemoveFromConfig(line,RegisterType.HoldingRegister)">
-                                🗙
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+            </InputSelect>
+        </div>
+        <div class="text-center">
+            <button class="btn btn-success" type="submit">Zapisz konfigurację</button>
+        </div>
+    </EditForm>
+    <br />
+    <h6 class="text-center">Coil Registers</h6>
+    <table class="table table-bordered">
+        <tbody>
+            @foreach (var line in m_config.Registers.CoilRegisters.OrderBy(x => x.RegisterNumber))
+            {
+                <tr>
+                    <td>Register: @line.RegisterNumber</td>
+                    <td>
+                        <button class="btn btn-link text-danger"
+                                @onclick="() => RemoveFromConfig(line,RegisterType.CoilRegister)">
+                            🗙
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h6 class="text-center">Discrete Inputs</h6>
+    <table class="table table-bordered">
+        <tbody>
+            @foreach (var line in m_config.Registers.DiscreteInputs.OrderBy(x => x.RegisterNumber))
+            {
+                <tr>
+                    <td>Register: @line.RegisterNumber</td>
+                    <td>
+                        <button @onclick="() => RemoveFromConfig(line,RegisterType.DiscreteInput)">
+                            🗙
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h6 class="text-center">Input Registers</h6>
+    <table class="table table-bordered">
+        <tbody>
+            @foreach (var line in m_config.Registers.InputRegisters.OrderBy(x => x.RegisterNumber))
+            {
+                <tr>
+                    <td>Register: @line.RegisterNumber</td>
+                    <td>
+                        <button @onclick="() => RemoveFromConfig(line,RegisterType.InputRegister)">
+                            🗙
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h6 class="text-center">Holding Registers</h6>
+    <table class="table table-bordered">
+        <tbody>
+            @foreach (var line in m_config.Registers.HoldingRegisters.OrderBy(x => x.RegisterNumber))
+            {
+                <tr>
+                    <td>Register: @line.RegisterNumber</td>
+                    <td>
+                        <button @onclick="() => RemoveFromConfig(line,RegisterType.HoldingRegister)">
+                            🗙
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="text-center" style="margin:20px">
+    <button class="btn btn-danger" @onclick="() => DeleteConfig()">❗ 🗙  Delete configuration ❗</button>
 </div>
 
 @code {
@@ -157,7 +159,7 @@
             .Configurations
             .Where(x => x.ID == ConfigurationId)
             .Select(x => x.ConfigJson)
-            .FirstOrDefault()); 
+            .FirstOrDefault());
         return base.OnInitializedAsync();
     }
 
@@ -171,8 +173,24 @@
         configHandler.TryRemoveRegister(ref m_config, type, register.RegisterNumber);
     }
 
+    private void DeleteConfig()
+    {
+        var config = organizationContext.Configurations
+            .Where(x => x.ID == ConfigurationId)
+            .FirstOrDefault();
+        int id = config.OrganizationId;
+        organizationContext.Configurations.Remove(config);
+        organizationContext.SaveChanges();
+        NavManager.NavigateTo("/organizations/" + id, true);
+    }
+
     private void SaveConfig()
     {
-        throw new NotImplementedException();
+        var config = organizationContext.Configurations
+            .Where(x => x.ID == ConfigurationId)
+            .FirstOrDefault();
+        config.ConfigName = m_config.Name;
+        config.ConfigJson = configHandler.ConfigToJson(m_config);
+        organizationContext.SaveChanges();
     }
 }

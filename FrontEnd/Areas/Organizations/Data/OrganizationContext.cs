@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using DatabaseClasses;
 
 namespace FrontEnd.Areas.Organizations.Data
 {

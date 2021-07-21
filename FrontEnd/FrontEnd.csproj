@@ -31,6 +31,7 @@
     <ProjectReference Include="..\DataRegisters\DataRegisters.csproj">
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\DatabaseClasses\DatabaseClasses.csproj" />
   </ItemGroup>
 
 </Project>

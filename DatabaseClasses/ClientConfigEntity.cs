@@ -1,5 +1,4 @@
-﻿namespace FrontEnd.Areas.Organizations.Data
-{
+﻿namespace DatabaseClasses{
     public class ClientConfigEntity
     {
         public int ID { get; set; }

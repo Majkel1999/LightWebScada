@@ -24,9 +24,6 @@ namespace FrontEnd
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options => options.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
-
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHttpClient();
@@ -40,8 +37,6 @@ namespace FrontEnd
 
             services.AddDbContext<OrganizationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
-                
-            services.AddSwaggerDocument();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -57,15 +52,11 @@ namespace FrontEnd
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
-
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseMvcWithDefaultRoute();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
