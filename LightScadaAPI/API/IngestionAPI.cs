@@ -1,13 +1,8 @@
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Dapper;
 using DatabaseClasses;
-using DataRegisters;
-using Npgsql;
+using LightScadaAPI.Contexts;
+using System;
 
 namespace FrontEnd.Pages.API
 {
@@ -15,17 +10,27 @@ namespace FrontEnd.Pages.API
     [ApiController]
     public class IngestionAPI : ControllerBase
     {
-        private string m_connectionString;
+        private readonly string m_connectionString;
+        private readonly DatasetWriter m_datasetWriter;
 
         public IngestionAPI(IConfiguration configuration)
         {
             m_connectionString = configuration.GetConnectionString("UserContextConnection");
+            m_datasetWriter = new DatasetWriter(m_connectionString);
         }
 
         [HttpPost]
-        public ActionResult GetConfigurations(string apikey)
+        public ActionResult GetConfigurations(DataFrame dataFrame)
         {
-            return NoContent();
+            try
+            {
+                m_datasetWriter.WriteToDatabase(dataFrame);
+                return Accepted();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

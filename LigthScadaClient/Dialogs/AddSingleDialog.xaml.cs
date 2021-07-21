@@ -8,7 +8,7 @@ namespace LigthScadaClient
 {
     public partial class AddSingleDialog : Window
     {
-        private static readonly Regex regex = new Regex("^(?:[1-9][0-9]{3}|[1-9][0-9]{2}|[1-9][0-9]|[1-9])$");
+        private static readonly Regex regex = new("^(?:[1-9][0-9]{3}|[1-9][0-9]{2}|[1-9][0-9]|[1-9])$");
 
         private int m_registerNumber = -1;
         public AddSingleDialog() => InitializeComponent();
