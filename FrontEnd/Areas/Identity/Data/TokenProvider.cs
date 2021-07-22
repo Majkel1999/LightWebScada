@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Antiforgery;
-
-namespace FrontEnd.Areas.Identity.Data
+﻿namespace FrontEnd.Areas.Identity.Data
 {
     public class TokenProvider
     {

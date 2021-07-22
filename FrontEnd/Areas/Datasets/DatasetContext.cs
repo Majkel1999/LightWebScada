@@ -1,8 +1,8 @@
-﻿using Npgsql;
+﻿using System.Data;
+using Microsoft.Extensions.Configuration;
 using Dapper;
 using DatabaseClasses;
-using System.Data;
-using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace FrontEnd.Areas.Datasets
 {
@@ -15,6 +15,11 @@ namespace FrontEnd.Areas.Datasets
             PRIMARY KEY(""Id"")
             );";
 
+        public static string GetTableName(Organization organization)
+        {
+            return ("public." + organization.Name + "_" + organization.OrganizationId + "_data");
+        }
+
         public void CreateNewTable(Organization organization)
         {
             using (IDbConnection db = new NpgsqlConnection(Startup.Configuration.GetConnectionString("UserContextConnection")))
@@ -25,11 +30,6 @@ namespace FrontEnd.Areas.Datasets
         {
             using (IDbConnection db = new NpgsqlConnection(Startup.Configuration.GetConnectionString("UserContextConnection")))
                 db.Execute("Drop Table IF EXISTS " + GetTableName(organization));
-        }
-
-        private string GetTableName(Organization organization)
-        {
-            return ("public."+organization.Name + "_" + organization.OrganizationId + "_data");
         }
     }
 }
