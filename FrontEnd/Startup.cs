@@ -1,14 +1,17 @@
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using FrontEnd.Areas.Datasets;
 using FrontEnd.Areas.Identity.Data;
 using FrontEnd.Areas.Organizations.Data;
 using FrontEnd.DatabaseConnection;
 using FrontEnd.DataHandlers;
-using FrontEnd.Areas.Datasets;
+using FrontEnd.Hubs;
 
 namespace FrontEnd
 {
@@ -39,10 +42,18 @@ namespace FrontEnd
 
             services.AddDbContext<OrganizationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
+
+            services.AddResponseCompression(options =>
+            {
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                    new[] { "application/octet-stream" });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseResponseCompression();
+
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
             else
@@ -62,6 +73,7 @@ namespace FrontEnd
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
+                endpoints.MapHub<ViewHub>("/viewhub");
                 endpoints.MapFallbackToPage("/Utility/_Host");
             });
         }

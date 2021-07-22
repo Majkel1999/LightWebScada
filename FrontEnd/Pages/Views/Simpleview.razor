@@ -1,0 +1,51 @@
+@page "/view/{organizationId:int}"
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Components.Server.Circuits
+
+@inject NavigationManager NavigationManager
+@inject OrganizationContext organizationsContext
+
+@implements IAsyncDisposable
+
+<ul id="messagesList">
+    @foreach (var message in m_messages)
+    {
+        <li>@message</li>
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public int OrganizationId { get; set; }
+
+    private HubConnection m_hubConnection;
+    private List<string> m_messages = new List<string>();
+    private Organization m_organization;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        m_organization = organizationsContext.Organizations.Single(o => o.OrganizationId == OrganizationId);
+        DatasetReader.StartSession(m_organization);
+
+        m_hubConnection = new HubConnectionBuilder()
+        .WithUrl(NavigationManager.ToAbsoluteUri("/viewhub"))
+        .Build();
+        m_hubConnection.On<string, string>("ReceiveData", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            m_messages.Add(encodedMsg);
+            StateHasChanged();
+        });
+        await m_hubConnection.StartAsync();
+        await m_hubConnection.SendAsync("JoinGroup", m_organization.Name);
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await m_hubConnection.SendAsync("LeaveGroup", m_organization.Name);
+        if (m_hubConnection is not null)
+            await m_hubConnection.DisposeAsync();
+        DatasetReader.EndSession(m_organization);
+    }
+}
