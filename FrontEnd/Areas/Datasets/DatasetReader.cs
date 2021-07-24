@@ -19,6 +19,7 @@ namespace FrontEnd.Areas.Datasets
         private Organization m_organization;
         private string m_connectionString;
         private int m_clients;
+        private int m_lastId = -1;
         private bool m_stayAlive;
 
         public static void StartSession(Organization organization)
@@ -86,10 +87,14 @@ namespace FrontEnd.Areas.Datasets
             {
                 using (IDbConnection db = new NpgsqlConnection(m_connectionString))
                 {
-                    string content = db.Query<string>
-                        (@"Select ""Dataset"" From " + DatasetContext.GetTableName(m_organization) + @" Order By ""Timestamp"" DESC")
+                    var frame = db.Query<DataFrame>
+                        (@"Select * From " + DatasetContext.GetTableName(m_organization) + @" Order By ""Timestamp"" DESC")
                         .FirstOrDefault();
-                    await hubConnection.SendAsync("SendMessage", content, m_organization.Name);
+                    if (m_lastId != frame.Id)
+                    {
+                        m_lastId = frame.Id;
+                        await hubConnection.SendAsync("SendMessage", frame.Dataset, m_organization.Name);
+                    }
                 }
                 Thread.Sleep(2000);
             }
