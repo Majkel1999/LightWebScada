@@ -23,6 +23,7 @@ namespace FrontEnd.DataHandlers
                 using (var generator = RandomNumberGenerator.Create())
                     generator.GetBytes(key);
                 apiKey = Convert.ToBase64String(key);
+                apiKey = apiKey.Replace('+','0');
             } while (m_organizationContext.Organizations.Where(x => x.ApiKey == apiKey).Any());
             return apiKey;
         }
