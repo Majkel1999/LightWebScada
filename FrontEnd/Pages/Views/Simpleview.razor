@@ -1,6 +1,5 @@
 @page "/view/{organizationId:int}"
 @using Microsoft.AspNetCore.SignalR.Client
-@using Microsoft.AspNetCore.Components.Server.Circuits
 
 @inject NavigationManager NavigationManager
 @inject OrganizationContext organizationsContext
@@ -28,8 +27,8 @@
         DatasetReader.StartSession(m_organization);
 
         m_hubConnection = new HubConnectionBuilder()
-        .WithUrl(NavigationManager.ToAbsoluteUri("/viewhub"))
-        .Build();
+            .WithUrl(NavigationManager.ToAbsoluteUri("/viewhub"))
+            .Build();
         m_hubConnection.On<string, string>("ReceiveData", (user, message) =>
         {
             var encodedMsg = $"{user}: {message}";
