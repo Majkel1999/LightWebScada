@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using DatabaseClasses;
 using LightScadaAPI.Contexts;
 using System;
+using System.Threading.Tasks;
 
 namespace FrontEnd.Pages.API
 {
@@ -20,14 +21,16 @@ namespace FrontEnd.Pages.API
         }
 
         [HttpPost]
-        public ActionResult GetConfigurations(DataFrame dataFrame)
+        public async Task<ActionResult> GetConfigurations([FromQuery] string apiKey, [FromBody] DataFrame dataFrame)
         {
             try
             {
-                m_datasetWriter.WriteToDatabase(dataFrame);
-                return Accepted();
+                if (await m_datasetWriter.WriteToDatabase(dataFrame, apiKey))
+                    return Accepted(new[] { "DataFrame written to database" });
+                else
+                    return BadRequest("Wrong api key!");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
