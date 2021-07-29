@@ -7,7 +7,7 @@ namespace FrontEnd.Areas.Organizations.Data
     {
         public DbSet<ViewObject> Views {get;set;}
 
-        public ViewContext(DbContextOptions<OrganizationContext> options) : base(options) 
+        public ViewContext(DbContextOptions<ViewContext> options) : base(options) 
         { 
         }
 
