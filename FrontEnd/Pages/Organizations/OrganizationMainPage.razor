@@ -29,12 +29,13 @@
             <tbody>
                 @foreach (string user in m_members.Where(x => x.isAdmin).Select(x => x.UserName))
                 {
-                    <tr>
-                        <td>@user</td>
-                    </tr>
+                        <tr>
+                            <td>@user</td>
+                        </tr>
                 }
             </tbody>
         </table>
+        <hr/>
         <div class="d-flex justify-content-between">
             <h4>Users</h4>
         </div>
@@ -42,9 +43,9 @@
             <tbody>
                 @foreach (string user in m_members.Where(x => !x.isAdmin).Select(x => x.UserName))
                 {
-                    <tr>
-                        <td>@user</td>
-                    </tr>
+                        <tr>
+                            <td>@user</td>
+                        </tr>
                 }
             </tbody>
         </table>
@@ -57,6 +58,7 @@
             <h4>Configurations</h4>
             <a href=@String.Concat("/configurations/create/",organizationId) class="btn-link">➕ Add configuration</a>
         </div>
+        <hr/>
         <div class="text-center">
             ApiKey: @m_apiKey
         </div>
@@ -64,19 +66,20 @@
             <tbody>
                 @foreach (ClientConfigEntity config in m_organizationConfigs)
                 {
-                    <tr>
-                        <td class="text-center">@config.ConfigName</td>
-                        <td>
-                            <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>Edytuj</a>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td class="text-center">@config.ConfigName</td>
+                            <td>
+                                <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>Edytuj</a>
+                            </td>
+                        </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
-
-<a href=@String.Concat("/organizations/manage/",organizationId)>Manage</a>
+<div class="text-center">
+    <button class="btn btn-primary" href=@String.Concat("/organizations/manage/",organizationId)>Advanced settings</button>
+</div>
 
 @code {
     [Parameter]

@@ -8,7 +8,7 @@
         HoldingRegister
     }
 
-    public class Register
+    public abstract class Register
     {
         public int RegisterNumber { get; set; }
     }

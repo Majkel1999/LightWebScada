@@ -7,11 +7,11 @@ namespace FrontEnd.Areas.Organizations.Data
     public class OrganizationContext : DbContext
     {
         public DbSet<Organization> Organizations { get; set; }
-        public DbSet<OrganizationMember> Members{get;set;}
+        public DbSet<OrganizationMember> Members { get; set; }
         public DbSet<ClientConfigEntity> Configurations { get; set; }
 
-        public OrganizationContext(DbContextOptions<OrganizationContext> options) : base(options) 
-        { 
+        public OrganizationContext(DbContextOptions<OrganizationContext> options) : base(options)
+        {
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
