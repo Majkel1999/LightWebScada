@@ -17,6 +17,7 @@ namespace FrontEnd.Areas.Datasets
 
         private Thread m_updateThread;
         private Organization m_organization;
+        private Mutex m_mutex;
         private string m_connectionString;
         private int m_clients;
         private int m_lastId = -1;
@@ -61,17 +62,21 @@ namespace FrontEnd.Areas.Datasets
 
         private void AddClient()
         {
+            m_mutex.WaitOne();
             m_clients++;
             m_stayAlive = true;
             Console.WriteLine("Added client on " + m_organization.Name + ". Client count: " + m_clients);
+            m_mutex.ReleaseMutex();
         }
 
         private void RemoveClient()
         {
+            m_mutex.WaitOne();
             m_clients--;
             if (m_clients <= 0)
                 m_stayAlive = false;
             Console.WriteLine("Removed client on " + m_organization.Name + ". Client count: " + m_clients);
+            m_mutex.ReleaseMutex();
         }
 
         private async void UpdateHubs()
@@ -98,8 +103,10 @@ namespace FrontEnd.Areas.Datasets
                 }
                 Thread.Sleep(2000);
             }
+            m_mutex.WaitOne();
             m_instances.TryRemove(GetInstanceName(m_organization), out DatasetReader instance);
             m_updateThread = null;
+            m_mutex.ReleaseMutex();
             Console.WriteLine("Controller dying " + m_organization.Name);
         }
     }
