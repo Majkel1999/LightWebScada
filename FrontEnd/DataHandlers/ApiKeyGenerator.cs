@@ -24,6 +24,7 @@ namespace FrontEnd.DataHandlers
                     generator.GetBytes(key);
                 apiKey = Convert.ToBase64String(key);
                 apiKey = apiKey.Replace('+','0');
+                apiKey = apiKey.Replace('/','9');
             } while (m_organizationContext.Organizations.Where(x => x.ApiKey == apiKey).Any());
             return apiKey;
         }
