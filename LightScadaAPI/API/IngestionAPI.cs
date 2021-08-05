@@ -1,9 +1,9 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using DatabaseClasses;
 using LightScadaAPI.Contexts;
-using System;
-using System.Threading.Tasks;
 
 namespace FrontEnd.Pages.API
 {

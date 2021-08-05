@@ -19,7 +19,6 @@ namespace FrontEnd.Pages.API
         public ConfigurationAPI(IConfiguration configuration)
         {
             m_connectionString = configuration.GetConnectionString("UserContextConnection");
-            
         }
 
         [HttpGet("{apikey}")]
