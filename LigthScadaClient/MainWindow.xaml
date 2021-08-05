@@ -3,25 +3,60 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:local="clr-namespace:LigthScadaClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Closing="MainWindow_Closing"
-        Loaded="Window_Loaded">
-    <TabControl x:Name="MainTabControl">
-        <TabItem Header="{DynamicResource status}">
-            <Frame x:Name="StatusPageFrame" Source="/Pages/StatusPage.xaml"/>
-        </TabItem>
-        <TabItem Header="{DynamicResource coils}">
-            <Frame x:Name="CoilsFrame" Source="/Pages/CoilRegistersPage.xaml"/>
-        </TabItem>
-        <TabItem Header="{DynamicResource discreteInputs}">
-            <Frame x:Name="DiscreteInputsFrame" Source="/Pages/DiscreteInputsPage.xaml"/>
-        </TabItem>
-        <TabItem Header="{DynamicResource inputRegisters}">
-            <Frame x:Name="InputRegistersFrame" Source="/Pages/InputRegistersPage.xaml"/>
-        </TabItem>
-        <TabItem Header="{DynamicResource holdingRegisters}">
-            <Frame x:Name="HoldingRegistersFrame" Source="/Pages/HoldingRegistersPage.xaml"/>
-        </TabItem>
-    </TabControl>
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label HorizontalContentAlignment="Center" VerticalAlignment="Top" Grid.ColumnSpan="2">Api Key</Label>
+            <TextBox x:Name="ApiKeyTextBox" Grid.Row="1" Grid.ColumnSpan="2" Margin="15" Text="API Key" VerticalContentAlignment="Center"/>
+            <Button x:Name="RefreshConfigsButton" Grid.Column="2" Grid.Row="1" Margin="15" Click="RefreshButtonHandler">Refresh configs</Button>
+        </Grid>
+
+        <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label HorizontalContentAlignment="Center" VerticalAlignment="Top">Configurations</Label>
+            <ComboBox x:Name="ConfigComboBox" Grid.Row="1" Margin="15" IsEnabled="false">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock VerticalContentAlignment="Center" Text="{Binding ConfigName}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <fa:ImageAwesome x:Name="RefreshIcon" Grid.Row="1" Grid.Column="1" Icon="Refresh" Spin="True" SpinDuration="4" Margin="10" Visibility="Hidden"/>
+        </Grid>
+
+
+
+
+    </Grid>
 </Window>

@@ -1,37 +1,47 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
+using DatabaseClasses;
 using LigthScadaClient.Logic;
-using LigthScadaClient.Pages;
 
 namespace LigthScadaClient
 {
     public partial class MainWindow : Window
     {
-        public StatusPage statusPage;
-        public CoilRegistersPage coilRegistersPage;
-        public DiscreteInputsPage discreteInputsPage;
-        public InputRegistersPage inputRegistersPage;
-        public HoldingRegistersPage holdingRegistersPage;
-
         public MainWindow() => InitializeComponent();
 
-        private void InitializePages()
+        private void RefreshButtonHandler(object sender, RoutedEventArgs e)
         {
-            statusPage = StatusPageFrame.Content as StatusPage;
-            coilRegistersPage = CoilsFrame.Content as CoilRegistersPage;
-            discreteInputsPage = DiscreteInputsFrame.Content as DiscreteInputsPage;
-            inputRegistersPage = InputRegistersFrame.Content as InputRegistersPage;
-            holdingRegistersPage = HoldingRegistersFrame.Content as HoldingRegistersPage;
-        }
+            if (!string.IsNullOrEmpty(ApiKeyTextBox.Text))
+            {
+                string apiKey = ApiKeyTextBox.Text;
+                RefreshIcon.Visibility = Visibility.Visible;
+                RefreshConfigsButton.IsEnabled = false;
+                Task.Run(async () =>
+               {
+                   List<ClientConfigEntity> configs = null;
+                   try
+                   {
+                       configs = await ServerCommunication.Instance.GetConfigurations(apiKey);
+                   }
+                   catch (Exception exception)
+                   {
+                       Dispatcher.Invoke(() => MessageBox.Show(exception.Message));
+                   }
 
-        private void MainWindow_Closing(object sender, CancelEventArgs e)
-        {
-            e.Cancel = !LocalConfig.SaveData();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            InitializePages();
+                   Dispatcher.Invoke(() =>
+                   {
+                       ConfigComboBox.ItemsSource = configs;
+                       if (configs != null && configs.Count > 0)
+                           ConfigComboBox.SelectedIndex = 0;
+                       ConfigComboBox.IsEnabled = configs != null ? true : false;
+                       RefreshIcon.Visibility = Visibility.Hidden;
+                       RefreshConfigsButton.IsEnabled = true;
+                   });
+               });
+            }
         }
     }
 }
+

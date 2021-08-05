@@ -1,20 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+    <PackageReference Include="FontAwesome.WPF" Version="*"/>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\DataRegisters\DataRegisters.csproj">
       <Private>true</Private>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\DatabaseClasses\DatabaseClasses.csproj"/>
   </ItemGroup>
-
 </Project>

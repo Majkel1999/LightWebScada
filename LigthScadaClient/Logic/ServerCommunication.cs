@@ -1,28 +1,61 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
-using System.Text;
+using System.Threading.Tasks;
+using DatabaseClasses;
 using Newtonsoft.Json;
 
 namespace LigthScadaClient.Logic
 {
-    static class ServerCommunication
+    public class ServerCommunication
     {
-        private static readonly HttpClient m_client = new();
+        private const string ApiUrl = "https://localhost:5003";
 
-        public static bool SendDataToServer(ref DataSet dataSet,string url)
+        private static ServerCommunication m_instance;
+
+        private readonly HttpClient m_client;
+
+        public static ServerCommunication Instance
         {
-            using (var content = new StringContent(JsonConvert.SerializeObject(dataSet), Encoding.UTF8, "application/json"))
+            get
             {
-                HttpResponseMessage result = m_client.PostAsync(url, content).Result;
-                if (result.StatusCode == System.Net.HttpStatusCode.Created)
-                {
-                    return true;
-                }
-
-                string returnValue = result.Content.ReadAsStringAsync().Result;
-                throw new Exception($"Failed to POST data: ({result.StatusCode}): {returnValue}");
+                if (m_instance == null)
+                    m_instance = new ServerCommunication();
+                return m_instance;
             }
+        }
+
+        private ServerCommunication()
+        {
+            m_client = new HttpClient();
+            m_client.Timeout = new TimeSpan(0, 0, 10);
+        }
+
+
+        public async Task<List<ClientConfigEntity>> GetConfigurations(string apiKey)
+        {
+            List<ClientConfigEntity> configs = null;
+            HttpResponseMessage response = null;
+            try
+            {
+                response = await m_client.GetAsync(ApiUrl + "/api/configurations/" + apiKey);
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine("\nException Caught!");
+                Trace.WriteLine("Message :{0} ", e.Message);
+                return null;
+            }
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                configs = JsonConvert.DeserializeObject<List<ClientConfigEntity>>(content);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                throw new KeyNotFoundException("The specified ApiKey is invalid!");
+
+            return configs;
         }
     }
 }
