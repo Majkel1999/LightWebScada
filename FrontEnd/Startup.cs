@@ -12,6 +12,7 @@ using FrontEnd.Areas.Organizations.Data;
 using FrontEnd.DatabaseConnection;
 using FrontEnd.DataHandlers;
 using FrontEnd.Hubs;
+using Plk.Blazor.DragDrop;
 
 namespace FrontEnd
 {
@@ -31,6 +32,7 @@ namespace FrontEnd
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHttpClient();
+            services.AddBlazorDragDrop();
 
             services.AddScoped<TokenProvider>();
             services.AddScoped<ApiKeyGenerator>();

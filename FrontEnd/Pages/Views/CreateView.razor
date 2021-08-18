@@ -1,8 +1,29 @@
 @page "/views/create/{OrganizationId:int}"
 
+<div class="plk-flex">
+    <Dropzone Class="flex-container" Items="Items" ItemWrapperClass="@(item => "flex-item")">
+        <div>@context</div>
+    </Dropzone>
+</div>
+
+<button class="btn btn-primary" @onclick="() => AddElement()">Add text</button>
+
 @code {
     [Parameter]
     public int OrganizationId { get; set; }
 
-    
+    private View m_view = new View();
+
+    private List<string> Items = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        Items.Add("123");
+        Items.Add("321");
+    }
+
+    private void AddElement()
+    {
+        Items.Add("elko");
+    }
 }
