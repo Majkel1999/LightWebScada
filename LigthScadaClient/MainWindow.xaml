@@ -17,6 +17,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
@@ -31,8 +32,8 @@
             </Grid.RowDefinitions>
 
             <Label HorizontalContentAlignment="Center" VerticalAlignment="Top" Grid.ColumnSpan="2">Api Key</Label>
-            <TextBox x:Name="ApiKeyTextBox" Grid.Row="1" Grid.ColumnSpan="2" Margin="15" Text="API Key" VerticalContentAlignment="Center"/>
-            <Button x:Name="RefreshConfigsButton" Grid.Column="2" Grid.Row="1" Margin="15" Click="RefreshButtonHandler">Refresh configs</Button>
+            <TextBox x:Name="ApiKeyTextBox" Grid.Row="1" Grid.ColumnSpan="2" Margin="15" Text="3elL82ggkbEoA9I1E7l6CoSIZfueblZ0xk0sOFVa4BQ=" VerticalContentAlignment="Center"/>
+            <Button x:Name="RefreshConfigsButton" Grid.Column="2" Grid.Row="1" Margin="15" Click="OnRefreshButtonClick">Refresh configs</Button>
         </Grid>
 
         <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
@@ -45,17 +46,39 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label HorizontalContentAlignment="Center" VerticalAlignment="Top">Configurations</Label>
-            <ComboBox x:Name="ConfigComboBox" Grid.Row="1" Margin="15" IsEnabled="false">
+            <ComboBox x:Name="ConfigComboBox" Grid.Row="1" Margin="15" IsEnabled="false"
+                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                      SelectionChanged="OnConfigSelection">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock VerticalContentAlignment="Center" Text="{Binding ConfigName}"/>
+                        <TextBlock Text="{Binding ConfigName}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <fa:ImageAwesome x:Name="RefreshIcon" Grid.Row="1" Grid.Column="1" Icon="Refresh" Spin="True" SpinDuration="4" Margin="10" Visibility="Hidden"/>
         </Grid>
 
+        <Border Margin="10" Grid.Row="2" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="2" CornerRadius="8">
+            <Grid>
+                <ScrollViewer Margin="10">
+                    <TextBlock x:Name="StatusTextBox"  Background="Transparent"/>
+                </ScrollViewer>
+            </Grid>
+        </Border>
 
+        <Grid Grid.Row="3" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="StopButton" Grid.Column="1" Margin="15" Click="OnStopButtonClick" IsEnabled="False">Stop</Button>
+            <Button x:Name="StartButton" Grid.Column="3" Margin="15" Click="OnStartButtonClick" IsEnabled="False">Start</Button>
+
+        </Grid>
 
 
     </Grid>
