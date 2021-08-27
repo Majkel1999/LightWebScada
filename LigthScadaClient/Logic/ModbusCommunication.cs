@@ -14,7 +14,7 @@ namespace LigthScadaClient.Logic
             try
             {
                 if (LocalConfiguration.Instance.IsTCP)
-                    m_modbusClient = new ModbusClient(LocalConfiguration.Instance.IP, LocalConfiguration.Instance.Port);
+                    m_modbusClient = new ModbusClient(LocalConfiguration.Instance.IP, LocalConfiguration.Instance.TCPPort);
                 else
                     m_modbusClient = new ModbusClient(LocalConfiguration.Instance.COMPort);
                 m_modbusClient.ConnectedChanged += OnClientConnectionChange;

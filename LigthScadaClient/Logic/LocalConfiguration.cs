@@ -1,4 +1,7 @@
-﻿using DatabaseClasses;
+﻿using System.IO;
+using System.IO.Ports;
+using System.Text;
+using DatabaseClasses;
 using DataRegisters;
 using LigthScadaClient.Logic.Utility;
 using Newtonsoft.Json;
@@ -7,35 +10,55 @@ namespace LigthScadaClient.Logic
 {
     public class LocalConfiguration : Singleton<LocalConfiguration>
     {
-        private string m_name = "Testowy";
-        private string m_apiKey;
-        private string m_configName;
-        private Protocol m_protocol;
-        private DataSet m_dataSet;
-        private string m_comPort = "COM4";
-        private string m_ip;
-        private int m_port;
+        private const string FileName = "config.cfg";
 
-        public DataSet DataSet => m_dataSet;
-        public string ApiKey => m_apiKey;
-        public string Name => m_name;
-        public string ConfigurationName => m_configName;
-        public string COMPort => m_comPort;
-        public string IP => m_ip;
-        public int Port => m_port;
-        public bool IsTCP => m_protocol == Protocol.ModbusTCP;
+        public string Name;
+        public string ApiKey;
+        public string COMPort;
+        public string IP;
+        public int TCPPort;
+        public int SlaveID = 1;
+        public int Baudrate = 9600;
+        public Parity Parity = Parity.None;
+        public StopBits StopBits = StopBits.Two;
+
+        [JsonProperty] private ClientConfig m_config;
+
+        [JsonIgnore] public DataSet DataSet => m_config.Registers;
+        [JsonIgnore] public string ConfigurationName => m_config.Name;
+        [JsonIgnore] public bool IsTCP => m_config.Protocol == Protocol.ModbusTCP;
+
+        public void SaveConfiguration() => SaveConfigToFile();
 
         public void SetConfiguration(ClientConfigEntity configEntity)
         {
-            ClientConfig config = JsonConvert.DeserializeObject<ClientConfig>(configEntity.ConfigJson);
-            m_configName = config.Name;
-            m_protocol = config.Protocol;
-            m_dataSet = config.Registers;
+            m_config = JsonConvert.DeserializeObject<ClientConfig>(configEntity.ConfigJson);
         }
 
-        public void SetApiKey(string apiKey)
+        protected override void OnCreate()
         {
-            m_apiKey = apiKey;
+            LoadConfigFromFile();
+        }
+
+        private void LoadConfigFromFile()
+        {
+            if (File.Exists(FileName))
+            {
+                using StreamReader theReader = new StreamReader(FileName, Encoding.UTF8);
+                string dataAsJson = theReader.ReadToEnd();
+                theReader.Close();
+                JsonConvert.PopulateObject(dataAsJson, this);
+            }
+        }
+
+        private void SaveConfigToFile()
+        {
+            string dataAsJson = JsonConvert.SerializeObject(this, Formatting.Indented);
+            using (FileStream file = File.Create(FileName))
+            {
+                byte[] info = new UTF8Encoding(true).GetBytes(dataAsJson);
+                file.Write(info, 0, info.Length);
+            }
         }
     }
 }
