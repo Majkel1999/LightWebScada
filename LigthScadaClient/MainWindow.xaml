@@ -95,7 +95,7 @@
                 <Label Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">IP Address</Label>
                 <TextBox x:Name="IPTextBox" Grid.Row="1" VerticalContentAlignment="Center" Margin="25" TextChanged="OnConfigTextChange"/>
                 <Label Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">Port</Label>
-                <TextBox x:Name="PortTextBox" Grid.Row="3" VerticalContentAlignment="Center" Margin="25" TextChanged="OnConfigTextChange"/>
+                <TextBox x:Name="PortTextBox" Grid.Row="3" VerticalContentAlignment="Center" Margin="25" TextChanged="OnConfigTextChange" PreviewTextInput="OnPortInputPreview"/>
                 <Button Grid.Row="4" Content="Save" Margin="10 25 10 25"/>
             </Grid>
 
@@ -116,7 +116,7 @@
                 <Label Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">COM Port</Label>
                 <ComboBox Grid.Row="1" x:Name="ComPortComboBox" Margin="10 0" SelectionChanged="OnConfigurationSelectionChange"/>
                 <Label Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">Slave ID</Label>
-                <TextBox Grid.Row="3" x:Name="SlaveIdTextBox" VerticalContentAlignment="Center" Margin="10 0" TextChanged="OnConfigTextChange"/>
+                <TextBox Grid.Row="3" x:Name="SlaveIdTextBox" VerticalContentAlignment="Center" Margin="10 0" TextChanged="OnConfigTextChange" PreviewTextInput="OnSlaveIdTextPreview"/>
                 <Label Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">Baudrate</Label>
                 <ComboBox Grid.Row="5" x:Name="BaudrateComboBox" Margin="10 0" SelectionChanged="OnConfigurationSelectionChange"/>
                 <Label Grid.Row="6" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">Parity</Label>

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.Ports;
+using System.Linq;
 using System.Text;
 using DatabaseClasses;
 using DataRegisters;
@@ -33,6 +34,34 @@ namespace LigthScadaClient.Logic
         public void SetConfiguration(ClientConfigEntity configEntity)
         {
             m_config = JsonConvert.DeserializeObject<ClientConfig>(configEntity.ConfigJson);
+        }
+
+        public bool IsConfigurationCorrect()
+        {
+            if (IsTCP)
+            {
+                if (TCPPort < 0 || TCPPort > 65535)
+                    return false;
+                
+            }
+            else
+            {
+                if (SerialPort.GetPortNames().Any(x => x == COMPort))
+                {
+                    try
+                    {
+                        var port = new SerialPort(COMPort);
+                        port.Open();
+                        port.Close();
+                        port.Dispose();
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         protected override void OnCreate()

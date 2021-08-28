@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,11 +7,15 @@ using System.Windows;
 using System.Windows.Controls;
 using DatabaseClasses;
 using LigthScadaClient.Logic;
+using System.Text.RegularExpressions;
 
 namespace LigthScadaClient
 {
     public partial class MainWindow : Window
     {
+        private readonly Regex m_portRegex = new Regex("^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
+        private readonly Regex m_slaveIdRegex = new Regex("^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-5][0-5])$");
+
         private StatusLogger m_logger;
         private ModbusCommunication m_modbusCommunication;
         private bool m_isConfigDirty = true;
@@ -92,6 +95,12 @@ namespace LigthScadaClient
 
         private void OnStartButtonClick(object sender, RoutedEventArgs e)
         {
+            if (!LocalConfiguration.Instance.IsConfigurationCorrect())
+            {
+                MessageBox.Show("Configuration incorrect!");
+                return;
+            }
+
             if (m_isConfigDirty)
             {
                 m_modbusCommunication?.Dispose();
@@ -118,6 +127,8 @@ namespace LigthScadaClient
                 LocalConfiguration.Instance.SlaveID = 1;
                 LocalConfiguration.Instance.SlaveID = int.TryParse(SlaveIdTextBox.Text, out int ID) ? ID : 1;
                 _ = int.TryParse(PortTextBox.Text, out LocalConfiguration.Instance.TCPPort);
+                m_modbusCommunication?.Stop();
+                SwitchButtonStates(true);
             }
         }
 
@@ -129,7 +140,19 @@ namespace LigthScadaClient
                 LocalConfiguration.Instance.Parity = ParityComboBox.SelectedIndex == -1 ? Parity.None : (Parity)ParityComboBox.SelectedItem;
                 LocalConfiguration.Instance.StopBits = StopBitsComboBox.SelectedIndex == -1 ? StopBits.None : (StopBits)StopBitsComboBox.SelectedItem;
                 LocalConfiguration.Instance.Baudrate = (int)BaudrateComboBox.SelectedItem;
+                m_modbusCommunication?.Stop();
+                SwitchButtonStates(true);
             }
+        }
+
+        private void OnSlaveIdTextPreview(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !m_slaveIdRegex.IsMatch((sender as TextBox).Text + e.Text);
+        }
+
+        private void OnPortInputPreview(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !m_portRegex.IsMatch((sender as TextBox).Text + e.Text);
         }
 
         private void OnWindowClose(object sender, EventArgs e)
@@ -152,7 +175,6 @@ namespace LigthScadaClient
 
         private void SwitchButtonStates(bool isStartEnabled)
         {
-            //ToDo sprawdzac poprawnosc configu
             StartButton.IsEnabled = isStartEnabled;
             StopButton.IsEnabled = !isStartEnabled;
         }
