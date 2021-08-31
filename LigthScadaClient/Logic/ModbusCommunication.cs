@@ -5,39 +5,33 @@ using EasyModbus;
 
 namespace LigthScadaClient.Logic
 {
-    public class ModbusCommunication : IDisposable
+    public class ModbusCommunication
     {
+        public event Action OnError;
+
         private ModbusClient m_modbusClient;
 
-        public ModbusCommunication()
+        public bool Start()
         {
             try
             {
-                if (LocalConfiguration.Instance.IsTCP)
-                    m_modbusClient = new ModbusClient(LocalConfiguration.Instance.IP, LocalConfiguration.Instance.TCPPort);
-                else
-                    m_modbusClient = new ModbusClient(LocalConfiguration.Instance.COMPort);
-                m_modbusClient.ConnectedChanged += OnClientConnectionChange;
-                m_modbusClient.LogFileFilename = "log.txt";
+                CreateClient();
+                m_modbusClient.Connect();
+                StatusLogger.Instance.Log("Modbus Client connected");
+                ReadValues();
+                return true;
             }
             catch (Exception e)
             {
                 StatusLogger.Instance.Log(e.Message);
-                return;
+                return false;
             }
-            StatusLogger.Instance.Log("Modbus Client created");
-        }
-
-        public void Start()
-        {
-            m_modbusClient.Connect();
-            StatusLogger.Instance.Log("Modbus Client connected");
-            ReadValues();
         }
 
         public void Stop()
         {
             m_modbusClient.Disconnect();
+            StatusLogger.Instance.Log("Modbus Client disconnected");
         }
 
         private void ReadValues()
@@ -57,9 +51,11 @@ namespace LigthScadaClient.Logic
                     LocalConfiguration.Instance.DataSet.InputRegisters.ForEach(
                         (x) => x.CurrentValue = m_modbusClient.ReadInputRegisters(x.RegisterNumber, 1)[0]);
                     await ServerCommunication.Instance.SendData(LocalConfiguration.Instance.DataSet, LocalConfiguration.Instance.ApiKey);
+                    StatusLogger.Instance.Log("Data sent to server");
                 }
                 catch (Exception e)
                 {
+                    OnError?.Invoke();
                     StatusLogger.Instance.Log(e.Message);
                 }
                 Thread.Sleep(5000);
@@ -67,14 +63,20 @@ namespace LigthScadaClient.Logic
             });
         }
 
-        public void Dispose()
+        private void CreateClient()
         {
-            m_modbusClient.ConnectedChanged -= OnClientConnectionChange;
-        }
-
-        private void OnClientConnectionChange(object sender)
-        {
-            StatusLogger.Instance.Log(sender.ToString() + " connection changed to connected : " + m_modbusClient.Connected);
+            if (LocalConfiguration.Instance.IsTCP)
+                m_modbusClient = new ModbusClient(LocalConfiguration.Instance.IP, LocalConfiguration.Instance.TCPPort);
+            else
+            {
+                m_modbusClient = new ModbusClient(LocalConfiguration.Instance.COMPort);
+                m_modbusClient.Baudrate = LocalConfiguration.Instance.Baudrate;
+                m_modbusClient.Parity = LocalConfiguration.Instance.Parity;
+                m_modbusClient.StopBits = LocalConfiguration.Instance.StopBits;
+                m_modbusClient.UnitIdentifier = (byte)LocalConfiguration.Instance.SlaveID;
+            }
+            m_modbusClient.ConnectionTimeout = 500;
+            StatusLogger.Instance.Log("Modbus Client created");
         }
     }
 }

@@ -38,6 +38,8 @@ namespace LigthScadaClient
             BaudrateComboBox.SelectedIndex = 0;
             ParityComboBox.SelectedIndex = 0;
             StopBitsComboBox.SelectedIndex = 0;
+            if (ComPortComboBox.Items.Count > 0)
+                ComPortComboBox.SelectedIndex = 0;
         }
 
         private void LoadSavedData()
@@ -95,20 +97,32 @@ namespace LigthScadaClient
 
         private void OnStartButtonClick(object sender, RoutedEventArgs e)
         {
-            if (!LocalConfiguration.Instance.IsConfigurationCorrect())
+            string error = LocalConfiguration.Instance.IsConfigurationCorrect();
+            if (error != null)
             {
-                MessageBox.Show("Configuration incorrect!");
+                MessageBox.Show(error);
                 return;
             }
 
             if (m_isConfigDirty)
             {
-                m_modbusCommunication?.Dispose();
                 m_modbusCommunication = new ModbusCommunication();
+                m_modbusCommunication.OnError += OnCommunicationError;
                 m_isConfigDirty = false;
             }
-            m_modbusCommunication.Start();
-            SwitchButtonStates(false);
+            Task.Run(() =>
+            {
+                try
+                {
+                    if (m_modbusCommunication.Start())
+                        Dispatcher.Invoke(() => SwitchButtonStates(false));
+                }
+                catch (Exception e)
+                {
+                    StatusLogger.Instance.Log(e.Message);
+                }
+            });
+
         }
 
         private void OnStopButtonClick(object sender, RoutedEventArgs e)
@@ -158,6 +172,11 @@ namespace LigthScadaClient
         private void OnWindowClose(object sender, EventArgs e)
         {
             LocalConfiguration.Instance.SaveConfiguration();
+        }
+
+        private void OnCommunicationError()
+        {
+
         }
 
         private void UpdateConfigsBox(List<ClientConfigEntity> configs)

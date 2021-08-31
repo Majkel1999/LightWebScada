@@ -36,12 +36,12 @@ namespace LigthScadaClient.Logic
             m_config = JsonConvert.DeserializeObject<ClientConfig>(configEntity.ConfigJson);
         }
 
-        public bool IsConfigurationCorrect()
+        public string IsConfigurationCorrect()
         {
             if (IsTCP)
             {
                 if (TCPPort < 0 || TCPPort > 65535)
-                    return false;
+                    return "TCP Port not in range 0-65535";
                 
             }
             else
@@ -57,11 +57,11 @@ namespace LigthScadaClient.Logic
                     }
                     catch
                     {
-                        return false;
+                        return "COP Port is already open";
                     }
                 }
             }
-            return true;
+            return null;
         }
 
         protected override void OnCreate()
