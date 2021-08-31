@@ -4,7 +4,11 @@
 @{
     Layout = null;
 }
+
 @using Microsoft.AspNetCore.Authentication
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization
+
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 
 @{
@@ -28,6 +32,14 @@
     <link href="FrontEnd.styles.css" rel="stylesheet" />
 </head>
 <body>
+    @{
+    this.HttpContext.Response.Cookies.Append(
+        CookieRequestCultureProvider.DefaultCookieName,
+        CookieRequestCultureProvider.MakeCookieValue(
+            new RequestCulture(
+                CultureInfo.CurrentCulture,
+                CultureInfo.CurrentUICulture)));
+    }
     <component type="typeof(App)" param-InitialState="tokens"  render-mode="ServerPrerendered" />
 
     <div id="blazor-error-ui">

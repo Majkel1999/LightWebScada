@@ -1,3 +1,10 @@
 @page "/"
+@using System.Globalization
 
-<h1>Welcome to the Light Scada Website!</h1>
+@inject IStringLocalizer<SharedResources> localizer
+
+<p>
+    <b>CurrentCulture</b>: @CultureInfo.CurrentCulture
+</p>
+
+<h1>@localizer["Welcome"]!</h1>
