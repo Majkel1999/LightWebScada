@@ -27,17 +27,17 @@ namespace ModbusSimulator
             StartButton.IsEnabled = false;
             StopButton.IsEnabled = true;
             m_server = new ModbusServer();
-            m_server.LogFileFilename = "log.txt";
             for (int i = 0; i < 100; i++)
             {
                 m_server.coils[i] = rand.Next(0, 10) > 5 ? false : true;
-                m_server.discreteInputs[i] = rand.Next(0, 5) > 5 ? false : true;
+                m_server.discreteInputs[i] = rand.Next(0, 10) > 5 ? false : true;
                 m_server.holdingRegisters[i] = (short)rand.Next(0, 10000);
                 m_server.inputRegisters[i] = (short)rand.Next(0, 10000);
             }
             m_server.SerialPort = PortsComboBox.SelectedItem as string;
             m_server.Listen();
-            m_logger.Log("Server started!");
+            m_logger.Log($"Server started on port {m_server.SerialPort}!");
+            PortsComboBox.IsEnabled = false;
             m_server.NumberOfConnectedClientsChanged += () => m_logger.Log("Clients connected : " + m_server.NumberOfConnections);
         }
 
@@ -47,6 +47,7 @@ namespace ModbusSimulator
             m_logger.Log("Server stopped");
             StartButton.IsEnabled = true;
             StopButton.IsEnabled = false;
+            PortsComboBox.IsEnabled = true;
         }
     }
 }
