@@ -17,7 +17,7 @@ namespace FrontEnd.Areas.Datasets
 
         private Thread m_updateThread;
         private Organization m_organization;
-        private Mutex m_mutex;
+        private Mutex m_mutex = new Mutex();
         private string m_connectionString;
         private int m_clients;
         private int m_lastId = -1;

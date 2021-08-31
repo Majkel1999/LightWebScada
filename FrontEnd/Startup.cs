@@ -33,6 +33,8 @@ namespace FrontEnd
             services.AddServerSideBlazor();
             services.AddHttpClient();
             services.AddBlazorDragDrop();
+            services.AddLocalization(Options=> Options.ResourcesPath = "Resources");
+            services.AddControllers();
 
             services.AddScoped<TokenProvider>();
             services.AddScoped<ApiKeyGenerator>();
@@ -75,8 +77,16 @@ namespace FrontEnd
             app.UseAuthentication();
             app.UseAuthorization();
 
+            var supportedCultures = new[] { "en-US"};
+            var localizationOptions = new RequestLocalizationOptions()
+                .SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+            app.UseRequestLocalization(localizationOptions);
+
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapHub<ViewHub>("/viewhub");
                 endpoints.MapFallbackToPage("/Utility/_Host");

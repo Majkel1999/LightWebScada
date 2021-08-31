@@ -4,7 +4,11 @@
 @{
     Layout = null;
 }
+
 @using Microsoft.AspNetCore.Authentication
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization
+
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 
 @{
@@ -21,7 +25,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FrontEnd</title>
+    <title>Web Scada</title>
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
@@ -29,6 +33,14 @@
     <link href="FrontEnd.styles.css" rel="stylesheet" />
 </head>
 <body>
+    @{
+    this.HttpContext.Response.Cookies.Append(
+        CookieRequestCultureProvider.DefaultCookieName,
+        CookieRequestCultureProvider.MakeCookieValue(
+            new RequestCulture(
+                CultureInfo.CurrentCulture,
+                CultureInfo.CurrentUICulture)));
+    }
     <component type="typeof(App)" param-InitialState="tokens"  render-mode="ServerPrerendered" />
 
     <div id="blazor-error-ui">

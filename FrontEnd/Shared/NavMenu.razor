@@ -1,5 +1,6 @@
 ﻿@inject OrganizationContext organizationContext
 @inject AuthenticationStateProvider authStateProvider
+@inject IStringLocalizer<SharedResources> localizer
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">Web Scada</a>
@@ -19,12 +20,12 @@
             <NotAuthorized>
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="identity/account/login" Match="NavLinkMatch.All">
-                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                        <span class="oi oi-account-login" aria-hidden="true"></span> @localizer["Login"]
                     </NavLink>
                 </li>
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="identity/account/register" Match="NavLinkMatch.All">
-                        <span class="oi oi-transfer" aria-hidden="true"></span> Register
+                        <span class="oi oi-transfer" aria-hidden="true"></span> @localizer["Register"]
                     </NavLink>
                 </li>
             </NotAuthorized>
@@ -46,7 +47,7 @@
                 </li>
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="/organizations/create" Match="NavLinkMatch.All">
-                        <span class="oi oi-plus" aria-hidden="true"></span>Nowa organizacja
+                        <span class="oi oi-plus" aria-hidden="true"></span>@localizer["NewOrganization"]
                     </NavLink>
                 </li>
             </Authorized>

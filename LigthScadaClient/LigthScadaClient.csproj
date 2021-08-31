@@ -5,14 +5,27 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-    <PackageReference Include="FontAwesome.WPF" Version="*"/>
+    <Compile Remove="NewFolder\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="NewFolder\**" />
+    <Page Remove="NewFolder\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MahApps.Metro" Version="2.4.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="FontAwesome.WPF" Version="*" />
+    <PackageReference Include="System.IO.Ports" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataRegisters\DataRegisters.csproj">
       <Private>true</Private>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\DatabaseClasses\DatabaseClasses.csproj"/>
+    <ProjectReference Include="..\DatabaseClasses\DatabaseClasses.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EasyModbus">
+      <HintPath>Libraries\EasyModbus.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

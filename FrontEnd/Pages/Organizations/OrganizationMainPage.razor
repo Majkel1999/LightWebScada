@@ -2,6 +2,7 @@
 
 @inject OrganizationContext organizationContext
 @inject ApiKeyGenerator apiKeyGenerator
+@inject IStringLocalizer<SharedResources> localizer
 
 @attribute [Authorize]
 
@@ -10,8 +11,8 @@
 <div class="container overflow-auto" style="max-width:700px">
     <div class="border" style="padding: 20px; margin: 10px">
         <div class="d-flex justify-content-between">
-            <h4>Views</h4>
-            <a href=@String.Concat("/views/create/",organizationId) class="btn-link">➕ Add view</a>
+            <h4>@localizer["Views"]</h4>
+            <a href=@String.Concat("/views/create/",organizationId) class="btn-link">➕ @localizer["AddView"]</a>
         </div>
     </div>
 </div>
@@ -19,10 +20,9 @@
 <div class="container overflow-auto" style="max-width:700px">
     <div class="border" style="padding: 20px; margin: 10px">
         <div class="d-flex justify-content-between">
-            <h4>Administrators</h4>
+            <h4>@localizer["Administrators"]</h4>
             <a href=@String.Concat("/organizations/users/add/",organizationId) class="btn-link">
-                ➕ Add
-                user/administrator
+                ➕ @localizer["AddUsers"]
             </a>
         </div>
         <table class="table text-center">
@@ -37,7 +37,7 @@
         </table>
         <hr/>
         <div class="d-flex justify-content-between">
-            <h4>Users</h4>
+            <h4>@localizer["Users"]</h4>
         </div>
         <table class="table text-center">
             <tbody>
@@ -55,12 +55,12 @@
 <div class="container" style="max-width:700px">
     <div class="border overflow-auto" style="padding:20px;margin:10px">
         <div class="d-flex justify-content-between">
-            <h4>Configurations</h4>
-            <a href=@String.Concat("/configurations/create/",organizationId) class="btn-link">➕ Add configuration</a>
+            <h4>@localizer["Configurations"]</h4>
+            <a href=@String.Concat("/configurations/create/",organizationId) class="btn-link">➕ @localizer["AddConfiguration"]</a>
         </div>
         <hr/>
         <div class="text-center">
-            ApiKey: @m_apiKey
+            @localizer["APIKey"]: @m_apiKey
         </div>
         <table class="table text-center">
             <tbody>
@@ -69,7 +69,7 @@
                         <tr>
                             <td class="text-center">@config.ConfigName</td>
                             <td>
-                                <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>Edytuj</a>
+                                <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>@localizer["Edit"]</a>
                             </td>
                         </tr>
                 }
@@ -78,7 +78,7 @@
     </div>
 </div>
 <div class="text-center">
-    <button class="btn btn-primary" href=@String.Concat("/organizations/manage/",organizationId)>Advanced settings</button>
+    <button class="btn btn-primary" href=@String.Concat("/organizations/manage/",organizationId)>@localizer["AdvancedSettings"]</button>
 </div>
 
 @code {

@@ -5,11 +5,12 @@
 @inject ApiKeyGenerator apiKeyGenerator
 @inject AuthenticationStateProvider AuthState
 @inject DatasetContext datasetContext
+@inject IStringLocalizer<SharedResources> localizer
 
 @attribute [Authorize]
 
 <div class="container" style="max-width:500px">
-    <div class="text-center font-weight-bolder" style="font-size:32px">Rejestracja organizacji</div>
+    <div class="text-center font-weight-bolder" style="font-size:32px">@localizer["CreateOrg"]</div>
 
     <div class="border" style="padding:20px">
         @if (!String.IsNullOrEmpty(m_errorString))
@@ -23,13 +24,13 @@
             <ValidationSummary />
 
             <div class="form-group">
-                <label for="organization name"><b>Nazwa organizacji</b></label>
+                <label for="organization name"><b>@localizer["OrgName"]</b></label>
                 <InputText id="username" @bind-Value="m_organizationRegistrationModel.OrganizationName"
-                           class="form-control" required placeholder="Nazwa organizacji..." />
+                    class="form-control" required placeholder=@localizer["OrgName"] />
             </div>
 
-            <button class="btn btn-primary" type="submit">➕ Stwórz organizacje</button>
-            <a class="btn btn-danger" type="button" href="/">Anuluj</a>
+            <button class="btn btn-primary" type="submit">➕ @localizer["CreateOrg"]</button>
+            <a class="btn btn-danger" type="button" href="/">@localizer["Cancel"]</a>
         </EditForm>
     </div>
 </div>
@@ -64,4 +65,3 @@
         Navigation.NavigateTo("/organizations/" + organization.OrganizationId, true);
     }
 }
-
