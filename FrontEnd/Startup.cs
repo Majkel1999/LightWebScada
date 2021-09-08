@@ -13,6 +13,7 @@ using FrontEnd.DatabaseConnection;
 using FrontEnd.DataHandlers;
 using FrontEnd.Hubs;
 using Plk.Blazor.DragDrop;
+using Blazored.Modal;
 
 namespace FrontEnd
 {
@@ -35,6 +36,7 @@ namespace FrontEnd
             services.AddBlazorDragDrop();
             services.AddLocalization(Options=> Options.ResourcesPath = "Resources");
             services.AddControllers();
+            services.AddBlazoredModal();
 
             services.AddScoped<TokenProvider>();
             services.AddScoped<ApiKeyGenerator>();
