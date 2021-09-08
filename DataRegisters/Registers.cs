@@ -10,7 +10,7 @@
 
     public abstract class Register
     {
-        public int RegisterNumber { get; set; }
+        public int RegisterAddress { get; set; }
     }
 
     public class DiscreteRegister : Register

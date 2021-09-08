@@ -4,22 +4,30 @@ namespace FrontEnd.Areas.Organizations.Data
 {
     public class View
     {
-        private List<List<ViewElement>> m_viewElements = new List<List<ViewElement>>();
+        private readonly List<ViewRow> m_viewRows = new();
 
-        public List<List<ViewElement>> Elements => m_viewElements;
-        public int Rows => m_viewElements.Count;
-        public int ElementsInRow(int row) => m_viewElements[row].Count;
+        public List<ViewRow> Rows => m_viewRows;
+        public int RowsCount => m_viewRows.Count;
 
-        public void AddRow(List<ViewElement> rowItems = null)
+        public void AddToFirstOpen(ViewElement element)
         {
-            m_viewElements.Add(rowItems ?? new List<ViewElement>());
+            foreach (var row in m_viewRows)
+            {
+                if (!row.Full)
+                {
+                    row.AddElement(element);
+                    return;
+                }
+            }
+            var newRow = AddRow();
+            newRow.AddElement(element);
         }
 
-        public void AddElement(ViewElement element, int row)
+        private ViewRow AddRow(ViewRow rowItems = null)
         {
-            if (row > m_viewElements.Count - 1)
-                return;
-            m_viewElements[row].Add(element);
+            var row = rowItems ?? new ViewRow();
+            m_viewRows.Add(row);
+            return row;
         }
     }
 }

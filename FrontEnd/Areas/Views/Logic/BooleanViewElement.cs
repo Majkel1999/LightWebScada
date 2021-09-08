@@ -8,8 +8,10 @@ namespace FrontEnd.Areas.Organizations.Data
 
         public bool Value => m_value;
 
-        public BooleanViewElement(Register register, RegisterType type) : base(register, type)
+        public BooleanViewElement(Register register, RegisterType registerType, ViewType viewType) : base(register, registerType, viewType)
         {
+            if (m_registerType != RegisterType.CoilRegister && m_registerType != RegisterType.DiscreteInput)
+                throw new System.Exception("Wrong RegisterType in BooleanViewElement");
         }
 
         public override void UpdateData(Register register)

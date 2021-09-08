@@ -1,29 +1,89 @@
 @page "/views/create/{OrganizationId:int}"
 
-<div class="plk-flex">
-    <Dropzone Class="flex-container" Items="Items" ItemWrapperClass="@(item => "flex-item")">
-        <div>@context</div>
-    </Dropzone>
+@using DataRegisters
+@using Pages.Modals
+
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-4">
+            <div class="center">
+                @foreach (ViewType type in (ViewType[])Enum.GetValues(typeof(ViewType)))
+                {
+                    <div class="row">
+                        <button class="btn btn-primary" @onclick="() => AddElement(type)"
+                        style="margin:auto;margin-top:10px">
+                            Add @type.ToString()</button>
+                    </div>
+                }
+            </div>
+            <div style="margin:auto">
+                <button class="btn btn-primary" @onclick="() => Save()">Save</button>
+            </div>
+        </div>
+
+        <div class="col-8">
+            <div class="center">
+                @foreach (var row in m_view.Rows)
+                {
+                    <div class="plk-flex center">
+                        <Dropzone Class="flex-container" Items="row.Elements" MaxItems="3" InstantReplace="true">
+                            <div class="draggable-item" @onclick="() => ShowModal(context)">
+                                <div>Type: @context.ViewType.ToString()</div><br />
+                                <div>Register type: @context.RegisterType.ToString()</div><br />
+                                <div>Register address: @context.RegisterAddress.ToString()</div><br />
+                            </div>
+                        </Dropzone>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
 </div>
 
-<button class="btn btn-primary" @onclick="() => AddElement()">Add text</button>
 
 @code {
     [Parameter]
     public int OrganizationId { get; set; }
 
+    [CascadingParameter]
+    public IModalService Modal { get; set; }
+
     private View m_view = new View();
 
-    private List<string> Items = new List<string>();
-
-    protected override void OnInitialized()
+    private void AddElement(ViewType type)
     {
-        Items.Add("123");
-        Items.Add("321");
+        switch (type)
+        {
+            case ViewType.Text:
+                m_view.AddToFirstOpen(new IntegerViewElement(new ValueRegister(), RegisterType.InputRegister, type));
+                break;
+            case ViewType.Signal:
+                m_view.AddToFirstOpen(new BooleanViewElement(new DiscreteRegister(), RegisterType.CoilRegister, type));
+                break;
+            default:
+                Console.WriteLine("Unknown type");
+                break;
+        }
     }
 
-    private void AddElement()
+    private void Save()
     {
-        Items.Add("elko");
+        Console.WriteLine("Clicked");
+    }
+
+    private async void ShowModal(ViewElement element)
+    {
+        var options = new ModalOptions()
+        {
+            HideCloseButton = true
+        };
+        ModalParameters parameters = new ModalParameters();
+        parameters.Add("Element", element);
+        var modal = Modal.Show<ViewElementModal>(element.ViewType.ToString(), parameters, options);
+        var result = await modal.Result;
+        if (!result.Cancelled)
+            StateHasChanged();
     }
 }

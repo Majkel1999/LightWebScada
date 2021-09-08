@@ -12,7 +12,7 @@ namespace FrontEnd.DataHandlers
             {
                 case RegisterType.CoilRegister:
                     {
-                        if (config.Registers.CoilRegisters.Where(x => x.RegisterNumber == registerNumber).Any())
+                        if (config.Registers.CoilRegisters.Where(x => x.RegisterAddress == registerNumber).Any())
                         {
                             error = "Taki rejestr został już dodany to konfiguracji!";
                             return false;
@@ -20,13 +20,13 @@ namespace FrontEnd.DataHandlers
                         config.Registers.CoilRegisters.Add(new DiscreteRegister
                         {
                             CurrentValue = false,
-                            RegisterNumber = registerNumber
+                            RegisterAddress = registerNumber
                         });
                         break;
                     }
                 case RegisterType.DiscreteInput:
                     {
-                        if (config.Registers.DiscreteInputs.Where(x => x.RegisterNumber == registerNumber).Any())
+                        if (config.Registers.DiscreteInputs.Where(x => x.RegisterAddress == registerNumber).Any())
                         {
                             error = "Taki rejestr został już dodany to konfiguracji!";
                             return false;
@@ -34,13 +34,13 @@ namespace FrontEnd.DataHandlers
                         config.Registers.DiscreteInputs.Add(new DiscreteRegister
                         {
                             CurrentValue = false,
-                            RegisterNumber = registerNumber
+                            RegisterAddress = registerNumber
                         });
                         break;
                     }
                 case RegisterType.InputRegister:
                     {
-                        if (config.Registers.InputRegisters.Where(x => x.RegisterNumber == registerNumber).Any())
+                        if (config.Registers.InputRegisters.Where(x => x.RegisterAddress == registerNumber).Any())
                         {
                             error = "Taki rejestr został już dodany to konfiguracji!";
                             return false;
@@ -48,13 +48,13 @@ namespace FrontEnd.DataHandlers
                         config.Registers.InputRegisters.Add(new ValueRegister
                         {
                             CurrentValue = 0,
-                            RegisterNumber = registerNumber
+                            RegisterAddress = registerNumber
                         });
                         break;
                     }
                 case RegisterType.HoldingRegister:
                     {
-                        if (config.Registers.HoldingRegisters.Where(x => x.RegisterNumber == registerNumber).Any())
+                        if (config.Registers.HoldingRegisters.Where(x => x.RegisterAddress == registerNumber).Any())
                         {
                             error = "Taki rejestr został już dodany to konfiguracji!";
                             return false;
@@ -62,7 +62,7 @@ namespace FrontEnd.DataHandlers
                         config.Registers.HoldingRegisters.Add(new ValueRegister
                         {
                             CurrentValue = 0,
-                            RegisterNumber = registerNumber
+                            RegisterAddress = registerNumber
                         });
                         break;
                     }
@@ -79,25 +79,25 @@ namespace FrontEnd.DataHandlers
                     {
                         return config.Registers.CoilRegisters.Remove(
                        config.Registers.CoilRegisters
-                       .Where(x => x.RegisterNumber == registerNumber).First());
+                       .Where(x => x.RegisterAddress == registerNumber).First());
                     }
                 case RegisterType.DiscreteInput:
                     {
                         return config.Registers.DiscreteInputs.Remove(
                         config.Registers.DiscreteInputs
-                        .Where(x => x.RegisterNumber == registerNumber).First());
+                        .Where(x => x.RegisterAddress == registerNumber).First());
                     }
                 case RegisterType.InputRegister:
                     {
                         return config.Registers.InputRegisters.Remove(
                         config.Registers.InputRegisters
-                        .Where(x => x.RegisterNumber == registerNumber).First());
+                        .Where(x => x.RegisterAddress == registerNumber).First());
                     }
                 case RegisterType.HoldingRegister:
                     {
                         return config.Registers.HoldingRegisters.Remove(
                         config.Registers.HoldingRegisters
-                        .Where(x => x.RegisterNumber == registerNumber).First());
+                        .Where(x => x.RegisterAddress == registerNumber).First());
                     }
             }
             return false;

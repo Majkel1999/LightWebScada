@@ -43,13 +43,13 @@ namespace LigthScadaClient.Logic
                 try
                 {
                     LocalConfiguration.Instance.DataSet.CoilRegisters.ForEach(
-                        (x) => x.CurrentValue = m_modbusClient.ReadCoils(x.RegisterNumber, 1)[0]);
+                        (x) => x.CurrentValue = m_modbusClient.ReadCoils(x.RegisterAddress, 1)[0]);
                     LocalConfiguration.Instance.DataSet.DiscreteInputs.ForEach(
-                        (x) => x.CurrentValue = m_modbusClient.ReadDiscreteInputs(x.RegisterNumber, 1)[0]);
+                        (x) => x.CurrentValue = m_modbusClient.ReadDiscreteInputs(x.RegisterAddress, 1)[0]);
                     LocalConfiguration.Instance.DataSet.HoldingRegisters.ForEach(
-                        (x) => x.CurrentValue = m_modbusClient.ReadHoldingRegisters(x.RegisterNumber, 1)[0]);
+                        (x) => x.CurrentValue = m_modbusClient.ReadHoldingRegisters(x.RegisterAddress, 1)[0]);
                     LocalConfiguration.Instance.DataSet.InputRegisters.ForEach(
-                        (x) => x.CurrentValue = m_modbusClient.ReadInputRegisters(x.RegisterNumber, 1)[0]);
+                        (x) => x.CurrentValue = m_modbusClient.ReadInputRegisters(x.RegisterAddress, 1)[0]);
                     await ServerCommunication.Instance.SendData(LocalConfiguration.Instance.DataSet, LocalConfiguration.Instance.ApiKey);
                     StatusLogger.Instance.Log("Data sent to server");
                 }

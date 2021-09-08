@@ -8,8 +8,10 @@ namespace FrontEnd.Areas.Organizations.Data
 
         public int Value => m_value;
 
-        public IntegerViewElement(Register register, RegisterType type) : base(register, type)
+        public IntegerViewElement(ValueRegister register, RegisterType registerType, ViewType viewType) : base(register, registerType, viewType)
         {
+            if (m_registerType != RegisterType.InputRegister && m_registerType != RegisterType.HoldingRegister)
+                throw new System.Exception("Wrong RegisterType in IntegerViewElement");
         }
 
         public override void UpdateData(Register register)

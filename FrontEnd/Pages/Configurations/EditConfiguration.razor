@@ -83,10 +83,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var line in m_config.Registers.CoilRegisters.OrderBy(x => x.RegisterNumber))
+            @foreach (var line in m_config.Registers.CoilRegisters.OrderBy(x => x.RegisterAddress))
             {
                 <tr>
-                    <td>@localizer["PhysicalRegister"]: @line.RegisterNumber</td>
+                    <td>@localizer["PhysicalRegister"]: @line.RegisterAddress</td>
                     <td>
                         <button class="btn btn-link text-danger"
                         @onclick="() => RemoveFromConfig(line,RegisterType.CoilRegister)">
@@ -106,10 +106,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var line in m_config.Registers.DiscreteInputs.OrderBy(x => x.RegisterNumber))
+            @foreach (var line in m_config.Registers.DiscreteInputs.OrderBy(x => x.RegisterAddress))
             {
                 <tr>
-                    <td>@localizer["PhysicalRegister"]: @line.RegisterNumber</td>
+                    <td>@localizer["PhysicalRegister"]: @line.RegisterAddress</td>
                     <td>
                         <button class="btn btn-link text-danger"
                         @onclick="() => RemoveFromConfig(line,RegisterType.DiscreteInput)">
@@ -129,10 +129,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var line in m_config.Registers.InputRegisters.OrderBy(x => x.RegisterNumber))
+            @foreach (var line in m_config.Registers.InputRegisters.OrderBy(x => x.RegisterAddress))
             {
                 <tr>
-                    <td>@localizer["PhysicalRegister"]: @line.RegisterNumber</td>
+                    <td>@localizer["PhysicalRegister"]: @line.RegisterAddress</td>
                     <td>
                         <button class="btn btn-link text-danger"
                         @onclick="() => RemoveFromConfig(line,RegisterType.InputRegister)">
@@ -152,10 +152,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var line in m_config.Registers.HoldingRegisters.OrderBy(x => x.RegisterNumber))
+            @foreach (var line in m_config.Registers.HoldingRegisters.OrderBy(x => x.RegisterAddress))
             {
                 <tr>
-                    <td>@localizer["PhysicalRegister"]: @line.RegisterNumber</td>
+                    <td>@localizer["PhysicalRegister"]: @line.RegisterAddress</td>
                     <td>
                         <button class="btn btn-link text-danger"
                         @onclick="() => RemoveFromConfig(line,RegisterType.HoldingRegister)">
@@ -198,7 +198,7 @@
 
     private void RemoveFromConfig(Register register, RegisterType type)
     {
-        configHandler.TryRemoveRegister(ref m_config, type, register.RegisterNumber);
+        configHandler.TryRemoveRegister(ref m_config, type, register.RegisterAddress);
     }
 
     private void DeleteConfig()

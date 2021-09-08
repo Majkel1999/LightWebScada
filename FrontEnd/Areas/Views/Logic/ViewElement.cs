@@ -11,11 +11,14 @@ namespace FrontEnd.Areas.Organizations.Data
 
         public DataType DataType => m_dataType;
         public ViewType ViewType => m_viewType;
+        public RegisterType RegisterType => m_registerType;
+        public int RegisterAddress => m_register.RegisterAddress;
 
-        public ViewElement(Register register, RegisterType type)
+        public ViewElement(Register register, RegisterType registerType, ViewType viewType)
         {
+            m_viewType = viewType;
             m_register = register;
-            m_registerType = type;
+            m_registerType = registerType;
             if (m_registerType == RegisterType.CoilRegister || m_registerType == RegisterType.DiscreteInput)
                 m_dataType = DataType.Boolean;
             else
@@ -23,5 +26,8 @@ namespace FrontEnd.Areas.Organizations.Data
         }
 
         public abstract void UpdateData(Register register);
+
+        public void SetRegisterType(RegisterType registerType) => m_registerType = registerType;
+        public void SetRegisterAddress(int address) => m_register.RegisterAddress = address;
     }
 }
