@@ -2,15 +2,17 @@
 using FrontEnd.Areas.Organizations.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FrontEnd.Migrations.View
 {
     [DbContext(typeof(ViewContext))]
-    partial class ViewContextModelSnapshot : ModelSnapshot
+    [Migration("20210912081817_ViewsNames")]
+    partial class ViewsNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
