@@ -1,11 +1,17 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-html,
-body {
+:root {
+    --mainColor: #BDD4E7;
+    --secondColor: #8693AB;
+    --mainBlue: #2B4570;
+    --mainGreen: #09814A;
+    --mainRed: #7C0B2B;
+}
+
+html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-a,
-.btn-link {
+a, .btn-link {
     color: #0366d6;
 }
 
@@ -51,12 +57,15 @@ a,
 }
 
 .draggable-item {
+    width: 180px;
+    height: 180px;
     margin-top: 10px;
     margin-bottom: 10px;
-    background-color: orange;
+    background-color: #7089A8;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+    color: #d7d7d7;
 }
 
 .flex-container {
@@ -64,10 +73,25 @@ a,
     justify-content: center;
 }
 
-.center {
+.center-border {
     margin: auto;
     margin-top: 10px;
     border: 1px solid gray;
     border-radius: 5px;
     padding: 10px;
+}
+
+.center-text{
+    justify-content: center;
+    text-align: center;
+}
+
+.container-line {
+    background: linear-gradient(90deg, #ffffff13, #ffffff7e, #ffffff13);
+    height: 1px;
+}
+
+.side-margin {
+    margin-left: 10px;
+    margin-right: 10px;
 }
