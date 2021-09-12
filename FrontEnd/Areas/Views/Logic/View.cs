@@ -1,12 +1,16 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
     public class View
     {
-        private readonly List<ViewRow> m_viewRows = new();
+        [JsonProperty]
+        private List<ViewRow> m_viewRows = new();
 
+        [JsonIgnore]
         public List<ViewRow> Rows => m_viewRows;
+        [JsonIgnore]
         public int RowsCount => m_viewRows.Count;
 
         public void AddToFirstOpen(ViewElement element)

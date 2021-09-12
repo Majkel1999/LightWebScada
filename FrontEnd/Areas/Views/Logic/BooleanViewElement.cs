@@ -1,11 +1,14 @@
 using DataRegisters;
+using Newtonsoft.Json;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
     public class BooleanViewElement : ViewElement
     {
+        [JsonProperty]
         private bool m_value;
 
+        [JsonIgnore]
         public bool Value => m_value;
 
         public BooleanViewElement(Register register, RegisterType registerType, ViewType viewType) : base(register, registerType, viewType)

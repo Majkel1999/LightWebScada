@@ -1,11 +1,14 @@
 using DataRegisters;
+using Newtonsoft.Json;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
     public class IntegerViewElement : ViewElement
     {
+        [JsonProperty]
         private int m_value;
 
+        [JsonIgnore]
         public int Value => m_value;
 
         public IntegerViewElement(ValueRegister register, RegisterType registerType, ViewType viewType) : base(register, registerType, viewType)

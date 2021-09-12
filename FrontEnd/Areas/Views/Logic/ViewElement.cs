@@ -1,17 +1,26 @@
 using DataRegisters;
+using Newtonsoft.Json;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
     public abstract class ViewElement
     {
+        [JsonProperty]
         protected DataType m_dataType;
+        [JsonProperty]
         protected RegisterType m_registerType;
+        [JsonProperty]
         protected Register m_register;
+        [JsonProperty]
         protected ViewType m_viewType;
 
+        [JsonIgnore]
         public DataType DataType => m_dataType;
+        [JsonIgnore]
         public ViewType ViewType => m_viewType;
+        [JsonIgnore]
         public RegisterType RegisterType => m_registerType;
+        [JsonIgnore]
         public int RegisterAddress => m_register.RegisterAddress;
 
         public ViewElement(Register register, RegisterType registerType, ViewType viewType)
