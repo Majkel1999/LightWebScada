@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO.Ports;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using EasyModbus;
 
@@ -23,10 +25,21 @@ namespace ModbusSimulator
 
         private void OnStartButtonClick(object sender, RoutedEventArgs e)
         {
-            var rand = new Random(DateTime.Now.Millisecond);
+
             StartButton.IsEnabled = false;
             StopButton.IsEnabled = true;
             m_server = new ModbusServer();
+            RandomizeValues();
+            m_server.SerialPort = PortsComboBox.SelectedItem as string;
+            m_server.Listen();
+            m_logger.Log($"Server started on port {m_server.SerialPort}!");
+            PortsComboBox.IsEnabled = false;
+            m_server.NumberOfConnectedClientsChanged += () => m_logger.Log("Clients connected : " + m_server.NumberOfConnections);
+        }
+
+        private void RandomizeValues()
+        {
+            var rand = new Random(DateTime.Now.Millisecond);
             for (int i = 0; i < 100; i++)
             {
                 m_server.coils[i] = rand.Next(0, 10) > 5 ? false : true;
@@ -34,11 +47,12 @@ namespace ModbusSimulator
                 m_server.holdingRegisters[i] = (short)rand.Next(0, 10000);
                 m_server.inputRegisters[i] = (short)rand.Next(0, 10000);
             }
-            m_server.SerialPort = PortsComboBox.SelectedItem as string;
-            m_server.Listen();
-            m_logger.Log($"Server started on port {m_server.SerialPort}!");
-            PortsComboBox.IsEnabled = false;
-            m_server.NumberOfConnectedClientsChanged += () => m_logger.Log("Clients connected : " + m_server.NumberOfConnections);
+            Task.Run(() =>
+            {
+                Thread.Sleep(1000);
+                RandomizeValues();
+                m_logger.Log("Values randomized");
+            });
         }
 
         private void OnStopButtonClick(object sender, RoutedEventArgs e)
