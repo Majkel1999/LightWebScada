@@ -1,13 +1,33 @@
 @page "/views/create/{OrganizationId:int}"
 
-@using DataRegisters
+@using Microsoft.Extensions.Primitives
+@using Newtonsoft.Json
 @using Pages.Modals
+
+@inject ViewContext viewContext
+@inject NavigationManager NavManager
+
+<div class="container" style="max-width:500px">
+    <div class="text-center font-weight-bolder" style="font-size:32px"></div>
+    <div class="border" style="padding:20px">
+        <b>
+            <div class="center-text">View name</div>
+        </b>
+        <EditForm Model="@m_view">
+            <div class="form-group">
+                <label for="organization name"><b></b></label>
+                <InputText id="username" @bind-Value="m_view.Name" class="form-control" required
+                    placeholder="View name" />
+            </div>
+        </EditForm>
+    </div>
+</div>
 
 <div class="container-fluid">
     <div class="row">
 
         <div class="col-4">
-            <div class="center">
+            <div class="center-border">
                 @foreach (ViewType type in (ViewType[])Enum.GetValues(typeof(ViewType)))
                 {
                     <div class="row">
@@ -17,28 +37,35 @@
                     </div>
                 }
             </div>
-            <div style="margin:auto">
-                <button class="btn btn-primary" @onclick="() => Save()">Save</button>
+            <div class="center-text" style="margin-top:10px">
+                <button class="btn btn-success" @onclick="() => Save()">Save</button>
             </div>
         </div>
 
         <div class="col-8">
-            <div class="center">
+            <div class="center-border">
                 @foreach (var row in m_view.Rows)
                 {
-                    <div class="plk-flex center">
+                    <div class="plk-flex center-border">
                         <Dropzone Class="flex-container" Items="row.Elements" MaxItems="3" InstantReplace="true">
                             <div class="draggable-item" @onclick="() => ShowModal(context)">
-                                <div>Type: @context.ViewType.ToString()</div><br />
-                                <div>Register type: @context.RegisterType.ToString()</div><br />
-                                <div>Register address: @context.RegisterAddress.ToString()</div><br />
+                                <div>
+                                    <div class="center-text" style="font-size:large;padding-top:15px">
+                                        <b>@context.ViewType.ToString()</b>
+                                    </div>
+                                    <hr class="container-line side-margin">
+                                    <div class="side-margin" style="text-align:center">@context.RegisterType.ToString()
+                                    </div>
+                                    <br />
+                                    <div class="side-margin" style="text-align:center">@context.RegisterAddress.ToString()
+                                    </div>
+                                </div>
                             </div>
                         </Dropzone>
                     </div>
                 }
             </div>
         </div>
-
     </div>
 </div>
 
@@ -51,33 +78,61 @@
     public IModalService Modal { get; set; }
 
     private View m_view = new View();
+    private ViewObject m_viewObject;
+    private List<ViewElement> m_emptyList = new();
+    private bool m_isEdit = false;
+
+    protected override void OnParametersSet()
+    {
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(NavManager.Uri).Query);
+        if (query.TryGetValue("ViewId", out StringValues viewId))
+        {
+            int id = int.Parse(viewId.First());
+            m_viewObject = viewContext.Views
+            .Where(x => x.Id == id)
+            .FirstOrDefault();
+            m_view = JsonConvert.DeserializeObject<View>(m_viewObject.ViewJson) ?? new View();
+            m_isEdit = true;
+        }
+    }
 
     private void AddElement(ViewType type)
     {
-        switch (type)
+        m_view.AddToFirstOpen(new ViewElement()
         {
-            case ViewType.Text:
-                m_view.AddToFirstOpen(new IntegerViewElement(new ValueRegister(), RegisterType.InputRegister, type));
-                break;
-            case ViewType.Signal:
-                m_view.AddToFirstOpen(new BooleanViewElement(new DiscreteRegister(), RegisterType.CoilRegister, type));
-                break;
-            default:
-                Console.WriteLine("Unknown type");
-                break;
-        }
+            ViewType = type
+        });
     }
 
     private void Save()
     {
-        Console.WriteLine("Clicked");
+        if (m_view.RowsCount == 0 || string.IsNullOrEmpty(m_view.Name))
+            return;
+        if (m_isEdit)
+        {
+            m_viewObject.ViewJson = JsonConvert.SerializeObject(m_view);
+            m_viewObject.Name = m_view.Name;
+        }
+        else
+        {
+            string json = JsonConvert.SerializeObject(m_view);
+            viewContext.Views.Add(new ViewObject
+            {
+                OrganizationId = this.OrganizationId,
+                ViewJson = json,
+                Name = m_view.Name
+            });
+        }
+        viewContext.SaveChanges();
+        NavManager.NavigateTo("/organizations/" + this.OrganizationId, true);
     }
 
     private async void ShowModal(ViewElement element)
     {
         var options = new ModalOptions()
         {
-            HideCloseButton = true
+            HideCloseButton = true,
+            FocusFirstElement = true
         };
         ModalParameters parameters = new ModalParameters();
         parameters.Add("Element", element);
@@ -85,5 +140,10 @@
         var result = await modal.Result;
         if (!result.Cancelled)
             StateHasChanged();
+    }
+
+    private void RemoveObject(ViewElement element)
+    {
+        m_view.Remove(element);
     }
 }

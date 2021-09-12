@@ -1,6 +1,7 @@
 ﻿@page "/organizations/{organizationId:int}"
 
 @inject OrganizationContext organizationContext
+@inject ViewContext viewContext
 @inject ApiKeyGenerator apiKeyGenerator
 @inject IStringLocalizer<SharedResources> localizer
 
@@ -14,6 +15,22 @@
             <h4>@localizer["Views"]</h4>
             <a href=@String.Concat("/views/create/",organizationId) class="btn-link">➕ @localizer["AddView"]</a>
         </div>
+        <table class="table text-center">
+            <tbody>
+                @foreach (ViewObject view in m_views)
+                {
+                    <tr>
+                        <td class="text-center">@view.Name</td>
+                        <td> <a class="oi oi-eye" href=@String.Concat("/views/show/",view.Id)>@String.Concat(" ",localizer["View"])</a></td>
+                        <td>
+                            <a class="oi oi-share-boxed"
+                            href=@String.Concat("/views/create/",organizationId,"?ViewId=",view.Id)>
+                                @String.Concat(" ",@localizer["Edit"])</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -29,13 +46,13 @@
             <tbody>
                 @foreach (string user in m_members.Where(x => x.isAdmin).Select(x => x.UserName))
                 {
-                        <tr>
-                            <td>@user</td>
-                        </tr>
+                    <tr>
+                        <td>@user</td>
+                    </tr>
                 }
             </tbody>
         </table>
-        <hr/>
+        <hr />
         <div class="d-flex justify-content-between">
             <h4>@localizer["Users"]</h4>
         </div>
@@ -43,9 +60,9 @@
             <tbody>
                 @foreach (string user in m_members.Where(x => !x.isAdmin).Select(x => x.UserName))
                 {
-                        <tr>
-                            <td>@user</td>
-                        </tr>
+                    <tr>
+                        <td>@user</td>
+                    </tr>
                 }
             </tbody>
         </table>
@@ -56,9 +73,10 @@
     <div class="border overflow-auto" style="padding:20px;margin:10px">
         <div class="d-flex justify-content-between">
             <h4>@localizer["Configurations"]</h4>
-            <a href=@String.Concat("/configurations/create/",organizationId) class="btn-link">➕ @localizer["AddConfiguration"]</a>
+            <a href=@String.Concat("/configurations/create/",organizationId) class="btn-link">➕
+                @localizer["AddConfiguration"]</a>
         </div>
-        <hr/>
+        <hr />
         <div class="text-center">
             @localizer["APIKey"]: @m_apiKey
         </div>
@@ -66,19 +84,21 @@
             <tbody>
                 @foreach (ClientConfigEntity config in m_organizationConfigs)
                 {
-                        <tr>
-                            <td class="text-center">@config.ConfigName</td>
-                            <td>
-                                <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>@localizer["Edit"]</a>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td class="text-center">@config.ConfigName</td>
+                        <td>
+                            <a class="oi oi-share-boxed"
+                            href=@String.Concat("/configurations/edit/",config.ID)>@String.Concat(" ",@localizer["Edit"])</a>
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
 <div class="text-center">
-    <button class="btn btn-primary" href=@String.Concat("/organizations/manage/",organizationId)>@localizer["AdvancedSettings"]</button>
+    <button class="btn btn-primary"
+        href=@String.Concat("/organizations/manage/",organizationId)>@localizer["AdvancedSettings"]</button>
 </div>
 
 @code {
@@ -87,6 +107,7 @@
 
     private List<ClientConfigEntity> m_organizationConfigs;
     private List<OrganizationMember> m_members;
+    private List<ViewObject> m_views;
     private string m_organizationName;
     private string m_apiKey;
 
@@ -104,25 +125,29 @@
 
     private void InitParams()
     {
+        m_views = viewContext.Views
+        .Where(x => x.OrganizationId == organizationId)
+        .ToList();
         m_organizationName = organizationContext.Organizations
-            .Where(x => x.OrganizationId == organizationId)
-            .Select(x => x.Name)
-            .FirstOrDefault();
+        .Where(x => x.OrganizationId == organizationId)
+        .Select(x => x.Name)
+        .FirstOrDefault();
         m_organizationConfigs = organizationContext.Configurations
-            .Where(x => x.OrganizationId == organizationId).ToList();
+        .Where(x => x.OrganizationId == organizationId)
+        .ToList();
         m_members = organizationContext.Members
-            .Where(x => x.OrganizationId == organizationId)
-            .ToList();
+        .Where(x => x.OrganizationId == organizationId)
+        .ToList();
         m_apiKey = organizationContext.Organizations
-            .Where(x => x.OrganizationId == organizationId)
-            .Select(x => x.ApiKey)
-            .FirstOrDefault();
+        .Where(x => x.OrganizationId == organizationId)
+        .Select(x => x.ApiKey)
+        .FirstOrDefault();
         if (String.IsNullOrEmpty(m_apiKey))
         {
             m_apiKey = apiKeyGenerator.GenerateNewApiKey();
             var organization = organizationContext.Organizations
-                .Where(x => x.OrganizationId == organizationId)
-                .FirstOrDefault();
+            .Where(x => x.OrganizationId == organizationId)
+            .FirstOrDefault();
             organization.ApiKey = m_apiKey;
             organizationContext.SaveChanges();
         }

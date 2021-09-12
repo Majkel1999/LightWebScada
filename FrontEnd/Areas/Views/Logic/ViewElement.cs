@@ -3,40 +3,23 @@ using Newtonsoft.Json;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
-    public abstract class ViewElement
+    public class ViewElement
     {
-        [JsonProperty]
-        protected DataType m_dataType;
-        [JsonProperty]
-        protected RegisterType m_registerType;
-        [JsonProperty]
-        protected Register m_register;
-        [JsonProperty]
-        protected ViewType m_viewType;
+        public ViewType ViewType;
 
-        [JsonIgnore]
-        public DataType DataType => m_dataType;
-        [JsonIgnore]
-        public ViewType ViewType => m_viewType;
-        [JsonIgnore]
-        public RegisterType RegisterType => m_registerType;
-        [JsonIgnore]
-        public int RegisterAddress => m_register.RegisterAddress;
+        [JsonProperty] private RegisterType m_registerType;
+        [JsonProperty] private int m_registerAddress;
+        private int m_value;
 
-        public ViewElement(Register register, RegisterType registerType, ViewType viewType)
-        {
-            m_viewType = viewType;
-            m_register = register;
-            m_registerType = registerType;
-            if (m_registerType == RegisterType.CoilRegister || m_registerType == RegisterType.DiscreteInput)
-                m_dataType = DataType.Boolean;
-            else
-                m_dataType = DataType.Integer;
-        }
+        [JsonIgnore] public RegisterType RegisterType => m_registerType;
+        [JsonIgnore] public int RegisterAddress => m_registerAddress;
+        [JsonIgnore] public int Value => m_value;
+        [JsonIgnore] public bool IsBoolean => false;// RegisterType == RegisterType.CoilRegister || RegisterType == RegisterType.DiscreteInput;
 
-        public abstract void UpdateData(Register register);
-
+        public void SetRegisterAddress(int address) => m_registerAddress = address;
         public void SetRegisterType(RegisterType registerType) => m_registerType = registerType;
-        public void SetRegisterAddress(int address) => m_register.RegisterAddress = address;
+
+        public void SetValue(int value) => m_value = value;
+        public void SetValue(bool value) => m_value = value ? 1 : 0;
     }
 }

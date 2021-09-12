@@ -1,50 +1,106 @@
-@page "/view/{organizationId:int}"
+@page "/views/show/{ViewId:int}"
+@using DataRegisters
 @using Microsoft.AspNetCore.SignalR.Client
+@using Newtonsoft.Json
+@using FrontEnd.Pages.Views.Elements
 
 @inject NavigationManager NavigationManager
 @inject OrganizationContext organizationsContext
+@inject ViewContext viewContext
 
 @implements IAsyncDisposable
 
-<ul id="messagesList">
-    @foreach (var message in m_messages)
-    {
-        <li>@message</li>
-    }
-</ul>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="center-border">
+                @foreach (ViewRow row in m_view.Rows)
+                {
+                    <div class="row">
+                        @foreach (ViewElement element in row.Elements)
+                        {
+                            <div class="col-4" style="margin:0 auto">
+                                @switch (element.ViewType)
+                                {
+                                    case ViewType.Text:
+                                        {
+                                            <TextViewElement View=@element />
+                                            break;
+                                        }
+                                    case ViewType.Signal:
+                                        {
+                                            <SignalViewElement View=@element />
+                                            break;
+                                        }
+                                    default:
+                                        break;
+                                }
+                            </div>
+                        }
+                    </div>
+                    <hr class="container-line side-margin">
+                }
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter]
-    public int OrganizationId { get; set; }
+    public int ViewId { get; set; }
 
     private HubConnection m_hubConnection;
-    private List<string> m_messages = new List<string>();
-    private Organization m_organization;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        m_organization = organizationsContext.Organizations.Single(o => o.OrganizationId == OrganizationId);
-        DatasetReader.StartSession(m_organization);
-
-        m_hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/viewhub"))
-            .Build();
-        m_hubConnection.On<string, string>("ReceiveData", (user, message) =>
-        {
-            var encodedMsg = $"{user}: {message}";
-            m_messages.Add(encodedMsg);
-            StateHasChanged();
-        });
-        await m_hubConnection.StartAsync();
-        await m_hubConnection.SendAsync("JoinGroup", m_organization.Name);
-        await base.OnParametersSetAsync();
-    }
+    private DataSet m_currentSet;
+    private View m_view;
 
     public async ValueTask DisposeAsync()
     {
-        await m_hubConnection.SendAsync("LeaveGroup", m_organization.Name);
+        await m_hubConnection.SendAsync("LeaveGroup", ViewId.ToString());
         if (m_hubConnection is not null)
             await m_hubConnection.DisposeAsync();
-        DatasetReader.EndSession(m_organization);
+        DatasetReader.EndSession(ViewId);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        ViewObject view = viewContext.Views.Where(x => x.Id == ViewId).First();
+        m_view = JsonConvert.DeserializeObject<View>(view.ViewJson);
+        Organization org = organizationsContext.Organizations.Where(x => x.OrganizationId ==
+        view.OrganizationId).First();
+        DatasetReader reader = DatasetReader.StartSession(ViewId, org);
+
+        m_hubConnection = new HubConnectionBuilder()
+        .WithUrl("https://localhost:5001/viewhub")
+        .Build();
+
+        m_hubConnection.On<string>("ReceiveData", UpdateView);
+        await m_hubConnection.StartAsync();
+        await m_hubConnection.SendAsync("JoinGroup", ViewId.ToString());
+        if (reader.LastFrame != null)
+        {
+            m_currentSet = JsonConvert.DeserializeObject<DataSet>(reader.LastFrame.Dataset);
+            UpdateView();
+        }
+    }
+
+    private void UpdateView(string message)
+    {
+        m_currentSet = JsonConvert.DeserializeObject<DataSet>(message);
+        UpdateView();
+        StateHasChanged();
+    }
+
+    private void UpdateView()
+    {
+        foreach (ViewRow row in m_view.Rows)
+        {
+            foreach (ViewElement element in row.Elements)
+            {
+                if (m_currentSet.Contains(element.RegisterAddress, element.RegisterType))
+                    element.SetValue(m_currentSet.GetValue(element.RegisterAddress, element.RegisterType));
+            }
+        }
     }
 }

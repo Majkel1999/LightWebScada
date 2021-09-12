@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,7 +8,7 @@ namespace FrontEnd.Hubs
     {
         public async Task SendMessage(string message, string groupName)
         {
-            await Clients.Group(groupName).SendAsync("ReceiveData", groupName, message);
+            await Clients.Group(groupName).SendAsync("ReceiveData", message);
         }
 
         public Task JoinGroup(string groupName)

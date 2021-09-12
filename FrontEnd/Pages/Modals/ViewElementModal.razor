@@ -5,7 +5,7 @@
         <EditForm Model=this>
             <label>Register type</label>
             <InputSelect @bind-Value=m_registerType class="form-control">
-                @if (Element.DataType == DataType.Boolean)
+                @if (Element.IsBoolean)
                 {
                     <option value=@RegisterType.CoilRegister>Coil register</option>
                     <option value=@RegisterType.DiscreteInput>Discrete input</option>
