@@ -1,25 +1,48 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
     public class View
     {
-        private List<List<ViewElement>> m_viewElements = new List<List<ViewElement>>();
+        public string Name { get; set; }
 
-        public List<List<ViewElement>> Elements => m_viewElements;
-        public int Rows => m_viewElements.Count;
-        public int ElementsInRow(int row) => m_viewElements[row].Count;
+        [JsonProperty] private List<ViewRow> m_viewRows = new();
 
-        public void AddRow(List<ViewElement> rowItems = null)
+        [JsonIgnore] public List<ViewRow> Rows => m_viewRows;
+        [JsonIgnore] public int RowsCount => m_viewRows.Count;
+
+        public void AddToFirstOpen(ViewElement element)
         {
-            m_viewElements.Add(rowItems ?? new List<ViewElement>());
+            foreach (var row in m_viewRows)
+            {
+                if (!row.Full)
+                {
+                    row.AddElement(element);
+                    return;
+                }
+            }
+            ViewRow newRow = AddRow();
+            newRow.AddElement(element);
         }
 
-        public void AddElement(ViewElement element, int row)
+        public void Remove(ViewElement element)
         {
-            if (row > m_viewElements.Count - 1)
-                return;
-            m_viewElements[row].Add(element);
+            foreach (var row in m_viewRows)
+            {
+                if (row.Elements.Contains(element))
+                {
+                    row.Elements.Remove(element);
+                    return;
+                }
+            }
+        }
+
+        private ViewRow AddRow(ViewRow rowItems = null)
+        {
+            ViewRow row = rowItems ?? new ViewRow();
+            m_viewRows.Add(row);
+            return row;
         }
     }
 }

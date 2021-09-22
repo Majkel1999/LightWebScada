@@ -1,21 +1,25 @@
 using DataRegisters;
+using Newtonsoft.Json;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
-    public abstract class ViewElement
+    public class ViewElement
     {
-        protected DataType m_dataType;
-        protected RegisterType m_registerType;
-        protected Register m_register;
+        public ViewType ViewType;
 
-        public DataType DataType => m_dataType;
+        [JsonProperty] private RegisterType m_registerType;
+        [JsonProperty] private int m_registerAddress;
+        private int m_value;
 
-        public ViewElement(Register register, RegisterType type)
-        {
-            m_register = register;
-            m_registerType = type;
-        }
+        [JsonIgnore] public RegisterType RegisterType => m_registerType;
+        [JsonIgnore] public int RegisterAddress => m_registerAddress;
+        [JsonIgnore] public int Value => m_value;
+        [JsonIgnore] public bool IsBoolean => false;// RegisterType == RegisterType.CoilRegister || RegisterType == RegisterType.DiscreteInput;
 
-        public abstract void UpdateData(Register register);
+        public void SetRegisterAddress(int address) => m_registerAddress = address;
+        public void SetRegisterType(RegisterType registerType) => m_registerType = registerType;
+
+        public void SetValue(int value) => m_value = value;
+        public void SetValue(bool value) => m_value = value ? 1 : 0;
     }
 }

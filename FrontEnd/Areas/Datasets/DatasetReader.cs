@@ -8,55 +8,57 @@ using Microsoft.Extensions.Configuration;
 using Dapper;
 using DatabaseClasses;
 using Npgsql;
+using Newtonsoft.Json;
 
 namespace FrontEnd.Areas.Datasets
 {
     public class DatasetReader
     {
-        private static ConcurrentDictionary<string, DatasetReader> m_instances = new ConcurrentDictionary<string, DatasetReader>();
+        private static ConcurrentDictionary<int, DatasetReader> m_instances = new ConcurrentDictionary<int, DatasetReader>();
 
         private Thread m_updateThread;
+        private Mutex m_mutex = new Mutex();
         private Organization m_organization;
-        private Mutex m_mutex;
+        private DataFrame m_lastFrame;
         private string m_connectionString;
+        private int m_viewId;
         private int m_clients;
         private int m_lastId = -1;
         private bool m_stayAlive;
 
-        public static void StartSession(Organization organization)
+        public DataFrame LastFrame => m_lastFrame;
+
+        public static DatasetReader StartSession(int viewId, Organization organization)
         {
-            string name = GetInstanceName(organization);
-            if (!m_instances.ContainsKey(name))
-                m_instances.TryAdd(name, new DatasetReader(Startup.Configuration.GetConnectionString("UserContextConnection"), organization));
-            m_instances[name].AddClient();
+            if (!m_instances.ContainsKey(viewId))
+                m_instances.TryAdd(viewId, new DatasetReader(Startup.Configuration.GetConnectionString("UserContextConnection"), viewId, organization));
+            m_instances[viewId].AddClient();
+            return m_instances[viewId];
         }
 
-        public static void EndSession(Organization organization)
+        public static void EndSession(int viewId)
         {
-            string name = GetInstanceName(organization);
-            if (m_instances.ContainsKey(name))
-                m_instances[name].RemoveClient();
+            if (m_instances.ContainsKey(viewId))
+                m_instances[viewId].RemoveClient();
         }
 
-        private DatasetReader(string connectionString, Organization organization)
+        private DatasetReader(string connectionString, int viewId, Organization organization)
         {
-            m_organization = organization;
             m_connectionString = connectionString;
+            m_viewId = viewId;
+            m_organization = organization;
             m_stayAlive = true;
             StartUpdateThread();
-        }
-
-        private static string GetInstanceName(Organization organization)
-        {
-            return organization.Name + "_" + organization.OrganizationId;
         }
 
         private void StartUpdateThread()
         {
             if (m_updateThread == null)
             {
+                m_mutex.WaitOne();
                 m_updateThread = new Thread(new ThreadStart(UpdateHubs));
                 m_updateThread.Start();
+                m_mutex.ReleaseMutex();
             }
         }
 
@@ -65,7 +67,7 @@ namespace FrontEnd.Areas.Datasets
             m_mutex.WaitOne();
             m_clients++;
             m_stayAlive = true;
-            Console.WriteLine("Added client on " + m_organization.Name + ". Client count: " + m_clients);
+            Console.WriteLine($"Added client on view {m_viewId} with current clients {m_clients}");
             m_mutex.ReleaseMutex();
         }
 
@@ -75,13 +77,13 @@ namespace FrontEnd.Areas.Datasets
             m_clients--;
             if (m_clients <= 0)
                 m_stayAlive = false;
-            Console.WriteLine("Removed client on " + m_organization.Name + ". Client count: " + m_clients);
+            Console.WriteLine($"Removed client on view {m_viewId} with current clients {m_clients}");
             m_mutex.ReleaseMutex();
         }
 
         private async void UpdateHubs()
         {
-            Console.WriteLine("Update starting " + m_organization.Name);
+            Console.WriteLine($"Update starting on {m_viewId}");
             HubConnection hubConnection = new HubConnectionBuilder()
                 .WithUrl("https://localhost:5001/viewhub")
                 .Build();
@@ -92,22 +94,22 @@ namespace FrontEnd.Areas.Datasets
             {
                 using (IDbConnection db = new NpgsqlConnection(m_connectionString))
                 {
-                    var frame = db.Query<DataFrame>
-                        (@"Select * From " + DatasetContext.GetTableName(m_organization) + @" Order By ""Timestamp"" DESC")
-                        .FirstOrDefault();
-                    if (m_lastId != frame.Id)
+                    m_lastFrame = db.Query<DataFrame>
+                         (@"Select * From " + DatasetContext.GetTableName(m_organization) + @" Order By ""Timestamp"" DESC")
+                         .FirstOrDefault();
+                    if (m_lastId != m_lastFrame.Id)
                     {
-                        m_lastId = frame.Id;
-                        await hubConnection.SendAsync("SendMessage", frame.Dataset, m_organization.Name);
+                        m_lastId = m_lastFrame.Id;
+                        await hubConnection.SendAsync("SendMessage", m_lastFrame.Dataset, m_viewId.ToString());
                     }
                 }
                 Thread.Sleep(2000);
             }
             m_mutex.WaitOne();
-            m_instances.TryRemove(GetInstanceName(m_organization), out DatasetReader instance);
+            m_instances.TryRemove(m_viewId, out DatasetReader instance);
             m_updateThread = null;
             m_mutex.ReleaseMutex();
-            Console.WriteLine("Controller dying " + m_organization.Name);
+            Console.WriteLine($"Controller dying on {m_viewId}");
         }
     }
 }

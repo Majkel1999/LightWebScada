@@ -1,0 +1,14 @@
+<div class="center-text">
+    <p>Signal</p>
+    <div>
+        @($"{View.RegisterType} {View.RegisterAddress}")
+    </div>
+    <br />
+    <b>@View.Value</b>
+</div>
+
+
+@code {
+    [Parameter]
+    public ViewElement View { get; set; }
+}

@@ -1,0 +1,54 @@
+@using DataRegisters
+
+<div>
+    <div class="form-group">
+        <EditForm Model=this>
+            <label>Register type</label>
+            <InputSelect @bind-Value=m_registerType class="form-control">
+                @if (Element.IsBoolean)
+                {
+                    <option value=@RegisterType.CoilRegister>Coil register</option>
+                    <option value=@RegisterType.DiscreteInput>Discrete input</option>
+                }
+                else
+                {
+                    <option value=@RegisterType.InputRegister>Input register</option>
+                    <option value=@RegisterType.HoldingRegister>Holding register</option>
+                }
+            </InputSelect>
+            <labe>Register number</labe>
+            <InputNumber @bind-Value=m_registerNumber class="form-control" min=0 max=65535 step=1></InputNumber>
+        </EditForm>
+    </div>
+
+    <div>
+        <button class="btn btn-danger" @onclick="() => Cancel()">Cancel</button>
+        <button class="btn btn-primary" @onclick="() => SaveAndClose()">Save</button>
+    </div>
+</div>
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+    [Parameter] public ViewElement Element { get; set; }
+
+    private RegisterType m_registerType;
+    private int m_registerNumber;
+
+    protected override void OnInitialized()
+    {
+        m_registerType = Element.RegisterType;
+        m_registerNumber = Element.RegisterAddress;
+    }
+
+    async Task SaveAndClose()
+    {
+        Element.SetRegisterType(m_registerType);
+        if (m_registerNumber > 0 && m_registerNumber < 65535)
+            Element.SetRegisterAddress(m_registerNumber);
+        await BlazoredModal.CloseAsync(ModalResult.Ok(true));
+    }
+
+    async Task Cancel() => await BlazoredModal.CancelAsync();
+}

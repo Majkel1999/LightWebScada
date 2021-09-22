@@ -2,36 +2,27 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using DatabaseClasses;
+using DataRegisters;
+using LigthScadaClient.Logic.Utility;
 using Newtonsoft.Json;
 
 namespace LigthScadaClient.Logic
 {
-    public class ServerCommunication
+    public class ServerCommunication : Singleton<ServerCommunication>
     {
         private const string ApiUrl = "https://localhost:5003";
 
-        private static ServerCommunication m_instance;
+        private HttpClient m_client;
 
-        private readonly HttpClient m_client;
-
-        public static ServerCommunication Instance
-        {
-            get
-            {
-                if (m_instance == null)
-                    m_instance = new ServerCommunication();
-                return m_instance;
-            }
-        }
-
-        private ServerCommunication()
+        protected override void OnCreate()
         {
             m_client = new HttpClient();
             m_client.Timeout = new TimeSpan(0, 0, 10);
         }
-
 
         public async Task<List<ClientConfigEntity>> GetConfigurations(string apiKey)
         {
@@ -56,6 +47,25 @@ namespace LigthScadaClient.Logic
                 throw new KeyNotFoundException("The specified ApiKey is invalid!");
 
             return configs;
+        }
+
+        public async Task SendData(DataSet data, string apiKey)
+        {
+            DataFrame frame = new DataFrame();
+            frame.Date = DateTime.UtcNow;
+            frame.Name = LocalConfiguration.Instance.Name;
+            frame.Dataset = JsonConvert.SerializeObject(data);
+            HttpRequestMessage request = new HttpRequestMessage();
+            var uriBuilder = new UriBuilder(ApiUrl + "/api/send");
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query["apiKey"] = apiKey;
+            uriBuilder.Query = query.ToString();
+            request.RequestUri = uriBuilder.Uri;
+            request.Method = HttpMethod.Post;
+            request.Content = new StringContent(JsonConvert.SerializeObject(frame), Encoding.UTF8, "application/json");
+            var response = await m_client.SendAsync(request);
+            if (response.StatusCode != System.Net.HttpStatusCode.Accepted)
+                StatusLogger.Instance.Log("Data sent but not accepted : " + response.ReasonPhrase);
         }
     }
 }

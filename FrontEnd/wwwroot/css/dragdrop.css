@@ -1,0 +1,45 @@
+﻿    .plk-dd-inprogess>* {
+        pointer-events: none;
+    }
+    
+    .plk-dd-dropzone {
+        min-height: 50px;
+    }
+    
+    .plk-dd-spacing {
+        height: 10px;
+    }
+    
+    .plk-dd-spacing-dragged-over {
+        padding: 25px;
+    }
+    
+    .plk-dd-dragged-over-denied {
+        background-color: red;
+        opacity: 0.6;
+    }
+    
+    .plk-dd-in-transit {
+        opacity: 0;
+    }
+    
+    .plk-flex .plk-dd-spacing {
+        width: 20px;
+        height: auto;
+    }
+    
+    .plk-dd-noselect {
+        -webkit-touch-callout: none;
+        /* iOS Safari */
+        -webkit-user-select: none;
+        /* Safari */
+        -khtml-user-select: none;
+        /* Konqueror HTML */
+        -moz-user-select: none;
+        /* Old versions of Firefox */
+        -ms-user-select: none;
+        /* Internet Explorer/Edge */
+        user-select: none;
+        /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+    }
