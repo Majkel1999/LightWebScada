@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LigthScadaClient", "LigthScadaClient\LigthScadaClient.csproj", "{C702DE8C-1862-43DB-A292-3D6F20E0A978}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightScadaClient", "LightScadaClient\LightScadaClient.csproj", "{C702DE8C-1862-43DB-A292-3D6F20E0A978}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrontEnd", "FrontEnd\FrontEnd.csproj", "{D39E59D6-D9CE-4A68-99F7-84A83FA3B098}"
 EndProject
