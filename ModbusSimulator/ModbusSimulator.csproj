@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <Reference Include="EasyModbus">
-      <HintPath>..\LigthScadaClient\Libraries\EasyModbus.dll</HintPath>
+      <HintPath>..\Libraries\EasyModbus.dll</HintPath>
     </Reference>
   </ItemGroup>
 

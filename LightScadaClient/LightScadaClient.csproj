@@ -25,7 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EasyModbus">
-      <HintPath>Libraries\EasyModbus.dll</HintPath>
+      <HintPath>..\Libraries\EasyModbus.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
