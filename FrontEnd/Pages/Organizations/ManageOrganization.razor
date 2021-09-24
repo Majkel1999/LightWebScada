@@ -99,6 +99,6 @@
             .ToList()
             .ForEach((y) => OrganizationContext.Configurations.Remove(y));
         OrganizationContext.SaveChanges();
-        NavManager.NavigateTo("/Account/Organizations", true);
+        NavManager.NavigateTo("/", true);
     }
 }

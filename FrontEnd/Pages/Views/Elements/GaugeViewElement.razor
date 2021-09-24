@@ -1,0 +1,19 @@
+<div class="center-text">
+    <RadzenRadialGauge Style="width: 100%; height: 300px;">
+        <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step=@Step Min=@MinimumValue Max=@MaximumValue TickPosition=GaugeTickPosition.Inside>
+            <RadzenRadialGaugeScalePointer Value="1" Length="0.6" ShowValue="false"/>
+        </RadzenRadialGaugeScale>
+    </RadzenRadialGauge>
+</div>
+
+
+@code {
+    [Parameter]
+    public ViewElement View { get; set; }
+    [Parameter]
+    public int MinimumValue { get; set; }
+    [Parameter]
+    public int MaximumValue { get; set; }
+    [Parameter]
+    public int Step {get;set;}
+}

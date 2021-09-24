@@ -14,6 +14,7 @@ using FrontEnd.DataHandlers;
 using FrontEnd.Hubs;
 using Plk.Blazor.DragDrop;
 using Blazored.Modal;
+using Microsoft.AspNetCore.Identity;
 
 namespace FrontEnd
 {
@@ -34,7 +35,7 @@ namespace FrontEnd
             services.AddServerSideBlazor();
             services.AddHttpClient();
             services.AddBlazorDragDrop();
-            services.AddLocalization(Options=> Options.ResourcesPath = "Resources");
+            services.AddLocalization(Options => Options.ResourcesPath = "Resources");
             services.AddControllers();
             services.AddBlazoredModal();
 
@@ -42,6 +43,14 @@ namespace FrontEnd
             services.AddScoped<ApiKeyGenerator>();
             services.AddScoped<DatasetContext>();
             services.AddSingleton<ConfigHandler>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric=false;
+                options.Password.RequiredLength = 6;
+            });
 
             services.AddDbContext<UserContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
@@ -79,7 +88,7 @@ namespace FrontEnd
             app.UseAuthentication();
             app.UseAuthorization();
 
-            var supportedCultures = new[] { "en-US"};
+            var supportedCultures = new[] { "en-US" };
             var localizationOptions = new RequestLocalizationOptions()
                 .SetDefaultCulture(supportedCultures[0])
                 .AddSupportedCultures(supportedCultures)

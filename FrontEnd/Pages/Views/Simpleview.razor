@@ -10,7 +10,6 @@
 
 @implements IAsyncDisposable
 
-
 <div class="container-fluid">
     <div class="row">
         <div class="col">
@@ -31,6 +30,11 @@
                                     case ViewType.Signal:
                                         {
                                             <SignalViewElement View=@element />
+                                            break;
+                                        }
+                                    case ViewType.Gauge:
+                                        {
+                                            <GaugeViewElement MinimumValue=0 MaximumValue=100 Step=5/>
                                             break;
                                         }
                                     default:
