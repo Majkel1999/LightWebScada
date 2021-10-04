@@ -10,6 +10,10 @@
 
 @implements IAsyncDisposable
 
+<div class="center-text">
+    Last Update @m_lastUpdate.ToString("yyyy-MM-dd HH:mm:ss UTC")
+</div>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col">
@@ -39,7 +43,7 @@
                                         }
                                     case ViewType.LineChart:
                                         {
-                                            <LineChartViewElement/>
+                                            <LineChartViewElement View=@element />
                                             break;
                                         }
                                     default:
@@ -61,14 +65,16 @@
 
     private HubConnection m_hubConnection;
     private DataSet m_currentSet;
-    private List<DataSet> m_historyDataSets = new List<DataSet>();
     private View m_view;
+    private DateTime m_lastUpdate = DateTime.Now;
+    private DatasetReader m_reader;
 
     public async ValueTask DisposeAsync()
     {
         await m_hubConnection.SendAsync("LeaveGroup", ViewId.ToString());
         if (m_hubConnection is not null)
             await m_hubConnection.DisposeAsync();
+        m_reader = null;
         DatasetReader.EndSession(ViewId);
     }
 
@@ -79,7 +85,7 @@
         m_view = JsonConvert.DeserializeObject<View>(view.ViewJson);
         Organization org = organizationsContext.Organizations.Where(x => x.OrganizationId ==
         view.OrganizationId).First();
-        DatasetReader reader = DatasetReader.StartSession(ViewId, org);
+        m_reader = DatasetReader.StartSession(ViewId, org);
 
         m_hubConnection = new HubConnectionBuilder()
         .WithUrl("https://localhost:5001/viewhub")
@@ -88,10 +94,10 @@
         m_hubConnection.On<string>("ReceiveData", UpdateView);
         await m_hubConnection.StartAsync();
         await m_hubConnection.SendAsync("JoinGroup", ViewId.ToString());
-        if (reader.LastFrame != null)
+        if (m_reader.LastFrame != null)
         {
-            m_currentSet = JsonConvert.DeserializeObject<DataSet>(reader.LastFrame.Dataset);
-            m_historyDataSets.Add(m_currentSet);
+            m_currentSet = JsonConvert.DeserializeObject<DataSet>(m_reader.LastFrame.Dataset);
+            m_lastUpdate = m_reader.LastFrame.Timestamp;
             UpdateView();
         }
     }
@@ -99,7 +105,7 @@
     private void UpdateView(string message)
     {
         m_currentSet = JsonConvert.DeserializeObject<DataSet>(message);
-        m_historyDataSets.Add(m_currentSet);
+        m_lastUpdate = m_reader.LastFrame.Timestamp;
         UpdateView();
         StateHasChanged();
     }

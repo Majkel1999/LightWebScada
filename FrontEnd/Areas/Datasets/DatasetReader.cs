@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Dapper;
 using DatabaseClasses;
 using Npgsql;
-using Newtonsoft.Json;
 
 namespace FrontEnd.Areas.Datasets
 {

@@ -14,7 +14,6 @@ namespace FrontEnd.Areas.Organizations.Data
         [JsonIgnore] public RegisterType RegisterType => m_registerType;
         [JsonIgnore] public int RegisterAddress => m_registerAddress;
         [JsonIgnore] public int Value => m_value;
-        [JsonIgnore] public bool IsBoolean => false;// RegisterType == RegisterType.CoilRegister || RegisterType == RegisterType.DiscreteInput;
 
         public void SetRegisterAddress(int address) => m_registerAddress = address;
         public void SetRegisterType(RegisterType registerType) => m_registerType = registerType;

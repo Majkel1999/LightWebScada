@@ -37,8 +37,13 @@
                     </div>
                 }
             </div>
-            <div class="center-text" style="margin-top:10px">
-                <button class="btn btn-success" @onclick="() => Save()">Save</button>
+            <div class="row">
+                <div class="center-text col-6" style="margin-top:10px">
+                    <button class="btn btn-success" @onclick="() => SaveViewConfiguration()">Save</button>
+                </div>
+                <div class="center-text col-6" style="margin-top:10px">
+                    <button class="btn btn-danger" @onclick="() => DeleteViewConfiguration()">Delete</button>
+                </div>
             </div>
         </div>
 
@@ -79,17 +84,17 @@
 
     private View m_view = new View();
     private ViewObject m_viewObject;
-    private List<ViewElement> m_emptyList = new();
     private bool m_isEdit = false;
+    private int m_viewId = -1;
 
     protected override void OnParametersSet()
     {
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(NavManager.Uri).Query);
         if (query.TryGetValue("ViewId", out StringValues viewId))
         {
-            int id = int.Parse(viewId.First());
+            m_viewId = int.Parse(viewId.First());
             m_viewObject = viewContext.Views
-            .Where(x => x.Id == id)
+            .Where(x => x.Id == m_viewId)
             .FirstOrDefault();
             m_view = JsonConvert.DeserializeObject<View>(m_viewObject.ViewJson) ?? new View();
             m_isEdit = true;
@@ -104,7 +109,7 @@
         });
     }
 
-    private void Save()
+    private void SaveViewConfiguration()
     {
         if (m_view.RowsCount == 0 || string.IsNullOrEmpty(m_view.Name))
             return;
@@ -125,6 +130,18 @@
         }
         viewContext.SaveChanges();
         NavManager.NavigateTo("/organizations/" + this.OrganizationId, true);
+    }
+
+    private void DeleteViewConfiguration()
+    {
+        ViewObject view = viewContext.Views.Where(x => x.Id == m_viewId).First();
+        Console.WriteLine(view.Name);
+        if (view != null)
+        {
+            viewContext.Views.Remove(view);
+            viewContext.SaveChanges();
+            NavManager.NavigateTo("/organizations/" + this.OrganizationId, true);
+        }
     }
 
     private async void ShowModal(ViewElement element)

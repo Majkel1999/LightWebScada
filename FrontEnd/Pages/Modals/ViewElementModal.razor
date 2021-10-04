@@ -5,16 +5,10 @@
         <EditForm Model=this>
             <label>Register type</label>
             <InputSelect @bind-Value=m_registerType class="form-control">
-                @if (Element.IsBoolean)
-                {
-                    <option value=@RegisterType.CoilRegister>Coil register</option>
-                    <option value=@RegisterType.DiscreteInput>Discrete input</option>
-                }
-                else
-                {
-                    <option value=@RegisterType.InputRegister>Input register</option>
-                    <option value=@RegisterType.HoldingRegister>Holding register</option>
-                }
+                <option value=@RegisterType.CoilRegister>Coil register</option>
+                <option value=@RegisterType.DiscreteInput>Discrete input</option>
+                <option value=@RegisterType.InputRegister>Input register</option>
+                <option value=@RegisterType.HoldingRegister>Holding register</option>
             </InputSelect>
             <labe>Register number</labe>
             <InputNumber @bind-Value=m_registerNumber class="form-control" min=0 max=65535 step=1></InputNumber>
@@ -45,7 +39,7 @@
     async Task SaveAndClose()
     {
         Element.SetRegisterType(m_registerType);
-        if (m_registerNumber > 0 && m_registerNumber < 65535)
+        if (m_registerNumber >= 0 && m_registerNumber < 65535)
             Element.SetRegisterAddress(m_registerNumber);
         await BlazoredModal.CloseAsync(ModalResult.Ok(true));
     }

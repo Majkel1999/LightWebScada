@@ -102,4 +102,11 @@ a, .btn-link {
     padding: 10px;
     height: 100%;
     min-height: 200px;
+    line-height: 100%;
+}
+
+.flex-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }

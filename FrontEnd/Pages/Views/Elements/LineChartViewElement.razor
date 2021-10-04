@@ -1,3 +1,33 @@
+<div class="round-border flex-center">
+    <div class="center-text">
+        <RadzenChart @ref="m_chart">
+            <RadzenLineSeries Data=@m_chartData ValueProperty="Value" CategoryProperty="Date" Title="Value">
+                <RadzenMarkers MarkerType="MarkerType.Circle" />
+            </RadzenLineSeries>
+            <RadzenCategoryAxis Padding="20" FormatString="{0:HH:mm:ss}" />
+            <RadzenValueAxis>
+                <RadzenGridLines Visible="true" />
+            </RadzenValueAxis>
+        </RadzenChart>
+    </div>
+</div>
 
 @code {
+    [Parameter]
+    public ViewElement View { get; set; }
+    public List<ChartItem> m_chartData { get; set; } = new List<ChartItem>();
+
+    private RadzenChart m_chart { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        m_chartData.Add(new ChartItem(View.Value, DateTime.Now));
+
+        if (m_chartData.Count > 20)
+            m_chartData.RemoveRange(0, m_chartData.Count - 20);
+
+        m_chartData = m_chartData.ToList();
+        m_chart?.Reload();
+        StateHasChanged();
+    }
 }

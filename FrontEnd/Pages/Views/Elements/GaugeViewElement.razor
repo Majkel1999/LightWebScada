@@ -1,4 +1,4 @@
-<div class="round-border">
+<div class="round-border flex-center">
     <div class="center-text">
         <RadzenRadialGauge Style="width: 100%; height: 300px;">
             <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step=@Step Min=@MinimumValue Max=@MaximumValue
@@ -6,7 +6,8 @@
                 <RadzenRadialGaugeScalePointer Value=@View.Value Length="0.6" ShowValue="false" />
             </RadzenRadialGaugeScale>
         </RadzenRadialGauge>
-        Holding Register 5 //ToDo
+        <br/>
+        <b>Value: @View.Value</b>
     </div>
 </div>
 
