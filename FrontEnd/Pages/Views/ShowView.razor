@@ -34,7 +34,12 @@
                                         }
                                     case ViewType.Gauge:
                                         {
-                                            <GaugeViewElement MinimumValue=0 MaximumValue=100 Step=5/>
+                                            <GaugeViewElement View=@element />
+                                            break;
+                                        }
+                                    case ViewType.LineChart:
+                                        {
+                                            <LineChartViewElement/>
                                             break;
                                         }
                                     default:
@@ -56,6 +61,7 @@
 
     private HubConnection m_hubConnection;
     private DataSet m_currentSet;
+    private List<DataSet> m_historyDataSets = new List<DataSet>();
     private View m_view;
 
     public async ValueTask DisposeAsync()
@@ -85,6 +91,7 @@
         if (reader.LastFrame != null)
         {
             m_currentSet = JsonConvert.DeserializeObject<DataSet>(reader.LastFrame.Dataset);
+            m_historyDataSets.Add(m_currentSet);
             UpdateView();
         }
     }
@@ -92,6 +99,7 @@
     private void UpdateView(string message)
     {
         m_currentSet = JsonConvert.DeserializeObject<DataSet>(message);
+        m_historyDataSets.Add(m_currentSet);
         UpdateView();
         StateHasChanged();
     }
