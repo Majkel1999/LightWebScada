@@ -52,7 +52,7 @@ namespace LigthScadaClient.Logic
         public async Task SendData(DataSet data, string apiKey)
         {
             DataFrame frame = new DataFrame();
-            frame.Date = DateTime.UtcNow;
+            frame.Timestamp = DateTime.UtcNow;
             frame.Name = LocalConfiguration.Instance.Name;
             frame.Dataset = JsonConvert.SerializeObject(data);
             HttpRequestMessage request = new HttpRequestMessage();

@@ -22,7 +22,7 @@ namespace LightScadaAPI.Contexts
             try
             {
                 Organization organization = db.Query<Organization>(@"SELECT * FROM common.organization WHERE ""ApiKey"" = @apiKey", new { apiKey }).First();
-                string query = "Insert into " + GetTableName(organization) + @"(""ClientName"", ""Timestamp"", ""Dataset"") Values (@Name,@Date,@Dataset)";
+                string query = "Insert into " + GetTableName(organization) + @"(""ClientName"", ""Timestamp"", ""Dataset"") Values (@Name,@Timestamp,@Dataset)";
                 await db.ExecuteAsync(query, dataFrame);
                 return true;
             }
