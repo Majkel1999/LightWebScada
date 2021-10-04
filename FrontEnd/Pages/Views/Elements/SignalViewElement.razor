@@ -1,10 +1,20 @@
-<div class="center-text">
-    <p>Signal</p>
-    <div>
-        @($"{View.RegisterType} {View.RegisterAddress}")
+<div class="round-border">
+    <div class="center-text">
+        <div>
+            @($"{View.RegisterType} {View.RegisterAddress}")
+        </div>
+        <br />
+        @if (View.Value == 0)
+        {
+            <img src="/images/red_ico.png" style="width:100px" />
+        }
+        else
+        {
+            <img src="/images/green_ico.png" style="width:100px" />
+        }
+        <br />
+        <b>Value: @View.Value</b>
     </div>
-    <br />
-    <b>@View.Value</b>
 </div>
 
 
