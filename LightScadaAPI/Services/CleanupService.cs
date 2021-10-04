@@ -22,7 +22,6 @@ public class CleanupService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine("Hello from bg task");
         await CheckTablesPerodically(stoppingToken);
     }
 
