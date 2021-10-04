@@ -34,7 +34,7 @@ namespace LightScadaAPI.Contexts
 
         private static string GetTableName(Organization organization)
         {
-            return ("public." + organization.Name + "_" + organization.OrganizationId + "_data");
+            return ("public.org_" + organization.OrganizationId + "_data");
         }
     }
 }
