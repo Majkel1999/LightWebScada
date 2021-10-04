@@ -1,19 +1,29 @@
-<div class="center-text">
-    <RadzenRadialGauge Style="width: 100%; height: 300px;">
-        <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step=@Step Min=@MinimumValue Max=@MaximumValue TickPosition=GaugeTickPosition.Inside>
-            <RadzenRadialGaugeScalePointer Value="1" Length="0.6" ShowValue="false"/>
-        </RadzenRadialGaugeScale>
-    </RadzenRadialGauge>
+<div class="round-border">
+    <div class="center-text">
+        <RadzenRadialGauge Style="width: 100%; height: 300px;">
+            <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step=@Step Min=@MinimumValue Max=@MaximumValue
+                TickPosition=GaugeTickPosition.Inside>
+                <RadzenRadialGaugeScalePointer Value=@View.Value Length="0.6" ShowValue="false" />
+            </RadzenRadialGaugeScale>
+        </RadzenRadialGauge>
+        Holding Register 5 //ToDo
+    </div>
 </div>
 
 
 @code {
     [Parameter]
     public ViewElement View { get; set; }
-    [Parameter]
-    public int MinimumValue { get; set; }
-    [Parameter]
-    public int MaximumValue { get; set; }
-    [Parameter]
-    public int Step {get;set;}
+
+    public int MinimumValue = 0;
+    public int MaximumValue = 10;
+    public int Step = 5;
+
+    protected override void OnParametersSet()
+    {
+        if (View.Value > MaximumValue){
+            MaximumValue = View.Value;
+            Step = MaximumValue / 10;
+        }
+    }
 }
