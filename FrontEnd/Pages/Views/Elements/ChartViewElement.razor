@@ -1,3 +1,6 @@
+@using DataRegisters
+@using Newtonsoft.Json
+
 <div class="round-border flex-center">
     <div class="center-text">
         <RadzenChart @ref="m_chart">
@@ -15,12 +18,23 @@
 @code {
     [Parameter]
     public ViewElement View { get; set; }
+    [Parameter]
+    public List<DataFrame> InitialData { get; set; }
     public List<ChartItem> m_chartData { get; set; } = new List<ChartItem>();
 
     private RadzenChart m_chart { get; set; }
 
     protected override void OnParametersSet()
     {
+        if (InitialData != null && m_chartData.Count < 20)
+        {
+            foreach (DataFrame frame in InitialData)
+            {
+                DataSet set = JsonConvert.DeserializeObject<DataSet>(frame.Dataset);
+                m_chartData.Add(new ChartItem(set.GetValue(View.RegisterAddress, View.RegisterType), frame.Timestamp.ToLocalTime()));
+            }
+        }
+
         m_chartData.Add(new ChartItem(View.Value, DateTime.Now));
 
         if (m_chartData.Count > 20)

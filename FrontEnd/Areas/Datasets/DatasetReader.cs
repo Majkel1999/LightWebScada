@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Dapper;
 using DatabaseClasses;
 using Npgsql;
+using System.Collections.Generic;
 
 namespace FrontEnd.Areas.Datasets
 {
@@ -39,6 +40,15 @@ namespace FrontEnd.Areas.Datasets
         {
             if (m_instances.ContainsKey(viewId))
                 m_instances[viewId].RemoveClient();
+        }
+
+        public List<DataFrame> GetLastValues()
+        {
+            using (IDbConnection db = new NpgsqlConnection(m_connectionString))
+            {
+                List<DataFrame> dataSets = db.Query<DataFrame>(@"Select * From " + DatasetContext.GetTableName(m_organization) + @" Order By ""Timestamp"" DESC LIMIT 20").ToList();
+                return dataSets;
+            }
         }
 
         private DatasetReader(string connectionString, int viewId, Organization organization)

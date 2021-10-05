@@ -11,7 +11,7 @@
 @implements IAsyncDisposable
 
 <div class="center-text">
-    Last Update @m_lastUpdate.ToString("yyyy-MM-dd HH:mm:ss UTC")
+    Last Update @m_lastUpdate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
 </div>
 
 <div class="container-fluid">
@@ -23,7 +23,7 @@
                     <div class="row">
                         @foreach (ViewElement element in row.Elements)
                         {
-                            <div class="col-4" style="margin:0 auto">
+                            <div class="col" style="margin:0 auto">
                                 @switch (element.ViewType)
                                 {
                                     case ViewType.Text:
@@ -43,7 +43,7 @@
                                         }
                                     case ViewType.LineChart:
                                         {
-                                            <LineChartViewElement View=@element />
+                                            <ChartViewElement View=@element InitialData=@m_initialData />
                                             break;
                                         }
                                     default:
@@ -64,10 +64,11 @@
     public int ViewId { get; set; }
 
     private HubConnection m_hubConnection;
-    private DataSet m_currentSet;
-    private View m_view;
-    private DateTime m_lastUpdate = DateTime.Now;
     private DatasetReader m_reader;
+    private View m_view;
+    private DataSet m_currentSet;
+    private DateTime m_lastUpdate = DateTime.Now;
+    private List<DataFrame> m_initialData = new List<DataFrame>();
 
     public async ValueTask DisposeAsync()
     {
@@ -83,8 +84,7 @@
         await base.OnParametersSetAsync();
         ViewObject view = viewContext.Views.Where(x => x.Id == ViewId).First();
         m_view = JsonConvert.DeserializeObject<View>(view.ViewJson);
-        Organization org = organizationsContext.Organizations.Where(x => x.OrganizationId ==
-        view.OrganizationId).First();
+        Organization org = organizationsContext.Organizations.Where(x => x.OrganizationId == view.OrganizationId).First();
         m_reader = DatasetReader.StartSession(ViewId, org);
 
         m_hubConnection = new HubConnectionBuilder()
@@ -94,12 +94,16 @@
         m_hubConnection.On<string>("ReceiveData", UpdateView);
         await m_hubConnection.StartAsync();
         await m_hubConnection.SendAsync("JoinGroup", ViewId.ToString());
+
         if (m_reader.LastFrame != null)
         {
             m_currentSet = JsonConvert.DeserializeObject<DataSet>(m_reader.LastFrame.Dataset);
             m_lastUpdate = m_reader.LastFrame.Timestamp;
             UpdateView();
         }
+
+        if (m_view.Rows.Any(x => x.Elements.Any(x => x.ViewType == ViewType.LineChart)))
+            m_initialData = m_reader.GetLastValues();
     }
 
     private void UpdateView(string message)
