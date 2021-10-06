@@ -16,6 +16,8 @@
 </div>
 
 @code {
+    private const int MaximumPoints = 50;
+
     [Parameter]
     public ViewElement View { get; set; }
     [Parameter]
@@ -26,7 +28,7 @@
 
     protected override void OnParametersSet()
     {
-        if (InitialData != null && m_chartData.Count < 20)
+        if (InitialData != null && m_chartData.Count < MaximumPoints)
         {
             foreach (DataFrame frame in InitialData)
             {
@@ -37,8 +39,8 @@
 
         m_chartData.Add(new ChartItem(View.Value, DateTime.Now));
 
-        if (m_chartData.Count > 20)
-            m_chartData.RemoveRange(0, m_chartData.Count - 20);
+        if (m_chartData.Count > MaximumPoints)
+            m_chartData.RemoveRange(0, m_chartData.Count - MaximumPoints);
 
         m_chartData = m_chartData.ToList();
         m_chart?.Reload();
