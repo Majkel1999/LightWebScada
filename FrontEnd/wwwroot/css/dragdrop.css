@@ -1,33 +1,47 @@
 ﻿    .plk-dd-inprogess>* {
         pointer-events: none;
     }
-    
+
     .plk-dd-dropzone {
         min-height: 50px;
     }
-    
+
     .plk-dd-spacing {
         height: 10px;
     }
-    
+
     .plk-dd-spacing-dragged-over {
         padding: 25px;
     }
-    
+
     .plk-dd-dragged-over-denied {
         background-color: red;
         opacity: 0.6;
     }
-    
+
     .plk-dd-in-transit {
         opacity: 0;
     }
-    
+
     .plk-flex .plk-dd-spacing {
         width: 20px;
         height: auto;
     }
-    
+
+    .plk-static-zone {
+        min-height: 100%;
+        min-width: 100%;
+    }
+
+    .delete-zone {
+        background-repeat: no-repeat;
+        background-image: url('/images/trash.png');
+        background-size: 80%;
+        background-position: 50% 50%;
+        min-height: 400px;
+        min-width: 200px;
+    }
+
     .plk-dd-noselect {
         -webkit-touch-callout: none;
         /* iOS Safari */

@@ -33,7 +33,20 @@ namespace FrontEnd.Areas.Organizations.Data
                 if (row.Elements.Contains(element))
                 {
                     row.Elements.Remove(element);
-                    return;
+                    break;
+                }
+            }
+            CheckRows();
+        }
+
+        private void CheckRows()
+        {
+            for (int i = 0; i < m_viewRows.Count; i++)
+            {
+                if (m_viewRows[i].Elements.Count == 0)
+                {
+                    m_viewRows.RemoveAt(i);
+                    i--;
                 }
             }
         }

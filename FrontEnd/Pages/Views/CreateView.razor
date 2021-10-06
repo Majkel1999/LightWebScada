@@ -17,7 +17,7 @@
             <div class="form-group">
                 <label for="organization name"><b></b></label>
                 <InputText id="username" @bind-Value="m_view.Name" class="form-control" required
-                    placeholder="View name" />
+                           placeholder="View name" />
             </div>
         </EditForm>
     </div>
@@ -32,8 +32,9 @@
                 {
                     <div class="row">
                         <button class="btn btn-primary" @onclick="() => AddElement(type)"
-                        style="margin:auto;margin-top:10px">
-                            Add @type.ToString()</button>
+                                style="margin:auto;margin-top:10px">
+                            Add @type.ToString()
+                        </button>
                     </div>
                 }
             </div>
@@ -44,6 +45,11 @@
                 <div class="center-text col-6" style="margin-top:10px">
                     <button class="btn btn-danger" @onclick="() => DeleteViewConfiguration()">Delete</button>
                 </div>
+            </div>
+
+            <div class="row center-border delete-zone">
+                <Dropzone Items="m_elements" Class="plk-static-zone" InstantReplace="true" TItem="ViewElement"
+                          OnItemDrop="@((x) => RemoveObject(x))"/>
             </div>
         </div>
 
@@ -59,16 +65,18 @@
                                         <b>@context.ViewType.ToString()</b>
                                     </div>
                                     <hr class="container-line side-margin">
-                                    <div class="side-margin" style="text-align:center">@context.RegisterType.ToString()
-                                    </div>
-                                    <br />
-                                    <div class="side-margin" style="text-align:center">@context.RegisterAddress.ToString()
-                                    </div>
+                                    <div class="side-margin" style="text-align:center">
+                                        @context.RegisterType.ToString()
                                 </div>
+                                <br />
+                                <div class="side-margin" style="text-align:center">
+                                    @context.RegisterAddress.ToString()
                             </div>
-                        </Dropzone>
+                        </div>
                     </div>
-                }
+                </Dropzone>
+            </div>
+        }
             </div>
         </div>
     </div>
@@ -84,6 +92,8 @@
 
     private View m_view = new View();
     private ViewObject m_viewObject;
+    private ViewElement m_element;
+    private List<ViewElement> m_elements = new List<ViewElement>();
     private bool m_isEdit = false;
     private int m_viewId = -1;
 
