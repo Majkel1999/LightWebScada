@@ -36,10 +36,12 @@
     .delete-zone {
         background-repeat: no-repeat;
         background-image: url('/images/trash.png');
-        background-size: 80%;
+        background-size: 10%;
         background-position: 50% 50%;
-        min-height: 400px;
-        min-width: 200px;
+        background-color: #dadada;
+        min-height: 200px;
+        min-width: 100px;
+        border: none;
     }
 
     .plk-dd-noselect {
