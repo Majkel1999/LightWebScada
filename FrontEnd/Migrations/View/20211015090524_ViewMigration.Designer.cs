@@ -9,8 +9,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FrontEnd.Migrations.View
 {
     [DbContext(typeof(ViewContext))]
-    [Migration("20210912080937_Views2")]
-    partial class Views2
+    [Migration("20211015090524_ViewMigration")]
+    partial class ViewMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,6 +27,9 @@ namespace FrontEnd.Migrations.View
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("integer");

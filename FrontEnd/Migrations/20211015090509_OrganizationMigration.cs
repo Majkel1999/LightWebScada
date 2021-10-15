@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FrontEnd.Migrations
 {
-    public partial class ConfigName : Migration
+    public partial class OrganizationMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -33,7 +33,8 @@ namespace FrontEnd.Migrations
                 {
                     OrganizationId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true)
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    ApiKey = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

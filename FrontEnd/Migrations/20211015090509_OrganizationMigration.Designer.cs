@@ -9,8 +9,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FrontEnd.Migrations
 {
     [DbContext(typeof(OrganizationContext))]
-    [Migration("20210718195440_apikeys")]
-    partial class apikeys
+    [Migration("20211015090509_OrganizationMigration")]
+    partial class OrganizationMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -18,10 +18,10 @@ namespace FrontEnd.Migrations
             modelBuilder
                 .HasDefaultSchema("common")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.7")
+                .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("FrontEnd.Areas.Organizations.Data.ClientConfigEntity", b =>
+            modelBuilder.Entity("DatabaseClasses.ClientConfigEntity", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -42,7 +42,7 @@ namespace FrontEnd.Migrations
                     b.ToTable("clientconfigentity");
                 });
 
-            modelBuilder.Entity("FrontEnd.Areas.Organizations.Data.Organization", b =>
+            modelBuilder.Entity("DatabaseClasses.Organization", b =>
                 {
                     b.Property<int>("OrganizationId")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,7 @@ namespace FrontEnd.Migrations
                     b.ToTable("organization");
                 });
 
-            modelBuilder.Entity("FrontEnd.Areas.Organizations.Data.OrganizationMember", b =>
+            modelBuilder.Entity("DatabaseClasses.OrganizationMember", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -83,9 +83,9 @@ namespace FrontEnd.Migrations
                     b.ToTable("organizationmember");
                 });
 
-            modelBuilder.Entity("FrontEnd.Areas.Organizations.Data.OrganizationMember", b =>
+            modelBuilder.Entity("DatabaseClasses.OrganizationMember", b =>
                 {
-                    b.HasOne("FrontEnd.Areas.Organizations.Data.Organization", "Organization")
+                    b.HasOne("DatabaseClasses.Organization", "Organization")
                         .WithMany()
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
