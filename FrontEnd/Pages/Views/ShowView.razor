@@ -43,7 +43,7 @@
                                         }
                                     case ViewType.LineChart:
                                         {
-                                            <ChartViewElement View=@element InitialData=@m_initialData />
+                                            <LineChartViewElement View=@element />
                                             break;
                                         }
                                     default:
@@ -102,8 +102,11 @@
             UpdateView();
         }
 
-        if (m_view.Rows.Any(x => x.Elements.Any(x => x.ViewType == ViewType.LineChart)))
-            m_initialData = m_reader.GetLastValues();
+        foreach (ViewRow row in m_view.Rows)
+        {
+            foreach (ViewElement element in row.Elements.Where(x => x.ViewType == ViewType.LineChart))
+                element.SetInitialData(m_reader.GetLastValues(element.RegisterType, element.RegisterAddress));
+        }
     }
 
     private void UpdateView(string message)

@@ -8,18 +8,9 @@
         HoldingRegister
     }
 
-    public abstract class Register
-    {
-        public int RegisterAddress { get; set; }
-    }
-
-    public class DiscreteRegister : Register
-    {
-        public bool CurrentValue { get; set; }
-    }
-
-    public class ValueRegister : Register
+    public class Register
     {
         public int CurrentValue { get; set; }
+        public int RegisterAddress { get; set; }
     }
 }

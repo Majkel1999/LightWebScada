@@ -9,6 +9,7 @@ using Dapper;
 using DatabaseClasses;
 using Npgsql;
 using System.Collections.Generic;
+using DataRegisters;
 
 namespace FrontEnd.Areas.Datasets
 {
@@ -42,12 +43,19 @@ namespace FrontEnd.Areas.Datasets
                 m_instances[viewId].RemoveClient();
         }
 
-        public List<DataFrame> GetLastValues()
+        public List<RegisterFrame> GetLastValues(RegisterType type, int registerAddress)
         {
-            using (IDbConnection db = new NpgsqlConnection(m_connectionString))
+            using (NpgsqlConnection db = new NpgsqlConnection(m_connectionString))
             {
-                List<DataFrame> dataSets = db.Query<DataFrame>(@"Select * From " + DatasetContext.GetTableName(m_organization) + @" Order By ""Timestamp"" DESC LIMIT 20").ToList();
-                return dataSets;
+                db.Open();
+                string query = @"Select * From " + DatasetContext.GetTableName(m_organization) +
+                $@" WHERE ""RegisterAddress""=@address AND ""RegisterType""=@type Order By ""Timestamp"" DESC LIMIT 20 ";
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("type", (int)type);
+                parameters.Add("address", registerAddress);
+                List<RegisterFrame> dataFrames = db.Query<RegisterFrame>(query, parameters).ToList();
+                db.Close();
+                return dataFrames;
             }
         }
 
@@ -101,17 +109,17 @@ namespace FrontEnd.Areas.Datasets
 
             while (m_stayAlive && m_clients > 0)
             {
-                using (IDbConnection db = new NpgsqlConnection(m_connectionString))
-                {
-                    m_lastFrame = db.Query<DataFrame>
-                         (@"Select * From " + DatasetContext.GetTableName(m_organization) + @" Order By ""Timestamp"" DESC")
-                         .FirstOrDefault();
-                    if (m_lastId != m_lastFrame.Id)
-                    {
-                        m_lastId = m_lastFrame.Id;
-                        await hubConnection.SendAsync("SendMessage", m_lastFrame.Dataset, m_viewId.ToString());
-                    }
-                }
+                // using (IDbConnection db = new NpgsqlConnection(m_connectionString))
+                // {
+                //     m_lastFrame = db.Query<DataFrame>
+                //          (@"Select * From " + DatasetContext.GetTableName(m_organization) + @" Order By ""Timestamp"" DESC")
+                //          .FirstOrDefault();
+                //     if (m_lastId != m_lastFrame.Id)
+                //     {
+                //         m_lastId = m_lastFrame.Id;
+                //         await hubConnection.SendAsync("SendMessage", m_lastFrame.Dataset, m_viewId.ToString());
+                //     }
+                // }
                 Thread.Sleep(2000);
             }
             m_mutex.WaitOne();

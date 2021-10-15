@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -27,19 +28,19 @@ namespace LightScadaAPI.Contexts
                 Organization organization = db.Query<Organization>(@"SELECT * FROM common.organization WHERE ""ApiKey"" = @apiKey", new { apiKey }).First();
                 DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(dataFrame.Dataset);
                 string tableName = GetTableName(organization);
+
                 NpgsqlCommand insertCommand = new NpgsqlCommand(@"Insert into " + tableName + @" (""ClientId"", ""Timestamp"", ""RegisterType"", ""RegisterAddress"", ""Value"") 
                 values (@id,@timestamp,@registerType,@registerAddress,@value)", db);
-                foreach (var reg in dataSet.CoilRegisters)
+
+                int i = 0;
+                foreach (List<Register> registers in dataSet.GetRegisters())
                 {
-                    insertCommand.Parameters.AddWithValue("id", dataFrame.ClientId);
-                    insertCommand.Parameters.AddWithValue("timestamp", dataFrame.Timestamp);
-                    insertCommand.Parameters.AddWithValue("registerType", (int)RegisterType.CoilRegister);
-                    insertCommand.Parameters.AddWithValue("registerAddress", reg.RegisterAddress);
-                    insertCommand.Parameters.AddWithValue("value", reg.CurrentValue ? 1 : 0);
-                    await insertCommand.PrepareAsync();
-                    await insertCommand.ExecuteNonQueryAsync();
-                    insertCommand.Parameters.Clear();
+                    foreach (var reg in registers)
+                        await SaveRegisterFrame(dataFrame, insertCommand, reg, i);
+                    i++;
                 }
+
+                await db.CloseAsync();
                 return true;
             }
             catch (Exception e)
@@ -47,6 +48,18 @@ namespace LightScadaAPI.Contexts
                 Console.WriteLine(e.Message);
                 return false;
             }
+        }
+
+        private static async Task SaveRegisterFrame(DataFrame dataFrame, NpgsqlCommand insertCommand, Register reg, int type)
+        {
+            insertCommand.Parameters.AddWithValue("id", dataFrame.ClientId);
+            insertCommand.Parameters.AddWithValue("timestamp", dataFrame.Timestamp);
+            insertCommand.Parameters.AddWithValue("registerType", type);
+            insertCommand.Parameters.AddWithValue("registerAddress", reg.RegisterAddress);
+            insertCommand.Parameters.AddWithValue("value", reg.CurrentValue);
+            await insertCommand.PrepareAsync();
+            await insertCommand.ExecuteNonQueryAsync();
+            insertCommand.Parameters.Clear();
         }
 
         private static string GetTableName(Organization organization)

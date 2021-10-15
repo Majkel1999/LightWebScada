@@ -57,7 +57,7 @@ namespace LigthScadaClient.Logic
                     }
                     catch
                     {
-                        return "COP Port is already open";
+                        return "COM Port is already open";
                     }
                 }
             }

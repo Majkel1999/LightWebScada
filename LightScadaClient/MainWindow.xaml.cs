@@ -107,7 +107,6 @@ namespace LigthScadaClient
             if (m_isConfigDirty)
             {
                 m_modbusCommunication = new ModbusCommunication();
-                m_modbusCommunication.OnError += OnCommunicationError;
                 m_isConfigDirty = false;
             }
             Task.Run(() =>
@@ -143,7 +142,6 @@ namespace LigthScadaClient
                 LocalConfiguration.Instance.ClientId = (int)(IdInputBox.Value ?? 1);
                 LocalConfiguration.Instance.ApiKey = ApiKeyTextBox.Text;
                 LocalConfiguration.Instance.IP = IPTextBox.Text;
-                LocalConfiguration.Instance.SlaveID = 1;
                 LocalConfiguration.Instance.SlaveID = int.TryParse(SlaveIdTextBox.Text, out int ID) ? ID : 1;
                 _ = int.TryParse(PortTextBox.Text, out LocalConfiguration.Instance.TCPPort);
                 m_modbusCommunication?.Stop();
@@ -159,7 +157,6 @@ namespace LigthScadaClient
                 LocalConfiguration.Instance.StopBits = StopBitsComboBox.SelectedIndex == -1 ? StopBits.None : (StopBits)StopBitsComboBox.SelectedItem;
                 LocalConfiguration.Instance.Baudrate = (int)BaudrateComboBox.SelectedItem;
                 m_modbusCommunication?.Stop();
-                SwitchButtonStates(true);
             }
         }
 
@@ -176,11 +173,6 @@ namespace LigthScadaClient
         private void OnWindowClose(object sender, EventArgs e)
         {
             LocalConfiguration.Instance.SaveConfiguration();
-        }
-
-        private void OnCommunicationError()
-        {
-
         }
 
         private void UpdateConfigsBox(List<ClientConfigEntity> configs)
