@@ -45,10 +45,10 @@ namespace LigthScadaClient
         private void LoadSavedData()
         {
             ApiKeyTextBox.Text = LocalConfiguration.Instance.ApiKey;
-            NameTextBox.Text = LocalConfiguration.Instance.Name;
             IPTextBox.Text = LocalConfiguration.Instance.IP;
             PortTextBox.Text = LocalConfiguration.Instance.TCPPort.ToString();
             SlaveIdTextBox.Text = LocalConfiguration.Instance.SlaveID.ToString();
+            IdInputBox.Value = LocalConfiguration.Instance.ClientId;
 
             ParityComboBox.SelectedItem = LocalConfiguration.Instance.Parity;
             StopBitsComboBox.SelectedItem = LocalConfiguration.Instance.StopBits;
@@ -131,18 +131,22 @@ namespace LigthScadaClient
             SwitchButtonStates(true);
         }
 
+        private void IdValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
+        {
+            OnConfigTextChange(this,null);
+        }
+
         private void OnConfigTextChange(object sender, TextChangedEventArgs e)
         {
             if (m_isInitialized)
             {
-                LocalConfiguration.Instance.Name = NameTextBox.Text;
+                LocalConfiguration.Instance.ClientId = (int)(IdInputBox.Value ?? 1);
                 LocalConfiguration.Instance.ApiKey = ApiKeyTextBox.Text;
                 LocalConfiguration.Instance.IP = IPTextBox.Text;
                 LocalConfiguration.Instance.SlaveID = 1;
                 LocalConfiguration.Instance.SlaveID = int.TryParse(SlaveIdTextBox.Text, out int ID) ? ID : 1;
                 _ = int.TryParse(PortTextBox.Text, out LocalConfiguration.Instance.TCPPort);
                 m_modbusCommunication?.Stop();
-                SwitchButtonStates(true);
             }
         }
 

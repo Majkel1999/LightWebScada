@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:mahaaps="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:local="clr-namespace:LigthScadaClient"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="850"
@@ -23,16 +24,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.2*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
+
             <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                   FontWeight="Bold" FontSize="14">Name</Label>
-            <TextBox x:Name="NameTextBox" Grid.Column="1" Margin="5" VerticalContentAlignment="Center" TextChanged="OnConfigTextChange">
-                Default name</TextBox>
+                   FontWeight="Bold" FontSize="14">ID</Label>
+
+            <mahaaps:NumericUpDown x:Name="IdInputBox" Grid.Column="1" Margin="5" Value="1" Minimum="1" Maximum="99"
+                                   NumericInputMode="Numbers" ValueChanged="IdValueChanged"/>
         </Grid>
 
         <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
@@ -82,8 +84,12 @@
                FontWeight="Bold" FontSize="16">Modbus Configuration</Label>
 
         <Grid Grid.Row="1" Grid.Column="3" Grid.RowSpan="3">
-            
-            <Grid x:Name="TCPConfigurationGrid" IsEnabled="False" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="33*"/>
+                <ColumnDefinition Width="250*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid x:Name="TCPConfigurationGrid" IsEnabled="False" Visibility="Hidden" Grid.ColumnSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.4*"/>
                     <RowDefinition Height="*"/>
@@ -99,7 +105,7 @@
                 <Button Grid.Row="4" Content="Save" Margin="10 25 10 25"/>
             </Grid>
 
-            <Grid x:Name="RTUConfigurationGrid" IsEnabled="False" Visibility="Hidden">
+            <Grid x:Name="RTUConfigurationGrid" IsEnabled="False" Visibility="Hidden" Grid.ColumnSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.8*"/>
                     <RowDefinition Height="*"/>
@@ -124,7 +130,7 @@
                 <Label Grid.Row="8" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">Stop bits</Label>
                 <ComboBox Grid.Row="9" x:Name="StopBitsComboBox" Margin="10 0" SelectionChanged="OnConfigurationSelectionChange"/>
             </Grid>
-            
+
         </Grid>
 
         <Border Margin="10" Grid.Row="3" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="2" CornerRadius="8">

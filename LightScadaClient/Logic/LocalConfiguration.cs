@@ -13,7 +13,7 @@ namespace LigthScadaClient.Logic
     {
         private const string FileName = "config.cfg";
 
-        public string Name;
+        public int ClientId = 1;
         public string ApiKey;
         public string COMPort;
         public string IP;
@@ -42,7 +42,7 @@ namespace LigthScadaClient.Logic
             {
                 if (TCPPort < 0 || TCPPort > 65535)
                     return "TCP Port not in range 0-65535";
-                
+
             }
             else
             {
