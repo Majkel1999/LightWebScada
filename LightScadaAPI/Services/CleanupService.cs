@@ -29,7 +29,6 @@ public class CleanupService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            Console.WriteLine(DateTime.Now + " : Tables cleaned up");
             using IDbConnection db = new NpgsqlConnection(m_connectionString);
             List<int> ids = db.Query<int>(@"SELECT ""OrganizationId"" FROM common.organization").ToList();
             foreach (int id in ids)
@@ -53,6 +52,7 @@ public class CleanupService : BackgroundService
                     continue;
                 }
             }
+            Console.WriteLine(DateTime.Now + " : Tables cleaned up");
             await Task.Delay(300000, stoppingToken);
         }
     }

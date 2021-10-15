@@ -14,7 +14,7 @@ namespace LigthScadaClient.Logic
 {
     public class ServerCommunication : Singleton<ServerCommunication>
     {
-        private const string ApiUrl = "https://localhost:5003";
+        private const string ApiUrl = "http://maluch.mikr.us:30104";
 
         private HttpClient m_client;
 

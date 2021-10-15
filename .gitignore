@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 .vscode
 LightScadaClient/config.cfg
+linux
+keys

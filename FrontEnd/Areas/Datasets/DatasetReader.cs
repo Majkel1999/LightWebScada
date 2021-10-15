@@ -94,7 +94,7 @@ namespace FrontEnd.Areas.Datasets
         {
             Console.WriteLine($"Update starting on {m_viewId}");
             HubConnection hubConnection = new HubConnectionBuilder()
-                .WithUrl("https://localhost:5001/viewhub")
+                .WithUrl("http://localhost:5000/viewhub")
                 .Build();
 
             await hubConnection.StartAsync();

@@ -1,6 +1,9 @@
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,9 +15,8 @@ using FrontEnd.Areas.Organizations.Data;
 using FrontEnd.DatabaseConnection;
 using FrontEnd.DataHandlers;
 using FrontEnd.Hubs;
-using Plk.Blazor.DragDrop;
 using Blazored.Modal;
-using Microsoft.AspNetCore.Identity;
+using Plk.Blazor.DragDrop;
 
 namespace FrontEnd
 {
@@ -38,6 +40,11 @@ namespace FrontEnd
             services.AddLocalization(Options => Options.ResourcesPath = "Resources");
             services.AddControllers();
             services.AddBlazoredModal();
+
+            services.AddDataProtection()
+                .SetApplicationName("LightWebScada")
+                .PersistKeysToFileSystem(new System.IO.DirectoryInfo("keys"))
+                .SetDefaultKeyLifetime(TimeSpan.FromDays(3650));
 
             services.AddScoped<TokenProvider>();
             services.AddScoped<ApiKeyGenerator>();
@@ -80,7 +87,7 @@ namespace FrontEnd
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
