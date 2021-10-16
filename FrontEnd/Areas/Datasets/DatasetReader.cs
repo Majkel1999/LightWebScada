@@ -44,49 +44,59 @@ namespace FrontEnd.Areas.Datasets
                 m_instances[viewId].RemoveClient();
         }
 
-        public List<RegisterFrame> GetLastValues(RegisterType type, int registerAddress)
+        public List<RegisterFrame> GetLastValues(RegisterType type, int registerAddress, int clientId)
         {
             using (NpgsqlConnection db = new NpgsqlConnection(m_connectionString))
             {
                 db.Open();
                 string query = @"Select * From " + DatasetContext.GetTableName(m_organization) +
-                $@" WHERE ""RegisterAddress""=@address AND ""RegisterType""=@type Order By ""Timestamp"" DESC LIMIT 20 ";
+                $@" WHERE ""RegisterAddress""=@address AND ""RegisterType""=@type AND ""ClientId""=@clientId Order By ""Timestamp"" DESC LIMIT 20 ";
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("type", (int)type);
                 parameters.Add("address", registerAddress);
+                parameters.Add("clientId", clientId);
                 List<RegisterFrame> dataFrames = db.Query<RegisterFrame>(query, parameters).ToList();
                 db.Close();
                 return dataFrames;
             }
         }
 
-        private List<string> PrepareQueryStrings(List<(int, RegisterType)> registers)
+        private List<string> PrepareQueryStrings(List<(int, int, RegisterType)> registers)
         {
             List<string> queries = new List<string>();
             foreach (RegisterType type in Enum.GetValues(typeof(RegisterType)))
             {
-                string query = @"SELECT DISTINCT ON (""RegisterAddress"") * FROM " + DatasetContext.GetTableName(m_organization) + GetWhereClause(type) +
-                @"AND ""RegisterAddress"" IN (";
-                int limit = 0;
-                foreach (var tuple in registers.Where(x => x.Item2 == type))
+                List<int> distinctClients = registers
+                    .GroupBy(x => x.Item2)
+                    .Select(x => x.FirstOrDefault())
+                    .Select(x => x.Item2)
+                    .ToList();
+
+                foreach (int clientId in distinctClients)
                 {
-                    query += tuple.Item1 + ",";
-                    limit++;
+                    string query = @"SELECT DISTINCT ON (""RegisterAddress"") * FROM " + DatasetContext.GetTableName(m_organization) + GetWhereClause(type, clientId) +
+                    @"AND ""RegisterAddress"" IN (";
+                    int limit = 0;
+                    foreach (var tuple in registers.Where(x => x.Item3 == type))
+                    {
+                        query += tuple.Item1 + ",";
+                        limit++;
+                    }
+                    query = query.TrimEnd(',');
+                    query += ")";
+                    query += @" Order By ""RegisterAddress"",""Timestamp"" DESC";
+                    if (limit > 0)
+                        queries.Add(query + " LIMIT " + limit);
                 }
-                query = query.TrimEnd(',');
-                query += ")";
-                query += @" Order By ""RegisterAddress"",""Timestamp"" DESC";
-                if (limit > 0)
-                    queries.Add(query + " LIMIT " + limit);
             }
             foreach (string s in queries)
                 Console.WriteLine(s);
             return queries;
         }
 
-        private string GetWhereClause(RegisterType type)
+        private string GetWhereClause(RegisterType type, int clientId)
         {
-            return @" WHERE ""RegisterType""=" + (int)type + " ";
+            return @" WHERE ""RegisterType""=" + (int)type + @" AND ""ClientId""=" + clientId + " ";
         }
 
         private DatasetReader(string connectionString, int viewId, Organization organization)

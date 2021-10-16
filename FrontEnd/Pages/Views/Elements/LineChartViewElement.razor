@@ -36,8 +36,9 @@
 
     protected override void OnParametersSet()
     {
-        if (!FirstPass)
-            m_chartData.Add(new ChartItem(View.Value, DateTime.Now));
+        int? value = View.GetValue();
+        if (!FirstPass && value.HasValue)
+            m_chartData.Add(new ChartItem(value.Value, View.TimeStamp));
 
         if (m_chartData.Count > MaximumPoints)
             m_chartData.RemoveRange(0, m_chartData.Count - MaximumPoints);

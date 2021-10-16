@@ -14,17 +14,28 @@ namespace FrontEnd.Areas.Organizations.Data
         [JsonIgnore] public List<ViewRow> Rows => m_viewRows;
         [JsonIgnore] public int RowsCount => m_viewRows.Count;
 
-        public List<(int, RegisterType)> GetRegisters()
+        /// <summary>
+        /// Fetches all neded registers for view update.
+        /// Does not duplicate registers, even if two ViewElements use the same register
+        /// from the same client.
+        /// </summary>
+        /// <returns>List where
+        /// Item1 -> register address
+        /// Item2 -> client Id
+        /// Item3 -> registerType
+        /// </returns>
+        public List<(int, int, RegisterType)> GetRegisters()
         {
-            List<(int, RegisterType)> registers = new List<(int, RegisterType)>();
+            List<(int, int, RegisterType)> registers = new List<(int, int, RegisterType)>();
             foreach (ViewRow row in Rows)
             {
                 foreach (ViewElement element in row.Elements)
                 {
                     if (registers.Any(x => x.Item1 == element.RegisterAddress &&
-                        x.Item2 == element.RegisterType))
+                        x.Item2 == element.ClientId &&
+                        x.Item3 == element.RegisterType))
                         continue;
-                    registers.Add((element.RegisterAddress, element.RegisterType));
+                    registers.Add((element.RegisterAddress,element.ClientId, element.RegisterType));
                 }
             }
             return registers;

@@ -97,7 +97,7 @@
         foreach (ViewRow row in m_view.Rows)
         {
             foreach (ViewElement element in row.Elements.Where(x => x.ViewType == ViewType.LineChart))
-                element.SetInitialData(m_reader.GetLastValues(element.RegisterType, element.RegisterAddress));
+                element.SetInitialData(m_reader.GetLastValues(element.RegisterType, element.RegisterAddress, element.ClientId));
         }
     }
 
@@ -120,7 +120,7 @@
                 .Where(x => x.RegisterAddress == element.RegisterAddress && x.RegisterType == element.RegisterType)
                 .FirstOrDefault();
                 if (frame != null)
-                    element.SetValue(frame.Value);
+                    element.SetValue(frame);
             }
         }
     }
