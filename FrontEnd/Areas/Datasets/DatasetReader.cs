@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Concurrent;
-using System.Data;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using Dapper;
-using DatabaseClasses;
 using Npgsql;
-using System.Collections.Generic;
-using DataRegisters;
+using ScadaCommon;
 
 namespace FrontEnd.Areas.Datasets
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace DatabaseClasses
+namespace ScadaCommon
 {
     public class DataFrame
     {

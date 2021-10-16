@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using DatabaseClasses;
-using DataRegisters;
 using Newtonsoft.Json;
+using ScadaCommon;
 
 namespace FrontEnd.Areas.Organizations.Data
 {

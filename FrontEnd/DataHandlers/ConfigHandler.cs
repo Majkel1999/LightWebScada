@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using DataRegisters;
+using ScadaCommon;
 using Newtonsoft.Json;
 
 namespace FrontEnd.DataHandlers

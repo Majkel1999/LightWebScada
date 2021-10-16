@@ -1,4 +1,4 @@
-﻿namespace DatabaseClasses
+﻿namespace ScadaCommon
 {
     public class Organization
     {

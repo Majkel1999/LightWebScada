@@ -1,7 +1,6 @@
 using System;
-using DataRegisters;
 
-namespace DatabaseClasses
+namespace ScadaCommon
 {
     public class RegisterFrame
     {

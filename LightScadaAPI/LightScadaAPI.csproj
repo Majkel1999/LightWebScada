@@ -9,7 +9,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataRegisters\DataRegisters.csproj"/>
-    <ProjectReference Include="..\DatabaseClasses\DatabaseClasses.csproj"/>
+    <ProjectReference Include="..\ScadaCommon\ScadaCommon.csproj" />
   </ItemGroup>
 </Project>

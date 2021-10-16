@@ -5,10 +5,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using DatabaseClasses;
-using DataRegisters;
 using LigthScadaClient.Logic.Utility;
 using Newtonsoft.Json;
+using ScadaCommon;
 
 namespace LigthScadaClient.Logic
 {

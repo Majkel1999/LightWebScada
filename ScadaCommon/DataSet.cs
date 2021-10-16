@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace DataRegisters
+namespace ScadaCommon
 {
     public class DataSet
     {

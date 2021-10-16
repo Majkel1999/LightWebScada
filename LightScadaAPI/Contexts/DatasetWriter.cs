@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using DatabaseClasses;
-using DataRegisters;
 using Newtonsoft.Json;
 using Npgsql;
+using ScadaCommon;
 
 namespace LightScadaAPI.Contexts
 {

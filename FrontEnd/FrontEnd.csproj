@@ -30,9 +30,6 @@
     <PackageReference Include="blazor-dragdrop" Version="2.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataRegisters\DataRegisters.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\DatabaseClasses\DatabaseClasses.csproj" />
+    <ProjectReference Include="..\ScadaCommon\ScadaCommon.csproj" />
   </ItemGroup>
 </Project>

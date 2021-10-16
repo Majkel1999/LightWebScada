@@ -2,10 +2,9 @@
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
-using DatabaseClasses;
-using DataRegisters;
 using LigthScadaClient.Logic.Utility;
 using Newtonsoft.Json;
+using ScadaCommon;
 
 namespace LigthScadaClient.Logic
 {

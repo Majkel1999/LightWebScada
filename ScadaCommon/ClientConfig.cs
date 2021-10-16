@@ -1,4 +1,4 @@
-﻿namespace DataRegisters
+﻿namespace ScadaCommon
 {
     public class ClientConfig
     {

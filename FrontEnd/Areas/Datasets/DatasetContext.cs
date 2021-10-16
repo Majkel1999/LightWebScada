@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Microsoft.Extensions.Configuration;
 using Dapper;
-using DatabaseClasses;
+using ScadaCommon;
 using Npgsql;
 
 namespace FrontEnd.Areas.Datasets

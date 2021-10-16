@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DataRegisters;
+using ScadaCommon;
 
 namespace FrontEnd.DataModels
 {
