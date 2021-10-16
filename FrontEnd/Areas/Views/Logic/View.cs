@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
+using ScadaCommon;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
@@ -11,6 +13,22 @@ namespace FrontEnd.Areas.Organizations.Data
 
         [JsonIgnore] public List<ViewRow> Rows => m_viewRows;
         [JsonIgnore] public int RowsCount => m_viewRows.Count;
+
+        public List<(int, RegisterType)> GetRegisters()
+        {
+            List<(int, RegisterType)> registers = new List<(int, RegisterType)>();
+            foreach (ViewRow row in Rows)
+            {
+                foreach (ViewElement element in row.Elements)
+                {
+                    if (registers.Any(x => x.Item1 == element.RegisterAddress &&
+                        x.Item2 == element.RegisterType))
+                        continue;
+                    registers.Add((element.RegisterAddress, element.RegisterType));
+                }
+            }
+            return registers;
+        }
 
         public void AddToFirstOpen(ViewElement element)
         {

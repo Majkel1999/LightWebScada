@@ -17,20 +17,27 @@
 
     [Parameter]
     public ViewElement View { get; set; }
+    [Parameter]
+    public bool FirstPass { get; set; }
 
     public List<ChartItem> m_chartData { get; set; } = new List<ChartItem>();
 
     private RadzenChart m_chart { get; set; }
 
-    protected override void OnParametersSet()
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
+        await base.SetParametersAsync(parameters);
         if (View.InitialData != null && m_chartData.Count < MaximumPoints)
         {
             foreach (RegisterFrame frame in View.InitialData)
                 m_chartData.Add(new ChartItem(frame.Value, frame.Timestamp.ToLocalTime()));
         }
+    }
 
-        m_chartData.Add(new ChartItem(View.Value, DateTime.Now));
+    protected override void OnParametersSet()
+    {
+        if (!FirstPass)
+            m_chartData.Add(new ChartItem(View.Value, DateTime.Now));
 
         if (m_chartData.Count > MaximumPoints)
             m_chartData.RemoveRange(0, m_chartData.Count - MaximumPoints);

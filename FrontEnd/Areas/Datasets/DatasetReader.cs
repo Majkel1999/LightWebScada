@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
+using FrontEnd.Areas.Organizations.Data;
 using Dapper;
+using Newtonsoft.Json;
 using Npgsql;
 using ScadaCommon;
 
@@ -18,19 +20,20 @@ namespace FrontEnd.Areas.Datasets
         private Thread m_updateThread;
         private Mutex m_mutex = new Mutex();
         private Organization m_organization;
-        private DataFrame m_lastFrame;
+        private List<string> m_queryStrings;
         private string m_connectionString;
         private int m_viewId;
         private int m_clients;
-        private int m_lastId = -1;
         private bool m_stayAlive;
 
-        public DataFrame LastFrame => m_lastFrame;
-
-        public static DatasetReader StartSession(int viewId, Organization organization)
+        public static DatasetReader StartSession(int viewId, View view, Organization organization)
         {
             if (!m_instances.ContainsKey(viewId))
-                m_instances.TryAdd(viewId, new DatasetReader(Startup.Configuration.GetConnectionString("UserContextConnection"), viewId, organization));
+            {
+                DatasetReader reader = new DatasetReader(Startup.Configuration.GetConnectionString("UserContextConnection"), viewId, organization);
+                m_instances.TryAdd(viewId, reader);
+                reader.m_queryStrings = reader.PrepareQueryStrings(view.GetRegisters());
+            }
             m_instances[viewId].AddClient();
             return m_instances[viewId];
         }
@@ -55,6 +58,35 @@ namespace FrontEnd.Areas.Datasets
                 db.Close();
                 return dataFrames;
             }
+        }
+
+        private List<string> PrepareQueryStrings(List<(int, RegisterType)> registers)
+        {
+            List<string> queries = new List<string>();
+            foreach (RegisterType type in Enum.GetValues(typeof(RegisterType)))
+            {
+                string query = @"SELECT DISTINCT ON (""RegisterAddress"") * FROM " + DatasetContext.GetTableName(m_organization) + GetWhereClause(type) +
+                @"AND ""RegisterAddress"" IN (";
+                int limit = 0;
+                foreach (var tuple in registers.Where(x => x.Item2 == type))
+                {
+                    query += tuple.Item1 + ",";
+                    limit++;
+                }
+                query = query.TrimEnd(',');
+                query += ")";
+                query += @" Order By ""RegisterAddress"",""Timestamp"" DESC";
+                if (limit > 0)
+                    queries.Add(query + " LIMIT " + limit);
+            }
+            foreach (string s in queries)
+                Console.WriteLine(s);
+            return queries;
+        }
+
+        private string GetWhereClause(RegisterType type)
+        {
+            return @" WHERE ""RegisterType""=" + (int)type + " ";
         }
 
         private DatasetReader(string connectionString, int viewId, Organization organization)
@@ -107,18 +139,17 @@ namespace FrontEnd.Areas.Datasets
 
             while (m_stayAlive && m_clients > 0)
             {
-                // using (IDbConnection db = new NpgsqlConnection(m_connectionString))
-                // {
-                //     m_lastFrame = db.Query<DataFrame>
-                //          (@"Select * From " + DatasetContext.GetTableName(m_organization) + @" Order By ""Timestamp"" DESC")
-                //          .FirstOrDefault();
-                //     if (m_lastId != m_lastFrame.Id)
-                //     {
-                //         m_lastId = m_lastFrame.Id;
-                //         await hubConnection.SendAsync("SendMessage", m_lastFrame.Dataset, m_viewId.ToString());
-                //     }
-                // }
-                Thread.Sleep(2000);
+                using (NpgsqlConnection db = new NpgsqlConnection(m_connectionString))
+                {
+                    await db.OpenAsync();
+                    List<RegisterFrame> frames = new List<RegisterFrame>();
+                    foreach (string query in m_queryStrings)
+                        frames.AddRange((await db.QueryAsync<RegisterFrame>(query)).ToList());
+
+                    await hubConnection.SendAsync("SendMessage", JsonConvert.SerializeObject(frames), m_viewId.ToString());
+                    await db.CloseAsync();
+                }
+                Thread.Sleep(5000);
             }
             m_mutex.WaitOne();
             m_instances.TryRemove(m_viewId, out DatasetReader instance);
