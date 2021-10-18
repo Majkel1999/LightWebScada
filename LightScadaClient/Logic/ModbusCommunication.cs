@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using EasyModbus;
 
 namespace LigthScadaClient.Logic
@@ -10,6 +11,7 @@ namespace LigthScadaClient.Logic
         public event Action OnError;
 
         private ModbusClient m_modbusClient;
+        private CancellationTokenSource m_source = new CancellationTokenSource();
 
         public bool Start()
         {
@@ -18,7 +20,7 @@ namespace LigthScadaClient.Logic
                 CreateClient();
                 m_modbusClient.Connect();
                 StatusLogger.Instance.Log("Modbus Client connected");
-                ReadValues();
+                ReadValues(m_source.Token);
                 return true;
             }
             catch (Exception e)
@@ -28,13 +30,18 @@ namespace LigthScadaClient.Logic
             }
         }
 
-        public void Stop()
+        public void Stop(Action OnStop)
         {
-            m_modbusClient.Disconnect();
-            StatusLogger.Instance.Log("Modbus Client disconnected");
+            Task.Run(() =>
+            {
+                m_source.Cancel();
+                m_modbusClient.Disconnect();
+                StatusLogger.Instance.Log("Modbus Client disconnected");
+                OnStop?.Invoke();
+            });
         }
 
-        private void ReadValues()
+        private void ReadValues(CancellationToken token)
         {
             Task.Run(async () =>
             {
@@ -58,8 +65,9 @@ namespace LigthScadaClient.Logic
                     OnError?.Invoke();
                     StatusLogger.Instance.Log(e.Message);
                 }
-                Thread.Sleep(5000);
-                ReadValues();
+                token.WaitHandle.WaitOne(5000);
+                if (!token.IsCancellationRequested)
+                    ReadValues(token);
             });
         }
 
