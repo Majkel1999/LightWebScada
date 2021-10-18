@@ -21,6 +21,11 @@ namespace FrontEnd.Pages.API
             m_connectionString = configuration.GetConnectionString("UserContextConnection");
         }
 
+        /// <summary>
+        /// GET Request for retrieving possible configurations for given organization's api key
+        /// </summary>
+        /// <param name="apikey">received api key</param>
+        /// <returns>List of ClientConfigEntities, or NoContent if ApiKey is invalid</returns>
         [HttpGet("{apikey}")]
         public async Task<ActionResult<List<ClientConfigEntity>>> GetConfigurations(string apikey)
         {

@@ -9,8 +9,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 
+/// <summary>
+/// Table cleanup service.
+/// Runs periodically and ensures that all data tables have maximum MaximumRows rows.
+/// </summary>
 public class CleanupService : BackgroundService
 {
+    /// <summary>
+    /// Maximum rows per data table per organization
+    /// </summary>
     private const int MaximumRows = 500;
 
     private string m_connectionString;
@@ -25,6 +32,11 @@ public class CleanupService : BackgroundService
         await CheckTablesPerodically(stoppingToken);
     }
 
+    /// <summary>
+    /// Method works for the whole lifetime of the hosted API.
+    /// </summary>
+    /// <param name="stoppingToken">CancellationToken for stopping the service</param>
+    /// <returns>Awaitable task</returns>
     private async Task CheckTablesPerodically(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)

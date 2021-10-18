@@ -9,6 +9,10 @@ using ScadaCommon;
 
 namespace LightScadaAPI.Contexts
 {
+    /// <summary>
+    /// Represents a class which converts JSON data from local clients into single register frames
+    /// and saves them to database
+    /// </summary>
     public class DatasetWriter
     {
         private readonly string m_connectionString;
@@ -18,6 +22,14 @@ namespace LightScadaAPI.Contexts
             m_connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Saves each RegisterFrame to database with proper register type, saved as (int)RegisterType
+        /// </summary>
+        /// <param name="dataFrame">DataFrame received from client</param>
+        /// <param name="apiKey">ApiKey assosiacted with the given request</param>
+        /// <returns>Tuple <bool,string> where:
+        /// Item1 is result true if succeded, false otherwise
+        /// Item2 is an error message, if Item1 is false</returns>
         public async Task<(bool, string)> WriteToDatabase(DataFrame dataFrame, string apiKey)
         {
             using NpgsqlConnection db = new NpgsqlConnection(m_connectionString);
@@ -52,7 +64,7 @@ namespace LightScadaAPI.Contexts
             }
         }
 
-        private static async Task SaveRegisterFrame(DataFrame dataFrame, NpgsqlCommand insertCommand, Register reg, int type)
+        private async Task SaveRegisterFrame(DataFrame dataFrame, NpgsqlCommand insertCommand, Register reg, int type)
         {
             insertCommand.Parameters.AddWithValue("id", dataFrame.ClientId);
             insertCommand.Parameters.AddWithValue("timestamp", dataFrame.Timestamp);

@@ -20,6 +20,12 @@ namespace FrontEnd.Pages.API
             m_datasetWriter = new DatasetWriter(m_connectionString);
         }
 
+        /// <summary>
+        /// POST Request handler, receives data from local clients and saves it after transforming to database
+        /// </summary>
+        /// <param name="apiKey">received api key</param>
+        /// <param name="dataFrame">Json Serialized DataFrame from local client</param>
+        /// <returns>BadRequest if failed, Accepted otherwise</returns>
         [HttpPost]
         public async Task<ActionResult> PostDataFrame([FromQuery] string apiKey, [FromBody] DataFrame dataFrame)
         {
