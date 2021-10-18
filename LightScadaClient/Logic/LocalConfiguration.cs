@@ -10,7 +10,7 @@ namespace LigthScadaClient.Logic
 {
     public class LocalConfiguration : Singleton<LocalConfiguration>
     {
-        private const string FileName = "config.cfg";
+        private const string ConfigFileName = "config.cfg";
 
         public int ClientId = 1;
         public string ApiKey;
@@ -47,17 +47,8 @@ namespace LigthScadaClient.Logic
             {
                 if (SerialPort.GetPortNames().Any(x => x == COMPort))
                 {
-                    try
-                    {
-                        var port = new SerialPort(COMPort);
-                        port.Open();
-                        port.Close();
-                        port.Dispose();
-                    }
-                    catch
-                    {
-                        return "COM Port is already open";
-                    }
+                    if (!SerialPortsHelper.CheckIfPortIsOpen(COMPort))
+                        return $"{COMPort} is already open!";
                 }
             }
             return null;
@@ -70,9 +61,9 @@ namespace LigthScadaClient.Logic
 
         private void LoadConfigFromFile()
         {
-            if (File.Exists(FileName))
+            if (File.Exists(ConfigFileName))
             {
-                using StreamReader theReader = new StreamReader(FileName, Encoding.UTF8);
+                using StreamReader theReader = new StreamReader(ConfigFileName, Encoding.UTF8);
                 string dataAsJson = theReader.ReadToEnd();
                 theReader.Close();
                 JsonConvert.PopulateObject(dataAsJson, this);
@@ -82,7 +73,7 @@ namespace LigthScadaClient.Logic
         private void SaveConfigToFile()
         {
             string dataAsJson = JsonConvert.SerializeObject(this, Formatting.Indented);
-            using (FileStream file = File.Create(FileName))
+            using (FileStream file = File.Create(ConfigFileName))
             {
                 byte[] info = new UTF8Encoding(true).GetBytes(dataAsJson);
                 file.Write(info, 0, info.Length);

@@ -21,14 +21,15 @@ namespace FrontEnd.Pages.API
         }
 
         [HttpPost]
-        public async Task<ActionResult> GetConfigurations([FromQuery] string apiKey, [FromBody] DataFrame dataFrame)
+        public async Task<ActionResult> PostDataFrame([FromQuery] string apiKey, [FromBody] DataFrame dataFrame)
         {
             try
             {
-                if (await m_datasetWriter.WriteToDatabase(dataFrame, apiKey))
+                var result = await m_datasetWriter.WriteToDatabase(dataFrame, apiKey);
+                if (result.Item1)
                     return Accepted(new[] { "DataFrame written to database" });
                 else
-                    return BadRequest("Wrong api key!");
+                    return BadRequest(result.Item2);
             }
             catch (Exception e)
             {

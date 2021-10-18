@@ -13,7 +13,7 @@ namespace LigthScadaClient.Logic
 {
     public class ServerCommunication : Singleton<ServerCommunication>
     {
-        private const string ApiUrl = "http://localhost:5002";//"http://maluch.mikr.us:30104";
+        private const string ApiUrl = "http://maluch.mikr.us:30104";//"http://localhost:5002";
 
         private HttpClient m_client;
 
@@ -64,7 +64,8 @@ namespace LigthScadaClient.Logic
             request.Content = new StringContent(JsonConvert.SerializeObject(frame), Encoding.UTF8, "application/json");
             var response = await m_client.SendAsync(request);
             if (response.StatusCode != System.Net.HttpStatusCode.Accepted)
-                StatusLogger.Instance.Log("Data sent but not accepted : " + response.ReasonPhrase);
+                StatusLogger.Instance.Log("Data sent but not accepted : " + response.ReasonPhrase
+                + " " + await response.Content.ReadAsStringAsync());
         }
     }
 }

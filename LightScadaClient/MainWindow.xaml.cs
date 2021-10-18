@@ -126,13 +126,18 @@ namespace LigthScadaClient
 
         private void OnStopButtonClick(object sender, RoutedEventArgs e)
         {
-            m_modbusCommunication.Stop();
-            SwitchButtonStates(true);
+            WorkingIndicator.IsActive = true;
+            StopButton.IsEnabled = false;
+            m_modbusCommunication.Stop(() => Dispatcher.Invoke(() =>
+            {
+                StartButton.IsEnabled = true;
+                WorkingIndicator.IsActive = false;
+            }));
         }
 
         private void IdValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
-            OnConfigTextChange(this,null);
+            OnConfigTextChange(this, null);
         }
 
         private void OnConfigTextChange(object sender, TextChangedEventArgs e)
@@ -144,7 +149,7 @@ namespace LigthScadaClient
                 LocalConfiguration.Instance.IP = IPTextBox.Text;
                 LocalConfiguration.Instance.SlaveID = int.TryParse(SlaveIdTextBox.Text, out int ID) ? ID : 1;
                 _ = int.TryParse(PortTextBox.Text, out LocalConfiguration.Instance.TCPPort);
-                m_modbusCommunication?.Stop();
+                m_modbusCommunication?.Stop(null);
             }
         }
 
@@ -152,11 +157,11 @@ namespace LigthScadaClient
         {
             if (m_isInitialized)
             {
-                LocalConfiguration.Instance.COMPort = ComPortComboBox.Text;
+                LocalConfiguration.Instance.COMPort = (string)ComPortComboBox.SelectedItem;
                 LocalConfiguration.Instance.Parity = ParityComboBox.SelectedIndex == -1 ? Parity.None : (Parity)ParityComboBox.SelectedItem;
                 LocalConfiguration.Instance.StopBits = StopBitsComboBox.SelectedIndex == -1 ? StopBits.None : (StopBits)StopBitsComboBox.SelectedItem;
                 LocalConfiguration.Instance.Baudrate = (int)BaudrateComboBox.SelectedItem;
-                m_modbusCommunication?.Stop();
+                m_modbusCommunication?.Stop(null);
             }
         }
 

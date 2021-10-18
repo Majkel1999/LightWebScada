@@ -18,13 +18,16 @@ namespace LightScadaAPI.Contexts
             m_connectionString = connectionString;
         }
 
-        public async Task<bool> WriteToDatabase(DataFrame dataFrame, string apiKey)
+        public async Task<(bool, string)> WriteToDatabase(DataFrame dataFrame, string apiKey)
         {
             using NpgsqlConnection db = new NpgsqlConnection(m_connectionString);
             try
             {
                 await db.OpenAsync();
-                Organization organization = db.Query<Organization>(@"SELECT * FROM common.organization WHERE ""ApiKey"" = @apiKey", new { apiKey }).First();
+                Organization organization = db.Query<Organization>(@"SELECT * FROM common.organization WHERE ""ApiKey"" = @apiKey", new { apiKey }).FirstOrDefault();
+                if (organization == null)
+                    throw new System.Exception("API Key invalid!");
+
                 DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(dataFrame.Dataset);
                 string tableName = GetTableName(organization);
 
@@ -40,12 +43,12 @@ namespace LightScadaAPI.Contexts
                 }
 
                 await db.CloseAsync();
-                return true;
+                return (true, "OK");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return false;
+                return (false, e.Message);
             }
         }
 

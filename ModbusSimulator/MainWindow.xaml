@@ -6,28 +6,67 @@
         xmlns:local="clr-namespace:ModbusSimulator"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <ComboBox x:Name="PortsComboBox" Grid.Column="0" Grid.Row="0" Margin="10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-
-        <Button x:Name="StartButton" Grid.Column="1" Grid.Row="2" Margin="10" Click="OnStartButtonClick">Start</Button>
-        <Button x:Name="StopButton" Grid.Column="0" Grid.Row="2" Margin="10" Click="OnStopButtonClick" IsEnabled="False">Stop</Button>
-
-        <Border Margin="10" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="2" CornerRadius="8">
+    <Window.Resources>
+        <DataTemplate x:Key="ArrayTemplate" >
             <Grid>
-                <ScrollViewer Margin="10">
-                    <TextBlock x:Name="StatusTextBox"  Background="Transparent"/>
-                </ScrollViewer>
+                <TextBlock Text="{Binding}" FontSize="14" HorizontalAlignment="Center"/>
             </Grid>
-        </Border>
-    </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    <TabControl>
+        <TabItem Header="Settings">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <ComboBox x:Name="PortsComboBox" Grid.Column="0" Grid.Row="0" Margin="10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+
+                <Button x:Name="StartButton" Grid.Column="1" Grid.Row="2" Margin="10" Click="OnStartButtonClick">Start</Button>
+                <Button x:Name="StopButton" Grid.Column="0" Grid.Row="2" Margin="10" Click="OnStopButtonClick" IsEnabled="False">Stop</Button>
+
+                <Border Margin="10" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="2" CornerRadius="8">
+                    <Grid>
+                        <ScrollViewer Margin="10">
+                            <TextBlock x:Name="StatusTextBox"  Background="Transparent"/>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Coil registers">
+            <DataGrid x:Name="CoilRegistersTable" LoadingRow="SetRowIndex">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Value" CellTemplate="{StaticResource ArrayTemplate}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </TabItem>
+        <TabItem Header="Discrete inputs">
+            <DataGrid x:Name="DiscreteInputsTable" LoadingRow="SetRowIndex">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Value" CellTemplate="{StaticResource ArrayTemplate}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </TabItem>
+        <TabItem Header="Input registers">
+            <DataGrid x:Name="InputRegistersTable" LoadingRow="SetRowIndex">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Value" CellTemplate="{StaticResource ArrayTemplate}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </TabItem>
+        <TabItem Header="Holding registers">
+            <DataGrid x:Name="HoldingRegistersTable" LoadingRow="SetRowIndex">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Value" CellTemplate="{StaticResource ArrayTemplate}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </TabItem>
+    </TabControl>
 </Window>

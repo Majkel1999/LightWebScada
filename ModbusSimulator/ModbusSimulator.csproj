@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ScadaCommon\ScadaCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="EasyModbus">
       <HintPath>..\Libraries\EasyModbus.dll</HintPath>
     </Reference>
