@@ -37,6 +37,8 @@
                                    NumericInputMode="Numbers" ValueChanged="IdValueChanged"/>
         </Grid>
 
+        <mahaaps:ProgressRing x:Name="WorkingIndicator" Grid.Column="1" Width="30" Height="30" IsActive="False"/>
+
         <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
