@@ -64,7 +64,8 @@ namespace LigthScadaClient.Logic
             request.Content = new StringContent(JsonConvert.SerializeObject(frame), Encoding.UTF8, "application/json");
             var response = await m_client.SendAsync(request);
             if (response.StatusCode != System.Net.HttpStatusCode.Accepted)
-                StatusLogger.Instance.Log("Data sent but not accepted : " + response.ReasonPhrase);
+                StatusLogger.Instance.Log("Data sent but not accepted : " + response.ReasonPhrase
+                + " " + await response.Content.ReadAsStringAsync());
         }
     }
 }
