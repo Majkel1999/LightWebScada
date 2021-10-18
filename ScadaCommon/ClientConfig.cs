@@ -1,5 +1,8 @@
 ﻿namespace ScadaCommon
 {
+    /// <summary>
+    /// Represents single configuration instance
+    /// </summary>
     public class ClientConfig
     {
         public string Name { get; set; }

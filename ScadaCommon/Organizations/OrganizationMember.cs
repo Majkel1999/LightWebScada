@@ -1,5 +1,8 @@
 namespace ScadaCommon
 {
+    /// <summary>
+    /// Represents an organization member
+    /// </summary>
     public class OrganizationMember
     {
         public int ID{get;set;}

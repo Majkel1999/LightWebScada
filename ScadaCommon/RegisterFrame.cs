@@ -2,6 +2,9 @@ using System;
 
 namespace ScadaCommon
 {
+    /// <summary>
+    /// Represents a single frame of a single register
+    /// </summary>
     public class RegisterFrame
     {
         public int Id { get; set; }
