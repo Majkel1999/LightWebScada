@@ -31,7 +31,7 @@ namespace ModbusSimulator
         public void Log(string message)
         {
             AddMessage(message);
-            Dispatcher.CurrentDispatcher.Invoke(() => m_console.Text = GetLog());
+            m_console.Text = GetLog();
         }
 
         private void AddMessage(string message)

@@ -47,17 +47,8 @@ namespace LigthScadaClient.Logic
             {
                 if (SerialPort.GetPortNames().Any(x => x == COMPort))
                 {
-                    try
-                    {
-                        var port = new SerialPort(COMPort);
-                        port.Open();
-                        port.Close();
-                        port.Dispose();
-                    }
-                    catch
-                    {
-                        return "COM Port is already open";
-                    }
+                    if (!SerialPortsHelper.CheckIfPortIsOpen(COMPort))
+                        return $"{COMPort} is already open!";
                 }
             }
             return null;

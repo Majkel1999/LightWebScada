@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using EasyModbus;
+using ScadaCommon;
 
 namespace ModbusSimulator
 {
@@ -25,20 +26,51 @@ namespace ModbusSimulator
 
         private void OnStartButtonClick(object sender, RoutedEventArgs e)
         {
+            string comPort = PortsComboBox.SelectedItem as string;
+            if (!SerialPortsHelper.CheckIfPortIsOpen(comPort))
+            {
+                MessageBox.Show($"{comPort} is already open!");
+                return;
+            }
 
             StartButton.IsEnabled = false;
             StopButton.IsEnabled = true;
-            m_server = new ModbusServer();
-            RandomizeValues();
-            m_server.SerialPort = PortsComboBox.SelectedItem as string;
-            m_server.Listen();
-            m_logger.Log($"Server started on port {m_server.SerialPort}!");
             PortsComboBox.IsEnabled = false;
-            m_server.NumberOfConnectedClientsChanged += () => m_logger.Log("Clients connected : " + m_server.NumberOfConnections);
+
+            m_server = new ModbusServer();
+            m_server.SerialPort = comPort;
+            m_server.Listen();
+
+            CoilRegistersTable.ItemsSource = m_server.coils.localArray;
+            DiscreteInputsTable.ItemsSource = m_server.discreteInputs.localArray;
+            HoldingRegistersTable.ItemsSource = m_server.holdingRegisters.localArray;
+            InputRegistersTable.ItemsSource = m_server.inputRegisters.localArray;
+
+            Dispatcher.Invoke(() => m_logger.Log($"Server started on port {m_server.SerialPort}!"));
+            RandomizeValues();
+        }
+
+        private void OnStopButtonClick(object sender, RoutedEventArgs e)
+        {
+            StartButton.IsEnabled = true;
+            StopButton.IsEnabled = false;
+            PortsComboBox.IsEnabled = true;
+
+            CoilRegistersTable.ItemsSource = null;
+            DiscreteInputsTable.ItemsSource = null;
+            HoldingRegistersTable.ItemsSource = null;
+            InputRegistersTable.ItemsSource = null;
+
+            m_server.StopListening();
+            m_server = null;
+
+            Dispatcher.Invoke(() => m_logger.Log("Server stopped"));
         }
 
         private void RandomizeValues()
         {
+            if (m_server == null)
+                return;
             var rand = new Random(DateTime.Now.Millisecond);
             for (int i = 0; i < 100; i++)
             {
@@ -47,21 +79,31 @@ namespace ModbusSimulator
                 m_server.holdingRegisters[i] = (short)rand.Next(0, 10000);
                 m_server.inputRegisters[i] = (short)rand.Next(0, 10000);
             }
+
+            Dispatcher.Invoke(() =>
+            {
+                RefreshDisplayedValues();
+                m_logger.Log("Values randomized");
+            });
+
             Task.Run(() =>
             {
                 Thread.Sleep(1000);
                 RandomizeValues();
-                m_logger.Log("Values randomized");
             });
         }
 
-        private void OnStopButtonClick(object sender, RoutedEventArgs e)
+        private void RefreshDisplayedValues()
         {
-            m_server.StopListening();
-            m_logger.Log("Server stopped");
-            StartButton.IsEnabled = true;
-            StopButton.IsEnabled = false;
-            PortsComboBox.IsEnabled = true;
+            CoilRegistersTable.Items.Refresh();
+            DiscreteInputsTable.Items.Refresh();
+            HoldingRegistersTable.Items.Refresh();
+            InputRegistersTable.Items.Refresh();
+        }
+
+        private void SetRowIndex(object sender, System.Windows.Controls.DataGridRowEventArgs e)
+        {
+            e.Row.Header = (e.Row.GetIndex()).ToString();
         }
     }
 }
