@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using DatabaseClasses;
+using ScadaCommon;
 using LightScadaAPI.Contexts;
 
 namespace FrontEnd.Pages.API

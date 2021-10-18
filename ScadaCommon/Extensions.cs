@@ -1,4 +1,4 @@
-namespace DataRegisters
+namespace ScadaCommon
 {
     public static class Extensions
     {

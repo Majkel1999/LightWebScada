@@ -2,10 +2,9 @@
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
-using DatabaseClasses;
-using DataRegisters;
 using LigthScadaClient.Logic.Utility;
 using Newtonsoft.Json;
+using ScadaCommon;
 
 namespace LigthScadaClient.Logic
 {
@@ -13,7 +12,7 @@ namespace LigthScadaClient.Logic
     {
         private const string FileName = "config.cfg";
 
-        public string Name;
+        public int ClientId = 1;
         public string ApiKey;
         public string COMPort;
         public string IP;
@@ -42,7 +41,7 @@ namespace LigthScadaClient.Logic
             {
                 if (TCPPort < 0 || TCPPort > 65535)
                     return "TCP Port not in range 0-65535";
-                
+
             }
             else
             {
@@ -57,7 +56,7 @@ namespace LigthScadaClient.Logic
                     }
                     catch
                     {
-                        return "COP Port is already open";
+                        return "COM Port is already open";
                     }
                 }
             }

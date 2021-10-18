@@ -43,9 +43,9 @@ namespace LigthScadaClient.Logic
                 try
                 {
                     LocalConfiguration.Instance.DataSet.CoilRegisters.ForEach(
-                        (x) => x.CurrentValue = m_modbusClient.ReadCoils(x.RegisterAddress, 1)[0]);
+                        (x) => x.CurrentValue = m_modbusClient.ReadCoils(x.RegisterAddress, 1)[0] ? 1 : 0);
                     LocalConfiguration.Instance.DataSet.DiscreteInputs.ForEach(
-                        (x) => x.CurrentValue = m_modbusClient.ReadDiscreteInputs(x.RegisterAddress, 1)[0]);
+                        (x) => x.CurrentValue = m_modbusClient.ReadDiscreteInputs(x.RegisterAddress, 1)[0] ? 1 : 0);
                     LocalConfiguration.Instance.DataSet.HoldingRegisters.ForEach(
                         (x) => x.CurrentValue = m_modbusClient.ReadHoldingRegisters(x.RegisterAddress, 1)[0]);
                     LocalConfiguration.Instance.DataSet.InputRegisters.ForEach(

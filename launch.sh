@@ -1,6 +1,3 @@
-echo 'Building'
-dotnet build
-echo 'Build completed'
 echo 'Launching API Backend'
 dotnet watch run --project LightScadaAPI &
 echo 'API Launched'

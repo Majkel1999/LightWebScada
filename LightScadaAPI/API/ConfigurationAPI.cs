@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Dapper;
-using DatabaseClasses;
+using ScadaCommon;
 using Npgsql;
 
 namespace FrontEnd.Pages.API

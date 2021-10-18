@@ -1,6 +1,6 @@
 ﻿@page "/configurations/create/{organizationId:int}"
 
-@using DataRegisters
+
 
 @inject OrganizationContext organizationContext
 @inject ConfigHandler configHandler
@@ -25,7 +25,7 @@
             <div class="form-group">
                 <label for="organization name"><b>@localizer["RegisterType"]</b></label>
                 <InputSelect id="type" @bind-Value="m_valueModel.Type" class="form-control" required>
-                    @foreach (var value in Enum.GetValues(typeof(DataRegisters.RegisterType)))
+                    @foreach (var value in Enum.GetValues(typeof(RegisterType)))
                     {
                         <option>@value</option>
                     }
@@ -63,7 +63,7 @@
         <div class="form-group">
             <label for="organization name"><b>@localizer["Protocol"]</b></label>
             <InputSelect id="configProtocol" @bind-Value="m_config.Protocol" class="form-control" required>
-                @foreach (var value in Enum.GetValues(typeof(DataRegisters.Protocol)))
+                @foreach (var value in Enum.GetValues(typeof(Protocol)))
                 {
                     <option>@value</option>
                 }

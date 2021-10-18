@@ -5,16 +5,15 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using DatabaseClasses;
-using DataRegisters;
 using LigthScadaClient.Logic.Utility;
 using Newtonsoft.Json;
+using ScadaCommon;
 
 namespace LigthScadaClient.Logic
 {
     public class ServerCommunication : Singleton<ServerCommunication>
     {
-        private const string ApiUrl = "http://maluch.mikr.us:30104";
+        private const string ApiUrl = "http://localhost:5002";//"http://maluch.mikr.us:30104";
 
         private HttpClient m_client;
 
@@ -53,7 +52,7 @@ namespace LigthScadaClient.Logic
         {
             DataFrame frame = new DataFrame();
             frame.Timestamp = DateTime.UtcNow;
-            frame.Name = LocalConfiguration.Instance.Name;
+            frame.ClientId = LocalConfiguration.Instance.ClientId;
             frame.Dataset = JsonConvert.SerializeObject(data);
             HttpRequestMessage request = new HttpRequestMessage();
             var uriBuilder = new UriBuilder(ApiUrl + "/api/send");

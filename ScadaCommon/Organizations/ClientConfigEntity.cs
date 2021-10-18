@@ -1,4 +1,4 @@
-﻿namespace DatabaseClasses{
+﻿namespace ScadaCommon{
     public class ClientConfigEntity
     {
         public int ID { get; set; }

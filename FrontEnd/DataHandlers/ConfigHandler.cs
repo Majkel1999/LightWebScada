@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using DataRegisters;
+using ScadaCommon;
 using Newtonsoft.Json;
 
 namespace FrontEnd.DataHandlers
@@ -17,9 +17,9 @@ namespace FrontEnd.DataHandlers
                             error = "Taki rejestr został już dodany to konfiguracji!";
                             return false;
                         }
-                        config.Registers.CoilRegisters.Add(new DiscreteRegister
+                        config.Registers.CoilRegisters.Add(new Register
                         {
-                            CurrentValue = false,
+                            CurrentValue = 0,
                             RegisterAddress = registerNumber
                         });
                         break;
@@ -31,9 +31,9 @@ namespace FrontEnd.DataHandlers
                             error = "Taki rejestr został już dodany to konfiguracji!";
                             return false;
                         }
-                        config.Registers.DiscreteInputs.Add(new DiscreteRegister
+                        config.Registers.DiscreteInputs.Add(new Register
                         {
-                            CurrentValue = false,
+                            CurrentValue = 0,
                             RegisterAddress = registerNumber
                         });
                         break;
@@ -45,7 +45,7 @@ namespace FrontEnd.DataHandlers
                             error = "Taki rejestr został już dodany to konfiguracji!";
                             return false;
                         }
-                        config.Registers.InputRegisters.Add(new ValueRegister
+                        config.Registers.InputRegisters.Add(new Register
                         {
                             CurrentValue = 0,
                             RegisterAddress = registerNumber
@@ -59,7 +59,7 @@ namespace FrontEnd.DataHandlers
                             error = "Taki rejestr został już dodany to konfiguracji!";
                             return false;
                         }
-                        config.Registers.HoldingRegisters.Add(new ValueRegister
+                        config.Registers.HoldingRegisters.Add(new Register
                         {
                             CurrentValue = 0,
                             RegisterAddress = registerNumber

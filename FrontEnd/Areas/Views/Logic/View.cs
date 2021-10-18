@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
+using ScadaCommon;
 
 namespace FrontEnd.Areas.Organizations.Data
 {
@@ -11,6 +13,33 @@ namespace FrontEnd.Areas.Organizations.Data
 
         [JsonIgnore] public List<ViewRow> Rows => m_viewRows;
         [JsonIgnore] public int RowsCount => m_viewRows.Count;
+
+        /// <summary>
+        /// Fetches all neded registers for view update.
+        /// Does not duplicate registers, even if two ViewElements use the same register
+        /// from the same client.
+        /// </summary>
+        /// <returns>List where
+        /// Item1 -> register address
+        /// Item2 -> client Id
+        /// Item3 -> registerType
+        /// </returns>
+        public List<(int, int, RegisterType)> GetRegisters()
+        {
+            List<(int, int, RegisterType)> registers = new List<(int, int, RegisterType)>();
+            foreach (ViewRow row in Rows)
+            {
+                foreach (ViewElement element in row.Elements)
+                {
+                    if (registers.Any(x => x.Item1 == element.RegisterAddress &&
+                        x.Item2 == element.ClientId &&
+                        x.Item3 == element.RegisterType))
+                        continue;
+                    registers.Add((element.RegisterAddress,element.ClientId, element.RegisterType));
+                }
+            }
+            return registers;
+        }
 
         public void AddToFirstOpen(ViewElement element)
         {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using DatabaseClasses;
+using ScadaCommon;
 
 namespace FrontEnd.Areas.Organizations.Data
 {

@@ -1,5 +1,3 @@
-@using DataRegisters
-
 <div>
     <div class="form-group">
         <EditForm Model=this>
@@ -10,8 +8,10 @@
                 <option value=@RegisterType.InputRegister>Input register</option>
                 <option value=@RegisterType.HoldingRegister>Holding register</option>
             </InputSelect>
-            <labe>Register number</labe>
+            <label>Register number</label>
             <InputNumber @bind-Value=m_registerNumber class="form-control" min=0 max=65535 step=1></InputNumber>
+            <label>Client ID</label>
+            <InputNumber @bind-Value=m_clientId class="form-control" min=1 max=99 step=1></InputNumber>
         </EditForm>
     </div>
 
@@ -29,11 +29,13 @@
 
     private RegisterType m_registerType;
     private int m_registerNumber;
+    private int m_clientId;
 
     protected override void OnInitialized()
     {
         m_registerType = Element.RegisterType;
         m_registerNumber = Element.RegisterAddress;
+        m_clientId = Element.ClientId;
     }
 
     async Task SaveAndClose()
@@ -41,6 +43,8 @@
         Element.SetRegisterType(m_registerType);
         if (m_registerNumber >= 0 && m_registerNumber < 65535)
             Element.SetRegisterAddress(m_registerNumber);
+        if(m_clientId >=1 && m_clientId < 99)
+            Element.SetClientId(m_clientId);
         await BlazoredModal.CloseAsync(ModalResult.Ok(true));
     }
 

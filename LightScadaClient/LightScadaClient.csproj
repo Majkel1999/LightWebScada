@@ -17,11 +17,7 @@
     <PackageReference Include="System.IO.Ports" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataRegisters\DataRegisters.csproj">
-      <Private>true</Private>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\DatabaseClasses\DatabaseClasses.csproj" />
+    <ProjectReference Include="..\ScadaCommon\ScadaCommon.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EasyModbus">
