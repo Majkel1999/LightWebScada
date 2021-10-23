@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using FrontEnd.Areas.Organizations.Data;
@@ -15,24 +16,30 @@ namespace FrontEnd.Areas.Datasets
 {
     public class DatasetReader
     {
-        private static ConcurrentDictionary<int, DatasetReader> m_instances = new ConcurrentDictionary<int, DatasetReader>();
+        private static Dictionary<int, DatasetReader> m_instances = new Dictionary<int, DatasetReader>();
+        private static string m_connectionString = Startup.Configuration.GetConnectionString("UserContextConnection");
 
-        private Thread m_updateThread;
-        private Mutex m_mutex = new Mutex();
+        private CancellationTokenSource m_tokenSource = new CancellationTokenSource();
         private Organization m_organization;
         private List<string> m_queryStrings;
-        private string m_connectionString;
         private int m_viewId;
         private int m_clients;
-        private bool m_stayAlive;
+
+        private DatasetReader(int viewId, Organization organization, View view)
+        {
+            m_viewId = viewId;
+            m_organization = organization;
+            m_instances.TryAdd(viewId, this);
+            m_queryStrings = PrepareQueryStrings(view.GetRegisters());
+            Task.Run(() => UpdateHubs(m_tokenSource.Token));
+        }
 
         public static DatasetReader StartSession(int viewId, View view, Organization organization)
         {
             if (!m_instances.ContainsKey(viewId))
             {
-                DatasetReader reader = new DatasetReader(Startup.Configuration.GetConnectionString("UserContextConnection"), viewId, organization);
-                m_instances.TryAdd(viewId, reader);
-                reader.m_queryStrings = reader.PrepareQueryStrings(view.GetRegisters());
+                DatasetReader reader = new DatasetReader(viewId, organization, view);
+
             }
             m_instances[viewId].AddClient();
             return m_instances[viewId];
@@ -89,8 +96,8 @@ namespace FrontEnd.Areas.Datasets
                         queries.Add(query + " LIMIT " + limit);
                 }
             }
-            foreach (string s in queries)
-                Console.WriteLine(s);
+            // foreach (string s in queries)
+            //     Console.WriteLine(s);
             return queries;
         }
 
@@ -99,46 +106,24 @@ namespace FrontEnd.Areas.Datasets
             return @" WHERE ""RegisterType""=" + (int)type + @" AND ""ClientId""=" + clientId + " ";
         }
 
-        private DatasetReader(string connectionString, int viewId, Organization organization)
-        {
-            m_connectionString = connectionString;
-            m_viewId = viewId;
-            m_organization = organization;
-            m_stayAlive = true;
-            StartUpdateThread();
-        }
-
-        private void StartUpdateThread()
-        {
-            if (m_updateThread == null)
-            {
-                m_mutex.WaitOne();
-                m_updateThread = new Thread(new ThreadStart(UpdateHubs));
-                m_updateThread.Start();
-                m_mutex.ReleaseMutex();
-            }
-        }
-
         private void AddClient()
         {
-            m_mutex.WaitOne();
             m_clients++;
-            m_stayAlive = true;
             Console.WriteLine($"Added client on view {m_viewId} with current clients {m_clients}");
-            m_mutex.ReleaseMutex();
         }
 
         private void RemoveClient()
         {
-            m_mutex.WaitOne();
             m_clients--;
             if (m_clients <= 0)
-                m_stayAlive = false;
+            {
+                m_instances.Remove(m_viewId);
+                m_tokenSource.Cancel();
+            }
             Console.WriteLine($"Removed client on view {m_viewId} with current clients {m_clients}");
-            m_mutex.ReleaseMutex();
         }
 
-        private async void UpdateHubs()
+        private async void UpdateHubs(CancellationToken token)
         {
             Console.WriteLine($"Update starting on {m_viewId}");
             HubConnection hubConnection = new HubConnectionBuilder()
@@ -146,25 +131,22 @@ namespace FrontEnd.Areas.Datasets
                 .Build();
 
             await hubConnection.StartAsync();
-
-            while (m_stayAlive && m_clients > 0)
+            do
             {
                 using (NpgsqlConnection db = new NpgsqlConnection(m_connectionString))
                 {
                     await db.OpenAsync();
                     List<RegisterFrame> frames = new List<RegisterFrame>();
                     foreach (string query in m_queryStrings)
-                        frames.AddRange((await db.QueryAsync<RegisterFrame>(query)).ToList());
+                        frames.AddRange(db.Query<RegisterFrame>(query).ToList());
 
                     await hubConnection.SendAsync("SendMessage", JsonConvert.SerializeObject(frames), m_viewId.ToString());
                     await db.CloseAsync();
                 }
-                Thread.Sleep(5000);
-            }
-            m_mutex.WaitOne();
-            m_instances.TryRemove(m_viewId, out DatasetReader instance);
-            m_updateThread = null;
-            m_mutex.ReleaseMutex();
+                token.WaitHandle.WaitOne(5000);
+            } while (!token.IsCancellationRequested);
+
+            m_tokenSource.Dispose();
             Console.WriteLine($"Controller dying on {m_viewId}");
         }
     }
