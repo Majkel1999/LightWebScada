@@ -6,7 +6,6 @@
 
 @inject NavigationManager NavigationManager
 @inject OrganizationContext organizationsContext
-@inject ViewContext viewContext
 
 @implements IAsyncDisposable
 
@@ -81,7 +80,9 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        ViewObject view = viewContext.Views.Where(x => x.Id == ViewId).First();
+        ViewObject view = organizationsContext.Views.Where(x => x.Id == ViewId).FirstOrDefault();
+        if (view == null)
+            NavigationManager.NavigateTo("/", true);
         m_view = JsonConvert.DeserializeObject<View>(view.ViewJson);
         Organization org = organizationsContext.Organizations.Where(x => x.OrganizationId == view.OrganizationId).First();
         m_reader = DatasetReader.StartSession(ViewId, m_view, org);

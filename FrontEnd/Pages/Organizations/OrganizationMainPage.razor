@@ -1,7 +1,6 @@
 ﻿@page "/organizations/{organizationId:int}"
 
 @inject OrganizationContext organizationContext
-@inject ViewContext viewContext
 @inject ApiKeyGenerator apiKeyGenerator
 @inject IStringLocalizer<SharedResources> localizer
 
@@ -125,7 +124,7 @@
 
     private void InitParams()
     {
-        m_views = viewContext.Views
+        m_views = organizationContext.Views
             .Where(x => x.OrganizationId == organizationId)
             .ToList();
         m_organizationName = organizationContext.Organizations

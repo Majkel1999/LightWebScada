@@ -9,6 +9,7 @@ namespace FrontEnd.Areas.Organizations.Data
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<OrganizationMember> Members { get; set; }
         public DbSet<ClientConfigEntity> Configurations { get; set; }
+        public DbSet<ViewObject> Views { get; set; }
 
         public OrganizationContext(DbContextOptions<OrganizationContext> options) : base(options)
         {

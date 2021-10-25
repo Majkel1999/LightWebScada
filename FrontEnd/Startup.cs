@@ -65,9 +65,6 @@ namespace FrontEnd
             services.AddDbContext<OrganizationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
 
-            services.AddDbContext<ViewContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("UserContextConnection")));
-
             services.AddResponseCompression(options =>
             {
                 options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(

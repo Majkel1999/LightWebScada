@@ -4,7 +4,7 @@
 @using Newtonsoft.Json
 @using Pages.Modals
 
-@inject ViewContext viewContext
+@inject OrganizationContext organizationContext
 @inject NavigationManager NavManager
 
 <div class="container" style="max-width:500px">
@@ -105,7 +105,7 @@
         if (query.TryGetValue("ViewId", out StringValues viewId))
         {
             m_viewId = int.Parse(viewId.First());
-            m_viewObject = viewContext.Views
+            m_viewObject = organizationContext.Views
             .Where(x => x.Id == m_viewId)
             .FirstOrDefault();
             m_view = JsonConvert.DeserializeObject<View>(m_viewObject.ViewJson) ?? new View();
@@ -133,25 +133,25 @@
         else
         {
             string json = JsonConvert.SerializeObject(m_view);
-            viewContext.Views.Add(new ViewObject
+            organizationContext.Views.Add(new ViewObject
             {
                 OrganizationId = this.OrganizationId,
                 ViewJson = json,
                 Name = m_view.Name
             });
         }
-        viewContext.SaveChanges();
+        organizationContext.SaveChanges();
         NavManager.NavigateTo("/organizations/" + this.OrganizationId, true);
     }
 
     private void DeleteViewConfiguration()
     {
-        ViewObject view = viewContext.Views.Where(x => x.Id == m_viewId).First();
+        ViewObject view = organizationContext.Views.Where(x => x.Id == m_viewId).First();
         Console.WriteLine(view.Name);
         if (view != null)
         {
-            viewContext.Views.Remove(view);
-            viewContext.SaveChanges();
+            organizationContext.Views.Remove(view);
+            organizationContext.SaveChanges();
             NavManager.NavigateTo("/organizations/" + this.OrganizationId, true);
         }
     }
