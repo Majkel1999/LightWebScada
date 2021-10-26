@@ -74,6 +74,8 @@ namespace FrontEnd
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseStaticFiles();
+
             app.UseResponseCompression();
 
             if (env.IsDevelopment())

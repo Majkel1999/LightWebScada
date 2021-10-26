@@ -3,6 +3,11 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <Authors>Michał Kaleta</Authors>
+    <Product>LightScada Client</Product>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <Company>Light Web Scada</Company>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="NewFolder\**" />
