@@ -13,7 +13,6 @@ namespace LightScadaAPI.Controllers
         {
             m_reportService = reportGenerator;
         }
-
         [HttpPost]
         public IActionResult Get([FromQuery] int OrganizationId, [FromBody] ReportContent Content)
         {

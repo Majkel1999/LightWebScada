@@ -31,7 +31,7 @@ namespace LightScadaAPI.Contexts
                 foreach (ReportElement element in content.Content)
                 {
                     DynamicParameters parameters = new DynamicParameters();
-                    parameters.Add("address", element.Adress);
+                    parameters.Add("address", element.Address);
                     parameters.Add("type", element.Type);
                     parameters.Add("clientId", element.ClientID);
                     data.Add(db.Query<RegisterFrame>(query, parameters).AsList());
