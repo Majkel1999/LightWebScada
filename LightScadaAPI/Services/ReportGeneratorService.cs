@@ -35,7 +35,7 @@ namespace LightScadaAPI.Controllers
                         <head>
                         <meta charset=""utf-8"">
                         <style>
-                        h3 {text-align: center;}
+                        h1, h3 {text-align: center;}
                         p {text-align: center;}
                         div {text-align: center;}
                         table { border-collapse: collapse; width: 100% }
@@ -44,7 +44,7 @@ namespace LightScadaAPI.Controllers
                         </style>
                         </head>
                         <body>" 
-                        + $@"<h1></h1>";
+                        + $@"<h1>{name} Report - {DateTime.Now}</h1>";
 
             foreach (List<RegisterFrame> registerData in data)
             {
