@@ -366,3 +366,5 @@ FodyWeavers.xsd
 LightScadaClient/config.cfg
 linux
 keys
+puml
+generateUML.sh
