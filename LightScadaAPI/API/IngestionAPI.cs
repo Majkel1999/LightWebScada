@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using ScadaCommon;
 using LightScadaAPI.Contexts;
 
-namespace FrontEnd.Pages.API
+namespace LightScadaAPI.Controllers
 {
     [Route("api/send")]
     [ApiController]

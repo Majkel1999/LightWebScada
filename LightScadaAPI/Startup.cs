@@ -1,3 +1,4 @@
+using LightScadaAPI.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +25,8 @@ namespace LightScadaAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LightScadaAPI", Version = "v1" });
             });
             services.AddHostedService<CleanupService>();
+
+            services.AddScoped<IReportGenerator, PdfReportGenerator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
