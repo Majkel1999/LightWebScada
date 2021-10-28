@@ -1,10 +1,23 @@
 @page "/"
-@using System.Globalization
 
-@inject IStringLocalizer<SharedResources> localizer
+<h1 style="text-align:center">Welcome to Light Web Scada main page!</h1>
 
-<p>
-    <b>CurrentCulture</b>: @CultureInfo.CurrentCulture
-</p>
+<h3> Light Web Scada is an Engineering Thesis project, designed to work as a decentralized SCADA system. It allows multiple
+    clients to send data from Modbus capable devices to the server. </h3>
 
-<h1>@localizer["Welcome"]!</h1>
+<h4> The current version supports 4 types of elements, possible to be embedded into views:</h4>
+
+<ul>
+    <li>Text</li>
+    <li>Signal</li>
+    <li>Gauge</li>
+    <li>Line Chart</li>
+</ul>
+
+<h4> Currently supported protocols :</h4>
+<ul>
+    <li>Modbus TCP/IP</li>
+    <li>Modbus RTU</li>
+    <li>Modbus ASCII</li>
+</ul>
+

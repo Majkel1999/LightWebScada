@@ -23,6 +23,16 @@ namespace LightScadaAPI.Contexts
         }
 
         /// <summary>
+        /// Creates the name of the table which belongs to the specified organization
+        /// </summary>
+        /// <param name="organization">Organization which table should be returned</param>
+        /// <returns>Table name with data of the specified organization</returns>
+        public static string GetTableName(Organization organization)
+        {
+            return ("public.org_" + organization.OrganizationId + "_data");
+        }
+
+        /// <summary>
         /// Saves each RegisterFrame to database with proper register type, saved as (int)RegisterType
         /// </summary>
         /// <param name="dataFrame">DataFrame received from client</param>
@@ -64,6 +74,14 @@ namespace LightScadaAPI.Contexts
             }
         }
 
+        /// <summary>
+        /// Saves signle register frame to the correct table in database
+        /// </summary>
+        /// <param name="dataFrame">DataFrame from which the register is taken</param>
+        /// <param name="insertCommand">Prepared command</param>
+        /// <param name="reg">Register data</param>
+        /// <param name="type">Register type</param>
+        /// <returns></returns>
         private async Task SaveRegisterFrame(DataFrame dataFrame, NpgsqlCommand insertCommand, Register reg, int type)
         {
             insertCommand.Parameters.AddWithValue("id", dataFrame.ClientId);
@@ -74,11 +92,6 @@ namespace LightScadaAPI.Contexts
             await insertCommand.PrepareAsync();
             await insertCommand.ExecuteNonQueryAsync();
             insertCommand.Parameters.Clear();
-        }
-
-        private static string GetTableName(Organization organization)
-        {
-            return ("public.org_" + organization.OrganizationId + "_data");
         }
     }
 }

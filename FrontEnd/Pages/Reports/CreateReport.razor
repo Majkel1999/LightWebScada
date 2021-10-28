@@ -1,0 +1,100 @@
+@page "/reports/create/{organizationId:int}"
+@using Newtonsoft.Json
+
+@inject IJSRuntime JS
+
+@attribute [Authorize]
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <EditForm Model="@Element" OnValidSubmit="AddToList">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>
+                        <b>Client Id</b>
+                        <InputNumber class="form-control" @bind-Value="Element.ClientID" />
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <b>Register Type</b>
+                        <InputSelect class="form-control" @bind-Value="Element.Type">
+                            @foreach (var value in Enum.GetValues(typeof(RegisterType)))
+                            {
+                                <option>@value</option>
+                            }
+                        </InputSelect>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <b>Register address</b>
+                        <InputNumber class="form-control" @bind-Value="Element.Address">0</InputNumber>
+                    </label>
+
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Add to report</button>
+                </div>
+            </EditForm>
+        </div>
+        <div class="col">
+
+            <div class="text-center">
+                <button class="btn btn-success" @onclick="@(() => GenerateReportAsync())"
+                    disabled="@IsButtonDisabled">Generate Report</button>
+                <div class="spinner" hidden="@(!IsButtonDisabled)" />
+            </div>
+            <br />
+            <table class="table text-center" style="width:100%">
+                <tr>
+                    <th>Client ID</th>
+                    <th>Register Address</th>
+                    <th>Register Type</th>
+                    <th></th>
+                </tr>
+                @foreach (ReportElement element in Report.Content)
+                {
+                    <tr>
+                        <td>@element.ClientID</td>
+                        <td>@element.Address</td>
+                        <td>@element.Type</td>
+                        <th><button class="btn btn-danger"
+                            @onclick="@(() => Report.Content.Remove(element))">Remove</button></th>
+                    </tr>
+                }
+            </table>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int organizationId { get; set; }
+
+    private ReportContent Report = new ReportContent();
+    private ReportElement Element = new ReportElement();
+    private bool IsButtonDisabled = false;
+
+    private void AddToList()
+    {
+        if (!Report.Content.Any(x => x.Address == Element.Address && x.Type == Element.Type && x.ClientID == Element.ClientID))
+        {
+            Report.Content.Add(Element);
+            Element = new ReportElement();
+        }
+    }
+
+    private async void GenerateReportAsync()
+    {
+        var task = JS.InvokeVoidAsync("getReport", organizationId, JsonConvert.SerializeObject(Report));
+        IsButtonDisabled = true;
+        await task;
+        IsButtonDisabled = false;
+        Report = new ReportContent();
+        Element = new ReportElement();
+        StateHasChanged();
+    }
+}

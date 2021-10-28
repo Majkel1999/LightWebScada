@@ -8,7 +8,7 @@ using Dapper;
 using ScadaCommon;
 using Npgsql;
 
-namespace FrontEnd.Pages.API
+namespace LightScadaAPI.Controllers
 {
     [Route("api/configurations")]
     [ApiController]
