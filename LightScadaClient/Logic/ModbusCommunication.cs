@@ -58,7 +58,6 @@ namespace LigthScadaClient.Logic
                     LocalConfiguration.Instance.DataSet.InputRegisters.ForEach(
                         (x) => x.CurrentValue = m_modbusClient.ReadInputRegisters(x.RegisterAddress, 1)[0]);
                     await ServerCommunication.Instance.SendData(LocalConfiguration.Instance.DataSet, LocalConfiguration.Instance.ApiKey);
-                    //StatusLogger.Instance.Log("Data sent to server");
                 }
                 catch (Exception e)
                 {

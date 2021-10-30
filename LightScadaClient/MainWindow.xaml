@@ -7,7 +7,7 @@
         xmlns:mahaaps="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:local="clr-namespace:LigthScadaClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="850"
+        Title="Light Web Scada Client" Height="500" Width="850"
         MinHeight="500" MinWidth="850"
         Closed="OnWindowClose">
     <Grid>
