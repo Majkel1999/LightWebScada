@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO.Ports;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,32 +22,46 @@ namespace ModbusSimulator
                 StartButton.IsEnabled = false;
             else
                 PortsComboBox.SelectedIndex = 0;
+            ProtocolComboBox.Items.Add("ASCII/RTU");
+            ProtocolComboBox.Items.Add("TCP/IP");
+            ProtocolComboBox.SelectedIndex = 0;
             m_logger = new StatusLogger(StatusTextBox);
         }
 
         private void OnStartButtonClick(object sender, RoutedEventArgs e)
         {
-            string comPort = PortsComboBox.SelectedItem as string;
-            if (!SerialPortsHelper.CheckIfPortIsOpen(comPort))
+            m_server = new ModbusServer();
+            if (ProtocolComboBox.SelectedItem.ToString() == "ASCII/RTU")
             {
-                MessageBox.Show($"{comPort} is already open!");
-                return;
+                string comPort = PortsComboBox.SelectedItem as string;
+                if (!SerialPortsHelper.CheckIfPortIsOpen(comPort))
+                {
+                    MessageBox.Show($"{comPort} is already open!");
+                    return;
+                }
+                m_server.SerialPort = comPort;
+                m_server.SerialFlag = true;
+                Dispatcher.Invoke(() => m_logger.Log($"Server started on port {m_server.SerialPort}!"));
+            }
+            else
+            {
+                m_server.SerialFlag = false;
+                Dispatcher.Invoke(() => m_logger.Log($"Server started on {m_server.LocalIPAddress}:{m_server.Port}!"));
             }
 
             StartButton.IsEnabled = false;
             StopButton.IsEnabled = true;
             PortsComboBox.IsEnabled = false;
-
-            m_server = new ModbusServer();
-            m_server.SerialPort = comPort;
-            m_server.Listen();
+            ProtocolComboBox.IsEnabled = false;
 
             CoilRegistersTable.ItemsSource = m_server.coils.localArray;
             DiscreteInputsTable.ItemsSource = m_server.discreteInputs.localArray;
             HoldingRegistersTable.ItemsSource = m_server.holdingRegisters.localArray;
             InputRegistersTable.ItemsSource = m_server.inputRegisters.localArray;
 
-            Dispatcher.Invoke(() => m_logger.Log($"Server started on port {m_server.SerialPort}!"));
+            m_server.Listen();
+
+
             RandomizeValues();
         }
 
@@ -55,6 +70,7 @@ namespace ModbusSimulator
             StartButton.IsEnabled = true;
             StopButton.IsEnabled = false;
             PortsComboBox.IsEnabled = true;
+            ProtocolComboBox.IsEnabled = true;
 
             CoilRegistersTable.ItemsSource = null;
             DiscreteInputsTable.ItemsSource = null;
