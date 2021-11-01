@@ -2,20 +2,20 @@
 
 @inject NavigationManager Navigation
 @inject TokenProvider TokenProvider
-@inject IStringLocalizer<SharedResources> localizer
+
 
 <AuthorizeView>
     <Authorized>
         <a href="Identity/Account/Manage/Index">
-            @localizer["Hello"], @context.User.Identity.Name!
+            Welcome @context.User.Identity.Name!
         </a>
         <form action="Identity/Account/LogOut" method="post">
-            <button class="nav-link btn btn-link" type="submit">@localizer["Logout"]</button>
+            <button class="nav-link btn btn-link" type="submit">Logout</button>
             <input name="__RequestVerificationToken" type="hidden" value="@TokenProvider.XsrfToken">
         </form>
     </Authorized>
     <NotAuthorized>
-        <a href="Identity/Account/Register">@localizer["Register"]</a>
-        <a href="Identity/Account/Login">@localizer["Login"]</a>
+        <a href="Identity/Account/Register">Register</a>
+        <a href="Identity/Account/Login">Login</a>
     </NotAuthorized>
 </AuthorizeView>

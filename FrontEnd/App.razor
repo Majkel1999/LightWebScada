@@ -1,5 +1,5 @@
 ﻿@inject TokenProvider TokenProvider
-@inject IStringLocalizer<SharedResources> localizer
+
 
 <CascadingAuthenticationState>
     <CascadingBlazoredModal>
@@ -10,14 +10,13 @@
                         <RedirectToLogin />
                     </NotAuthorized>
                     <Authorizing>
-                        <h1>@localizer["Authorization"]</h1>
-                        <p> @localizer["Only visible while authorization is in progress."] </p>
+                        <h1>Authorization in progress!</h1>
                     </Authorizing>
                 </AuthorizeRouteView>
             </Found>
             <NotFound>
                 <LayoutView Layout="@typeof(MainLayout)">
-                    <p>@localizer["NothingHere"]</p>
+                    <p>Sorry, there is nothing here!</p>
                 </LayoutView>
             </NotFound>
         </Router>

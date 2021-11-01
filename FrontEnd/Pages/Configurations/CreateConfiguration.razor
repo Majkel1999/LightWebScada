@@ -5,7 +5,7 @@
 @inject OrganizationContext organizationContext
 @inject ConfigHandler configHandler
 @inject NavigationManager NavManager
-@inject IStringLocalizer<SharedResources> localizer
+
 
 @attribute [Authorize]
 
@@ -23,7 +23,7 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="form-group">
-                <label for="organization name"><b>@localizer["RegisterType"]</b></label>
+                <label for="organization name"><b>Register Type</b></label>
                 <InputSelect id="type" @bind-Value="m_valueModel.Type" class="form-control" required>
                     @foreach (var value in Enum.GetValues(typeof(RegisterType)))
                     {
@@ -32,12 +32,12 @@
                 </InputSelect>
             </div>
             <div class="form-group">
-                <label for="organization name"><b>@localizer["PhysicalRegister"]0-9999</b></label>
+                <label for="organization name"><b>Register adress 0-9999</b></label>
                 <InputNumber id="registerNumber" @bind-Value="m_valueModel.RegisterNumber" class="form-control" required
-                    placeholder=@localizer["RegisterNum"] />
+                    placeholder="Register address"/>
             </div>
             <div class="text-center">
-                <button class="btn btn-primary" type="submit">@localizer["AddRegister"]</button>
+                <button class="btn btn-primary" type="submit">Add register</button>
             </div>
         </EditForm>
     </div>
@@ -45,7 +45,7 @@
 
 
 <div class="container overflow-auto border" style="max-height:800px; padding:20px">
-    <h4 class="text-center">@localizer["Configuration"]</h4>
+    <h4 class="text-center">Configuration</h4>
     @if (!String.IsNullOrEmpty(m_configError))
     {
         <br />
@@ -56,12 +56,12 @@
     }
     <EditForm Model="m_config" OnSubmit="SaveConfig">
         <div class="form-group">
-            <label for="organization name"><b>@localizer["Name"]</b></label>
+            <label for="organization name"><b>Configuration Name</b></label>
             <InputText id="configName" @bind-Value="m_config.Name" class="form-control" required
-                placeholder=@localizer["ConfigName"] />
+                placeholder="Configuration name" />
         </div>
         <div class="form-group">
-            <label for="organization name"><b>@localizer["Protocol"]</b></label>
+            <label for="organization name"><b>Protocol</b></label>
             <InputSelect id="configProtocol" @bind-Value="m_config.Protocol" class="form-control" required>
                 @foreach (var value in Enum.GetValues(typeof(Protocol)))
                 {
@@ -70,23 +70,23 @@
             </InputSelect>
         </div>
         <div class="text-center">
-            <button class="btn btn-success" type="submit">@localizer["SaveConfig"]</button>
+            <button class="btn btn-success" type="submit">Save Configuration</button>
         </div>
     </EditForm>
     <br />
-    <h6 class="text-center">@localizer["CoilRegisters"]</h6>
+    <h6 class="text-center">Coil Registers</h6>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th style="width: 70%;" scope="col">@localizer["PhysicalRegister"]</th>
-                <th scope="col" style="color: red;width: 30%;">@localizer["Delete"]</th>
+                <th style="width: 70%;" scope="col">Register Address</th>
+                <th scope="col" style="color: red;width: 30%;">Remove</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var line in m_config.Registers.CoilRegisters.OrderBy(x => x.RegisterAddress))
             {
                 <tr>
-                    <td>@localizer["PhysicalRegister"]: @line.RegisterAddress</td>
+                    <td>Register Address: @line.RegisterAddress</td>
                     <td>
                         <button class="btn btn-link text-danger"
                         @onclick="() => RemoveFromConfig(line,RegisterType.CoilRegister)">
@@ -97,19 +97,19 @@
             }
         </tbody>
     </table>
-    <h6 class="text-center">@localizer["DiscreteInputs"]</h6>
+    <h6 class="text-center">Discrete Inputs</h6>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th style="width: 70%;" scope="col">@localizer["PhysicalRegister"]</th>
-                <th scope="col" style="color: red;width: 30%;">@localizer["Delete"]</th>
+                <th style="width: 70%;" scope="col">Register Address</th>
+                <th scope="col" style="color: red;width: 30%;">Remove</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var line in m_config.Registers.DiscreteInputs.OrderBy(x => x.RegisterAddress))
             {
                 <tr>
-                    <td>@localizer["PhysicalRegister"]: @line.RegisterAddress</td>
+                    <td>Register Address: @line.RegisterAddress</td>
                     <td>
                         <button class="btn btn-link text-danger"
                         @onclick="() => RemoveFromConfig(line,RegisterType.DiscreteInput)">
@@ -120,19 +120,19 @@
             }
         </tbody>
     </table>
-    <h6 class="text-center">@localizer["InputRegisters"]</h6>
+    <h6 class="text-center">Input Registers</h6>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th style="width: 70%;" scope="col">@localizer["PhysicalRegister"]</th>
-                <th scope="col" style="color: red;width: 30%;">@localizer["Delete"]</th>
+                <th style="width: 70%;" scope="col">Register Address</th>
+                <th scope="col" style="color: red;width: 30%;">Remove</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var line in m_config.Registers.InputRegisters.OrderBy(x => x.RegisterAddress))
             {
                 <tr>
-                    <td>@localizer["PhysicalRegister"]: @line.RegisterAddress</td>
+                    <td>Register Address: @line.RegisterAddress</td>
                     <td>
                         <button class="btn btn-link text-danger"
                         @onclick="() => RemoveFromConfig(line,RegisterType.InputRegister)">
@@ -143,19 +143,19 @@
             }
         </tbody>
     </table>
-    <h6 class="text-center">@localizer["HoldingRegisters"]</h6>
+    <h6 class="text-center">Holding Registers</h6>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th style="width: 70%;" scope="col">@localizer["PhysicalRegister"]</th>
-                <th scope="col" style="color: red;width: 30%;">@localizer["Delete"]</th>
+                <th style="width: 70%;" scope="col">Register Address</th>
+                <th scope="col" style="color: red;width: 30%;">Remove</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var line in m_config.Registers.HoldingRegisters.OrderBy(x => x.RegisterAddress))
             {
                 <tr>
-                    <td>@localizer["PhysicalRegister"]: @line.RegisterAddress</td>
+                    <td>Register Address: @line.RegisterAddress</td>
                     <td>
                         <button class="btn btn-link text-danger"
                         @onclick="() => RemoveFromConfig(line,RegisterType.HoldingRegister)">

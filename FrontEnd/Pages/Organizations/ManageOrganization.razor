@@ -4,26 +4,26 @@
 @inject OrganizationContext OrganizationContext
 @inject AuthenticationStateProvider authState
 @inject DatasetContext datasetContext
-@inject IStringLocalizer<SharedResources> localizer
+
 
 @attribute [Authorize]
 
-<h3 class="text-center">@localizer["ManageOrg"] - @m_organizationName </h3>
+<h3 class="text-center">Manage organization - @m_organizationName </h3>
 
 <div class="container" style="max-width:500px">
     <div class="border" style="padding: 20px; margin: 10px">
-        <h4 class="text-center">@localizer["Informations"]</h4>
+        <h4 class="text-center">Informations</h4>
         <EditForm Model="@m_organizationRegistration" OnSubmit="ChangeOrganizationName">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <div class="form-group">
-                <label for="organization name"><b>@localizer["OrgName"] </b></label>
+                <label for="organization name"><b>Organization Name </b></label>
                 <InputText id="username" @bind-Value="m_organizationRegistration.OrganizationName" class="form-control"
-                           required placeholder=@localizer["OrgName"]  />
+                    required placeholder="Organization name" />
             </div>
             @m_nameChangeError
-            <button class="btn btn-primary" type="submit">@localizer["ChangeName"] </button>
+            <button class="btn btn-primary" type="submit">Change name </button>
 
         </EditForm>
 
@@ -33,10 +33,10 @@
 
 <div class="container" style="max-width:500px">
     <div class="border overflow-auto" style="padding:20px;margin:10px">
-        <h4 class="text-center">@localizer["DeleteOrg"] </h4>
+        <h4 class="text-center">Delete organization </h4>
         <div class="text-center">
             <button type="button" class="btn btn-danger" @onclick="() => DeleteOrganization()">
-                ❗ 🗙 @localizer["DeleteOrg"] ❗
+                ❗ 🗙 Delete organization ❗
             </button>
         </div>
     </div>
@@ -95,9 +95,9 @@
         datasetContext.RemoveTable(organization);
         OrganizationContext.Organizations.Remove(organization);
         OrganizationContext.Configurations
-            .Where(x => x.OrganizationId == OrganizationId)
-            .ToList()
-            .ForEach((y) => OrganizationContext.Configurations.Remove(y));
+        .Where(x => x.OrganizationId == OrganizationId)
+        .ToList()
+        .ForEach((y) => OrganizationContext.Configurations.Remove(y));
         OrganizationContext.SaveChanges();
         NavManager.NavigateTo("/", true);
     }
