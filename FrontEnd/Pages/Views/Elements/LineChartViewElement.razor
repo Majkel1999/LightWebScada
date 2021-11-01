@@ -2,11 +2,11 @@
     <div class="center-text">
         <h4>@View.Title</h4>
         <RadzenChart @ref="m_chart">
-            <RadzenLineSeries Data=@m_chartData ValueProperty="Value" CategoryProperty="Date" Title="Value">
+            <RadzenLineSeries Data=@m_chartData ValueProperty="Value" CategoryProperty="Date" Title=@m_name>
                 <RadzenMarkers MarkerType="MarkerType.Circle" />
             </RadzenLineSeries>
             <RadzenCategoryAxis Padding="20" FormatString="{0:HH:mm:ss}" />
-            <RadzenValueAxis>
+            <RadzenValueAxis Min=@m_minimumValue Max=@m_maximumValue Step=@m_step>
                 <RadzenGridLines Visible="true" />
             </RadzenValueAxis>
         </RadzenChart>
@@ -24,10 +24,33 @@
     public List<ChartItem> m_chartData { get; set; } = new List<ChartItem>();
 
     private RadzenChart m_chart { get; set; }
+    private double m_minimumValue = 0;
+    private double m_maximumValue = 10000;
+    private double m_step = 1000;
+    private string m_name = "Value";
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         await base.SetParametersAsync(parameters);
+
+        if (View.Parameters.TryGetValue("Minimum", out object minimum))
+        {
+            if (double.TryParse(minimum.ToString(), out double result))
+                m_minimumValue = result;
+        }
+        if (View.Parameters.TryGetValue("Maximum", out object maximum))
+        {
+            if (double.TryParse(maximum.ToString(), out double result))
+                m_maximumValue = result;
+        }
+        if (View.Parameters.TryGetValue("Step", out object step))
+        {
+            if (double.TryParse(step.ToString(), out double result))
+                m_step = result;
+        }
+        if (View.Parameters.TryGetValue("Name", out object name))
+            m_name = name.ToString();
+
         if (View.InitialData != null && m_chartData.Count < MaximumPoints)
         {
             foreach (DisplayedData data in View.InitialData)

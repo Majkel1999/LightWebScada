@@ -2,12 +2,12 @@
     <div class="center-text">
         <h4>@View.Title</h4>
         <RadzenRadialGauge Style="width: 100%; height: 300px;">
-            <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step=1000 Min=0 Max=10000
-                TickPosition=GaugeTickPosition.Inside>
+            <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step=@m_step Min=@m_minimumValue
+                Max=@m_maximumValue TickPosition=GaugeTickPosition.Inside>
                 <RadzenRadialGaugeScalePointer Value=@View.Value Length="0.6" ShowValue="false" />
             </RadzenRadialGaugeScale>
         </RadzenRadialGauge>
-        <br/>
+        <br />
         <b>Value: @View.Value</b>
     </div>
 </div>
@@ -17,12 +17,26 @@
     [Parameter]
     public ViewElement View { get; set; }
 
-    public int MinimumValue = 0;
-    public int MaximumValue = 10;
-    public int Step = 5;
+    private double m_minimumValue = 0;
+    private double m_maximumValue = 10000;
+    private double m_step = 1000;
 
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
-
+        if (View.Parameters.TryGetValue("Minimum", out object minimum))
+        {
+            if (double.TryParse(minimum.ToString(), out double result))
+                m_minimumValue = result;
+        }
+        if (View.Parameters.TryGetValue("Maximum", out object maximum))
+        {
+            if (double.TryParse(maximum.ToString(), out double result))
+                m_maximumValue = result;
+        }
+        if (View.Parameters.TryGetValue("Step", out object step))
+        {
+            if (double.TryParse(step.ToString(), out double result))
+                m_step = result;
+        }
     }
 }

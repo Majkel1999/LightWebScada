@@ -115,10 +115,7 @@
 
     private void AddElement(ViewType type)
     {
-        m_view.AddToFirstOpen(new ViewElement()
-        {
-            ViewType = type
-        });
+        m_view.AddToFirstOpen(new ViewElement(type));
     }
 
     private void SaveViewConfiguration()

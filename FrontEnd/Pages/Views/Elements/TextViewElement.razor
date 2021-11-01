@@ -1,12 +1,24 @@
 <div class="round-border flex-center">
     <div class="center-text">
         <h4>@View.Title</h4>
-        <br/>
-        <b>Value: @View.Value</b>
+        <br />
+        <b>@m_prefix @View.Value @m_suffix</b>
     </div>
 </div>
 
 @code {
     [Parameter]
     public ViewElement View { get; set; }
+
+    private string m_prefix;
+    private string m_suffix;
+
+    protected override void OnInitialized()
+    {
+        if (View.Parameters.TryGetValue("Prefix", out object prefix))
+            m_prefix = prefix.ToString();
+
+        if (View.Parameters.TryGetValue("Suffix", out object suffix))
+            m_suffix = suffix.ToString();
+    }
 }
