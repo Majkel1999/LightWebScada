@@ -30,14 +30,14 @@
         await base.SetParametersAsync(parameters);
         if (View.InitialData != null && m_chartData.Count < MaximumPoints)
         {
-            foreach (RegisterFrame frame in View.InitialData)
-                m_chartData.Add(new ChartItem(frame.Value, frame.Timestamp.ToLocalTime()));
+            foreach (DisplayedData data in View.InitialData)
+                m_chartData.Add(new ChartItem(data.Value, data.Timestamp.ToLocalTime()));
         }
     }
 
     protected override void OnParametersSet()
     {
-        int? value = View.GetValue();
+        double? value = View.GetValue();
         if (!FirstPass && value.HasValue)
             m_chartData.Add(new ChartItem(value.Value, View.TimeStamp));
 

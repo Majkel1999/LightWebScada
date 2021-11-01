@@ -14,6 +14,9 @@
             <InputNumber @bind-Value=m_registerNumber class="form-control" min=0 max=65535 step=1></InputNumber>
             <label>Client ID</label>
             <InputNumber @bind-Value=m_clientId class="form-control" min=1 max=99 step=1></InputNumber>
+            <label>Mathematical transformation </label> <br/>
+            <label>x - received value</label>
+            <InputText @bind-Value=m_mathExpression class="form-control"></InputText>
         </EditForm>
     </div>
 
@@ -33,18 +36,22 @@
     private int m_registerNumber;
     private int m_clientId;
     private string m_title;
+    private string m_mathExpression;
 
     protected override void OnInitialized()
     {
         m_registerType = Element.RegisterType;
         m_registerNumber = Element.RegisterAddress;
         m_clientId = Element.ClientId;
+        m_title = Element.Title;
+        m_mathExpression = Element.Expression;
     }
 
     async Task SaveAndClose()
     {
         Element.SetRegisterType(m_registerType);
         Element.SetTitle(m_title);
+        Element.SetMathExpression(m_mathExpression);
         if (m_registerNumber >= 0 && m_registerNumber < 65535)
             Element.SetRegisterAddress(m_registerNumber);
         if (m_clientId >= 1 && m_clientId < 99)
