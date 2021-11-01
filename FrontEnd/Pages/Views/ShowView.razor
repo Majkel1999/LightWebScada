@@ -9,6 +9,8 @@
 
 @implements IAsyncDisposable
 
+@attribute [Authorize]
+
 <div class="center-text">
     Last Update @m_lastUpdate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
 </div>
