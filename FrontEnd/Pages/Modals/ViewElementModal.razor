@@ -1,6 +1,8 @@
 <div>
     <div class="form-group">
         <EditForm Model=this>
+            <label>Title</label>
+            <InputText @bind-Value=@m_title class="form-control">Title...</InputText>
             <label>Register type</label>
             <InputSelect @bind-Value=m_registerType class="form-control">
                 <option value=@RegisterType.CoilRegister>Coil register</option>
@@ -30,6 +32,7 @@
     private RegisterType m_registerType;
     private int m_registerNumber;
     private int m_clientId;
+    private string m_title;
 
     protected override void OnInitialized()
     {
@@ -41,9 +44,10 @@
     async Task SaveAndClose()
     {
         Element.SetRegisterType(m_registerType);
+        Element.SetTitle(m_title);
         if (m_registerNumber >= 0 && m_registerNumber < 65535)
             Element.SetRegisterAddress(m_registerNumber);
-        if(m_clientId >=1 && m_clientId < 99)
+        if (m_clientId >= 1 && m_clientId < 99)
             Element.SetClientId(m_clientId);
         await BlazoredModal.CloseAsync(ModalResult.Ok(true));
     }

@@ -1,7 +1,8 @@
 <div class="round-border flex-center">
     <div class="center-text">
+        <h4>@View.Title</h4>
         <RadzenRadialGauge Style="width: 100%; height: 300px;">
-            <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step=@Step Min=@MinimumValue Max=@MaximumValue
+            <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step=1000 Min=0 Max=10000
                 TickPosition=GaugeTickPosition.Inside>
                 <RadzenRadialGaugeScalePointer Value=@View.Value Length="0.6" ShowValue="false" />
             </RadzenRadialGaugeScale>
