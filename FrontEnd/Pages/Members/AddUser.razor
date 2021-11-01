@@ -2,10 +2,9 @@
 
 @using System.Text.RegularExpressions
 
-@inject UserContext userContext
 @inject OrganizationContext organizationContext
 @inject NavigationManager navManager
-
+@inject UserManager<FrontEndUser> userManager
 
 @attribute [Authorize]
 
@@ -23,14 +22,28 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="form-group">
-                <InputText id="username" @bind-Value="m_memberModel.Username" class="form-control" required
-                           placeholder="Email address" />
-            </div>
-            <div class="d-flex justify-content-end">
-                <div style="margin: auto;">Grant administrator privileges</div>
-                <InputCheckbox id="isAdmin" @bind-Value="m_memberModel.Admin" class="form-control"/>
-            </div>
-            <div class="text-center" style="margin: 15px;">
+                <InputText @bind-Value="m_memberModel.Email" class="form-control" required
+                    placeholder="Email address" />
+
+                <label>Grant administrator privileges</label>
+                <InputCheckbox @bind-Value="m_memberModel.Admin" class="form-control" />
+
+                <h3>Permissions</h3>
+                <label>Show views</label>
+                <InputCheckbox @bind-Value="m_memberModel.CanShowViews" class="form-control" />
+
+                <label>Add/Edit views</label>
+                <InputCheckbox @bind-Value="m_memberModel.CanEditViews" class="form-control" />
+
+                <label>Delete views</label>
+                <InputCheckbox @bind-Value="m_memberModel.CanDeleteViews" class="form-control" />
+
+                <label>Add/Edit configurations</label>
+                <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" class="form-control" />
+
+                <label>Delete configurations</label>
+                <InputCheckbox @bind-Value="m_memberModel.CanDeleteConfigurations" class="form-control" />
+
                 <button class="btn btn-primary" type="submit">Add</button>
             </div>
         </EditForm>
@@ -44,14 +57,14 @@
     private string m_registerError;
     private MemberModel m_memberModel = new MemberModel();
 
-    private void TryAddUser()
+    private async void TryAddUser()
     {
         m_registerError = "";
         try
         {
-            if (!Regex.IsMatch(m_memberModel.Username,
-                @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-                RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)))
+            if (!Regex.IsMatch(m_memberModel.Email,
+            @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+            RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)))
             {
                 m_registerError = "The specified e-mail is in incorrect format";
                 return;
@@ -62,14 +75,16 @@
             m_registerError = "The specified e-mail is in incorrect format";
             return;
         }
-        if (!userContext.Users.Where(x => x.UserName.ToLower() == m_memberModel.Username.ToLower()).Any())
+
+        if (await userManager.FindByEmailAsync(userManager.NormalizeEmail(m_memberModel.Email)) == null)
         {
             m_registerError = "Specified user doesn't exist!";
             return;
         }
+
         organizationContext.Members.Add(new OrganizationMember
         {
-            UserName = m_memberModel.Username.Normalize(),
+            UserName = m_memberModel.Email.Normalize(),
             isAdmin = m_memberModel.Admin,
             OrganizationId = organizationId
         });

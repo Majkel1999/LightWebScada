@@ -19,7 +19,11 @@ namespace FrontEnd.Areas.Identity
                     options.UseNpgsql(
                         context.Configuration.GetConnectionString("UserContextConnection")));
 
-                services.AddDefaultIdentity<FrontEndUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                services.AddDefaultIdentity<FrontEndUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+                    options.User.RequireUniqueEmail = true;
+                })
                     .AddEntityFrameworkStores<UserContext>()
                     .AddTokenProvider<DataProtectorTokenProvider<FrontEndUser>>("default");
             });

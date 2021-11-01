@@ -6,8 +6,12 @@ namespace FrontEnd.DataModels
     {
         [Required]
         [DataType(DataType.EmailAddress)]
-        public string Username { get; set; }
-        [Required]
+        public string Email { get; set; }
         public bool Admin { get; set; }
+        public bool CanShowViews { get; set; }
+        public bool CanEditViews { get; set; }
+        public bool CanDeleteViews { get; set; }
+        public bool CanEditConfigurations { get; set; }
+        public bool CanDeleteConfigurations { get; set; }
     }
 }
