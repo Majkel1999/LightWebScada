@@ -150,6 +150,7 @@ namespace LigthScadaClient
                 LocalConfiguration.Instance.SlaveID = int.TryParse(SlaveIdTextBox.Text, out int ID) ? ID : 1;
                 _ = int.TryParse(PortTextBox.Text, out LocalConfiguration.Instance.TCPPort);
                 m_modbusCommunication?.Stop(null);
+                m_modbusCommunication = null;
             }
         }
 
@@ -162,6 +163,7 @@ namespace LigthScadaClient
                 LocalConfiguration.Instance.StopBits = StopBitsComboBox.SelectedIndex == -1 ? StopBits.None : (StopBits)StopBitsComboBox.SelectedItem;
                 LocalConfiguration.Instance.Baudrate = (int)BaudrateComboBox.SelectedItem;
                 m_modbusCommunication?.Stop(null);
+                m_modbusCommunication = null;
             }
         }
 

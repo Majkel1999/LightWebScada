@@ -104,7 +104,6 @@
                 <TextBox x:Name="IPTextBox" Grid.Row="1" VerticalContentAlignment="Center" Margin="25" TextChanged="OnConfigTextChange"/>
                 <Label Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">Port</Label>
                 <TextBox x:Name="PortTextBox" Grid.Row="3" VerticalContentAlignment="Center" Margin="25" TextChanged="OnConfigTextChange" PreviewTextInput="OnPortInputPreview"/>
-                <Button Grid.Row="4" Content="Save" Margin="10 25 10 25"/>
             </Grid>
 
             <Grid x:Name="RTUConfigurationGrid" IsEnabled="False" Visibility="Hidden" Grid.ColumnSpan="2">

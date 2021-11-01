@@ -99,7 +99,7 @@ namespace ModbusSimulator
             Dispatcher.Invoke(() =>
             {
                 RefreshDisplayedValues();
-                m_logger.Log("Values randomized");
+                //m_logger.Log("Values randomized");
             });
 
             Task.Run(() =>
