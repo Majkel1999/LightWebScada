@@ -6,41 +6,51 @@
 @inject DatasetContext datasetContext
 
 
-@attribute [Authorize]
+<AuthorizeView Context="authContext" Policy=@Policies.AdminPolicy Resource="@OrganizationId">
+    <Authorized>
+        <h3 class="text-center">Manage organization - @m_organizationName </h3>
 
-<h3 class="text-center">Manage organization - @m_organizationName </h3>
+        <div class="container" style="max-width:500px">
+            <div class="border" style="padding: 20px; margin: 10px">
+                <h4 class="text-center">Informations</h4>
+                <EditForm Model="@m_organizationRegistration" OnSubmit="ChangeOrganizationName">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-<div class="container" style="max-width:500px">
-    <div class="border" style="padding: 20px; margin: 10px">
-        <h4 class="text-center">Informations</h4>
-        <EditForm Model="@m_organizationRegistration" OnSubmit="ChangeOrganizationName">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+                    <div class="form-group">
+                        <label for="organization name"><b>Organization Name </b></label>
+                        <InputText id="username" @bind-Value="m_organizationRegistration.OrganizationName"
+                            class="form-control" required placeholder="Organization name" />
+                    </div>
+                    @m_nameChangeError
+                    <button class="btn btn-primary" type="submit">Change name </button>
 
-            <div class="form-group">
-                <label for="organization name"><b>Organization Name </b></label>
-                <InputText id="username" @bind-Value="m_organizationRegistration.OrganizationName" class="form-control"
-                    required placeholder="Organization name" />
+                </EditForm>
+
             </div>
-            @m_nameChangeError
-            <button class="btn btn-primary" type="submit">Change name </button>
-
-        </EditForm>
-
-    </div>
-</div>
-<br />
-
-<div class="container" style="max-width:500px">
-    <div class="border overflow-auto" style="padding:20px;margin:10px">
-        <h4 class="text-center">Delete organization </h4>
-        <div class="text-center">
-            <button type="button" class="btn btn-danger" @onclick="() => DeleteOrganization()">
-                ❗ 🗙 Delete organization ❗
-            </button>
         </div>
-    </div>
-</div>
+        <br />
+
+        <div class="container" style="max-width:500px">
+            <div class="border overflow-auto" style="padding:20px;margin:10px">
+                <h4 class="text-center">Delete organization </h4>
+                <div class="text-center">
+                    <button type="button" class="btn btn-danger" @onclick="() => DeleteOrganization()">
+                        ❗ 🗙 Delete organization ❗
+                    </button>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+        <NotAuthorized>
+        <h1>Sorry</h1>
+        <p>You're not authorized to reach this page.</p>
+        <p>You may need to log in as a different user.</p>
+    </NotAuthorized>
+    <Authorizing>
+        <h1>Authorization in progress!</h1>
+    </Authorizing>
+</AuthorizeView>
 
 
 @code {

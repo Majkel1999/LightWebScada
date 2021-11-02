@@ -7,86 +7,95 @@
 @inject OrganizationContext organizationContext
 @inject NavigationManager NavManager
 
-@attribute [Authorize]
-
-<div class="container" style="max-width:500px">
-    <div class="text-center font-weight-bolder" style="font-size:32px"></div>
-    <div class="border" style="padding:20px">
-        <b>
-            <div class="center-text">View name</div>
-        </b>
-        <EditForm Model="@m_view">
-            <div class="form-group">
-                <label for="organization name"><b></b></label>
-                <InputText id="username" @bind-Value="m_view.Name" class="form-control" required
-                    placeholder="View name" />
-            </div>
-        </EditForm>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-
-        <div class="col-4">
-            <div class="center-border">
-                @foreach (ViewType type in (ViewType[])Enum.GetValues(typeof(ViewType)))
-                {
-                    <div class="row">
-                        <button class="btn btn-primary" @onclick="() => AddElement(type)"
-                        style="margin:auto;margin-top:10px">
-                            Add @type.ToString()
-                        </button>
+<AuthorizeView Context="authContext" Policy=@Policies.EditViewsPolicy Resource="@OrganizationId">
+    <Authorized>
+        <div class="container" style="max-width:500px">
+            <div class="text-center font-weight-bolder" style="font-size:32px"></div>
+            <div class="border" style="padding:20px">
+                <b>
+                    <div class="center-text">View name</div>
+                </b>
+                <EditForm Model="@m_view">
+                    <div class="form-group">
+                        <label for="organization name"><b></b></label>
+                        <InputText id="username" @bind-Value="m_view.Name" class="form-control" required
+                            placeholder="View name" />
                     </div>
-                }
+                </EditForm>
             </div>
+        </div>
+
+        <div class="container-fluid">
             <div class="row">
-                <div class="center-text col-6" style="margin-top:10px">
-                    <button class="btn btn-success" @onclick="() => SaveViewConfiguration()">Save</button>
-                </div>
-                @if (m_isEdit)
-                {
-                    <div class="center-text col-6" style="margin-top:10px">
-                        <button class="btn btn-danger" @onclick="() => DeleteViewConfiguration()">Delete</button>
-                    </div>
-                }
-            </div>
 
-            <div class="row center-border delete-zone">
-                <Dropzone Items="m_elements" Class="plk-static-zone" InstantReplace="true" TItem="ViewElement"
-                    OnItemDrop="@((x) => RemoveObject(x))" />
-            </div>
-        </div>
-
-        <div class="col-8">
-            <div class="center-border">
-                @foreach (var row in m_view.Rows)
-                {
-                    <div class="plk-flex center-border">
-                        <Dropzone Class="flex-container" Items="row.Elements" MaxItems="3" InstantReplace="true">
-                            <div class="draggable-item" @onclick="() => ShowModal(context)">
-                                <div>
-                                    <div class="center-text" style="font-size:large;padding-top:15px">
-                                        <b>@context.ViewType.ToString()</b>
-                                    </div>
-                                    <hr class="container-line side-margin">
-                                    <div class="side-margin" style="text-align:center">
-                                        @context.RegisterType.ToString()
-                                    </div>
-                                    <br />
-                                    <div class="side-margin" style="text-align:center">
-                                        @context.RegisterAddress.ToString()
-                                    </div>
-                                </div>
+                <div class="col-4">
+                    <div class="center-border">
+                        @foreach (ViewType type in (ViewType[])Enum.GetValues(typeof(ViewType)))
+                        {
+                            <div class="row">
+                                <button class="btn btn-primary" @onclick="() => AddElement(type)"
+                                style="margin:auto;margin-top:10px">
+                                    Add @type.ToString()
+                                </button>
                             </div>
-                        </Dropzone>
+                        }
                     </div>
-                }
+                    <div class="row">
+                        <div class="center-text col-6" style="margin-top:10px">
+                            <button class="btn btn-success" @onclick="() => SaveViewConfiguration()">Save</button>
+                        </div>
+                        @if (m_isEdit)
+                        {
+                            <div class="center-text col-6" style="margin-top:10px">
+                                <button class="btn btn-danger" @onclick="() => DeleteViewConfiguration()">Delete</button>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row center-border delete-zone">
+                        <Dropzone Items="m_elements" Class="plk-static-zone" InstantReplace="true" TItem="ViewElement"
+                            OnItemDrop="@((x) => RemoveObject(x))" />
+                    </div>
+                </div>
+
+                <div class="col-8">
+                    <div class="center-border">
+                        @foreach (var row in m_view.Rows)
+                        {
+                            <div class="plk-flex center-border">
+                                <Dropzone Class="flex-container" Items="row.Elements" MaxItems="3" InstantReplace="true">
+                                    <div class="draggable-item" @onclick="() => ShowModal(context)">
+                                        <div>
+                                            <div class="center-text" style="font-size:large;padding-top:15px">
+                                                <b>@context.ViewType.ToString()</b>
+                                            </div>
+                                            <hr class="container-line side-margin">
+                                            <div class="side-margin" style="text-align:center">
+                                                @context.RegisterType.ToString()
+                                            </div>
+                                            <br />
+                                            <div class="side-margin" style="text-align:center">
+                                                @context.RegisterAddress.ToString()
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Dropzone>
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
+    </Authorized>
+    <NotAuthorized>
+        <h1>Sorry</h1>
+        <p>You're not authorized to reach this page.</p>
+        <p>You may need to log in as a different user.</p>
+    </NotAuthorized>
+    <Authorizing>
+        <h1>Authorization in progress!</h1>
+    </Authorizing>
+</AuthorizeView>
 
 @code {
     [Parameter]

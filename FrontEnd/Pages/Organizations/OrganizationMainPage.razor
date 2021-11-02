@@ -4,117 +4,129 @@
 @inject ApiKeyGenerator apiKeyGenerator
 
 
-@attribute [Authorize]
+<AuthorizeView Context="authContext" Policy=@Policies.OrganizationPolicy Resource="@organizationId">
+    <Authorized>
+        <h2 class="text-center">@m_organizationName</h2>
 
-<h2 class="text-center">@m_organizationName</h2>
-
-<div class="container overflow-auto" style="max-width:700px">
-    <div class="border" style="padding: 20px; margin: 10px">
-        <div class="d-flex justify-content-between">
-            <h4>Views</h4>
-            <a href=@String.Concat("/views/create/",organizationId) class="btn-link">➕ Create new view</a>
+        <div class="container overflow-auto" style="max-width:700px">
+            <div class="border" style="padding: 20px; margin: 10px">
+                <div class="d-flex justify-content-between">
+                    <h4>Views</h4>
+                    <a href=@String.Concat("/views/create/",organizationId) class="btn-link">➕ Create new view</a>
+                </div>
+                <table class="table text-center">
+                    <tbody>
+                        @foreach (ViewObject view in m_views)
+                        {
+                            <tr>
+                                <td class="text-center">@view.Name</td>
+                                <td> <a class="oi oi-eye" href=@String.Concat("/views/show/",view.Id)>View</a></td>
+                                <td>
+                                    <a class="oi oi-share-boxed"
+                                    href=@String.Concat("/views/create/",organizationId,"?ViewId=",view.Id)>Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <table class="table text-center">
-            <tbody>
-                @foreach (ViewObject view in m_views)
-                {
-                                    <tr>
-                                        <td class="text-center">@view.Name</td>
-                                        <td> <a class="oi oi-eye" href=@String.Concat("/views/show/",view.Id)>View</a></td>
-                                        <td>
-                                            <a class="oi oi-share-boxed"
-                            href=@String.Concat("/views/create/",organizationId,"?ViewId=",view.Id)>Edit</a>
-                                        </td>
-                                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
 
-<div class="container" style="max-width:700px">
-    <div class="border overflow-auto" style="padding:20px;margin:10px">
-        <div class="d-flex justify-content-between">
-            <h4>Configurations</h4>
-            <a href=@String.Concat("/configurations/create/",organizationId) class="btn-link">➕
-                Add new configuration</a>
+        <div class="container" style="max-width:700px">
+            <div class="border overflow-auto" style="padding:20px;margin:10px">
+                <div class="d-flex justify-content-between">
+                    <h4>Configurations</h4>
+                    <a href=@String.Concat("/configurations/edit/",organizationId) class="btn-link">➕
+                        Add new configuration</a>
+                </div>
+                <hr />
+                <div class="text-center">
+                    APIKey: @m_apiKey
+                </div>
+                <table class="table text-center">
+                    <tbody>
+                        @foreach (ClientConfigEntity config in m_organizationConfigs)
+                        {
+                            <tr>
+                                <td class="text-center">@config.ConfigName</td>
+                                <td>
+                                    <a class="oi oi-share-boxed"
+                                    href=@String.Concat("/configurations/edit/",config.ID,"?configurationId=",config.ID)>Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <hr />
+
+        <div class="container overflow-auto" style="max-width:700px">
+            <div class="border" style="padding: 20px; margin: 10px">
+                <h3>Owner: @m_owner</h3>
+                <div class="d-flex justify-content-between">
+                    <h4>Administrators</h4>
+                    <a href=@String.Concat("/organizations/users/add/",organizationId) class="btn-link">
+                        ➕ Add user
+                    </a>
+                </div>
+                <table class="table text-center">
+                    <tbody>
+                        @foreach (string user in m_members.Where(x => x.isAdmin).Select(x => x.UserName))
+                        {
+                            <tr>
+                                <td>@user</td>
+                                <td>
+                                    <a class="oi oi-share-boxed"
+                                    href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <hr />
+                <div class="d-flex justify-content-between">
+                    <h4>Users</h4>
+                </div>
+                <table class="table text-center">
+                    <tbody>
+                        @foreach (string user in m_members.Where(x => !x.isAdmin).Select(x => x.UserName))
+                        {
+                            <tr>
+                                <td>@user</td>
+                                <td>
+                                    <a class="oi oi-share-boxed"
+                                    href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container overflow-auto" style="max-width:700px">
+            <div class="border" style="padding: 20px; margin: 10px">
+                <div class="d-flex justify-content-between">
+                    <h4>Reports</h4>
+                    <a href=@String.Concat("/reports/create/",organizationId) class="btn-link">➕ Create new report</a>
+                </div>
+            </div>
+        </div>
+
         <div class="text-center">
-            APIKey: @m_apiKey
+            <a class="btn btn-primary" href=@String.Concat("/organizations/manage/",organizationId)>Advanced
+                settings</a>
         </div>
-        <table class="table text-center">
-            <tbody>
-                @foreach (ClientConfigEntity config in m_organizationConfigs)
-                {
-                                    <tr>
-                                        <td class="text-center">@config.ConfigName</td>
-                                        <td>
-                                            <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>Edit</a>
-                                        </td>
-                                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="container overflow-auto" style="max-width:700px">
-    <div class="border" style="padding: 20px; margin: 10px">
-        <h3>Owner: @m_owner</h3>
-        <div class="d-flex justify-content-between">
-            <h4>Administrators</h4>
-            <a href=@String.Concat("/organizations/users/add/",organizationId) class="btn-link">
-                ➕ Add user
-            </a>
-        </div>
-        <table class="table text-center">
-            <tbody>
-                @foreach (string user in m_members.Where(x => x.isAdmin).Select(x => x.UserName))
-                {
-                                    <tr>
-                                        <td>@user</td>
-                                        <td>
-                                            <a class="oi oi-share-boxed"
-                            href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
-                                        </td>
-                                    </tr>
-                }
-            </tbody>
-        </table>
-        <hr />
-        <div class="d-flex justify-content-between">
-            <h4>Users</h4>
-        </div>
-        <table class="table text-center">
-            <tbody>
-                @foreach (string user in m_members.Where(x => !x.isAdmin).Select(x => x.UserName))
-                {
-                                    <tr>
-                                        <td>@user</td>
-                                        <td>
-                                            <a class="oi oi-share-boxed"
-                            href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
-                                        </td>
-                                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="container overflow-auto" style="max-width:700px">
-    <div class="border" style="padding: 20px; margin: 10px">
-        <div class="d-flex justify-content-between">
-            <h4>Reports</h4>
-            <a href=@String.Concat("/reports/create/",organizationId) class="btn-link">➕ Create new report</a>
-        </div>
-    </div>
-</div>
-
-<div class="text-center">
-    <a class="btn btn-primary" href=@String.Concat("/organizations/manage/",organizationId)>Advanced settings</a>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Sorry</h1>
+        <p>You're not authorized to reach this page.</p>
+        <p>You may need to log in as a different user.</p>
+    </NotAuthorized>
+    <Authorizing>
+        <h1>Authorization in progress!</h1>
+    </Authorizing>
+</AuthorizeView>
 
 @code {
     [Parameter]

@@ -2,14 +2,13 @@
 
 @using System.Text.RegularExpressions
 @using Microsoft.Extensions.Primitives
-@using Newtonsoft.Json
 
 @inject OrganizationContext organizationContext
 @inject NavigationManager navManager
 @inject UserManager<FrontEndUser> userManager
 
-@attribute [Authorize]
-
+<AuthorizeView Context="authContext" Policy=@Policies.AdminPolicy Resource="@organizationId">
+<Authorized>
 <div class="container" style="max-width:500px">
     <div class="border" style="padding: 20px; margin: 10px">
         @if (!String.IsNullOrEmpty(m_registerError))
@@ -47,14 +46,11 @@
                     <label>Add/Edit views</label>
                     <InputCheckbox @bind-Value="m_memberModel.CanEditViews" class="form-control" />
 
-                    <label>Delete views</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanDeleteViews" class="form-control" />
-
                     <label>Add/Edit configurations</label>
                     <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" class="form-control" />
 
-                    <label>Delete configurations</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanDeleteConfigurations" class="form-control" />
+                    <label>Create Reports</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanCreateReports" class="form-control" />
                 }
                 else
                 {
@@ -64,14 +60,11 @@
                     <label>Add/Edit views</label>
                     <InputCheckbox @bind-Value="m_memberModel.CanEditViews" class="form-control" disabled />
 
-                    <label>Delete views</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanDeleteViews" class="form-control" disabled />
-
                     <label>Add/Edit configurations</label>
                     <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" class="form-control" disabled />
 
-                    <label>Delete configurations</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanDeleteConfigurations" class="form-control" disabled />
+                    <label>Create Reports</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanCreateReports" class="form-control" disabled />
                 }
 
                 <button class="btn btn-primary center" type="submit">Apply</button>
@@ -83,6 +76,16 @@
         }
     </div>
 </div>
+</Authorized>
+    <NotAuthorized>
+        <h1>Sorry</h1>
+        <p>You're not authorized to reach this page.</p>
+        <p>You may need to log in as a different user.</p>
+    </NotAuthorized>
+    <Authorizing>
+        <h1>Authorization in progress!</h1>
+    </Authorizing>
+</AuthorizeView>
 
 @code {
     [Parameter]
@@ -112,16 +115,14 @@
 
             IEnumerable<Claim> claims = (await userManager.GetClaimsAsync(user)).Where(x => x.Value == organizationId.ToString());
 
-            if (claims.Any(x => x.Type == "ShowViews"))
+            if (claims.Any(x => x.Type == OrganizationClaims.ShowViewClaim))
                 m_memberModel.CanShowViews = true;
-            if (claims.Any(x => x.Type == "EditViews"))
+            if (claims.Any(x => x.Type == OrganizationClaims.EditViewClaim))
                 m_memberModel.CanEditViews = true;
-            if (claims.Any(x => x.Type == "DeleteViews"))
-                m_memberModel.CanDeleteViews = true;
-            if (claims.Any(x => x.Type == "EditConfigurations"))
+            if (claims.Any(x => x.Type == OrganizationClaims.EditConfigurationsClaim))
                 m_memberModel.CanEditConfigurations = true;
-            if (claims.Any(x => x.Type == "DeleteConfigurations"))
-                m_memberModel.CanDeleteConfigurations = true;
+            if (claims.Any(x => x.Type == OrganizationClaims.CreateReportsClaim))
+                m_memberModel.CanCreateReports = true;
             m_isEdit = true;
         }
     }
@@ -138,11 +139,10 @@
     {
         FrontEndUser user = await userManager.FindByEmailAsync(userManager.NormalizeEmail(m_memberModel.Email));
         IEnumerable<Claim> claims = (await userManager.GetClaimsAsync(user)).Where(x => x.Value == organizationId.ToString());
-        await CheckClaim(user, claims, "ShowViews", m_memberModel.CanShowViews);
-        await CheckClaim(user, claims, "EditViews", m_memberModel.CanEditViews);
-        await CheckClaim(user, claims, "DeleteViews", m_memberModel.CanDeleteViews);
-        await CheckClaim(user, claims, "EditConfigurations", m_memberModel.CanEditConfigurations);
-        await CheckClaim(user, claims, "DeleteConfigurations", m_memberModel.CanDeleteConfigurations);
+        await CheckClaim(user, claims, OrganizationClaims.ShowViewClaim, m_memberModel.CanShowViews);
+        await CheckClaim(user, claims, OrganizationClaims.EditViewClaim, m_memberModel.CanEditViews);
+        await CheckClaim(user, claims, OrganizationClaims.EditConfigurationsClaim, m_memberModel.CanEditConfigurations);
+        await CheckClaim(user, claims, OrganizationClaims.CreateReportsClaim, m_memberModel.CanCreateReports);
         navManager.NavigateTo("/organizations/" + organizationId, true);
     }
 
@@ -199,15 +199,13 @@
         List<Claim> claims = new List<Claim>();
 
         if (m_memberModel.CanShowViews)
-            claims.Add(new Claim("ShowViews", organizationId.ToString()));
+            claims.Add(new Claim(OrganizationClaims.ShowViewClaim, organizationId.ToString()));
         if (m_memberModel.CanEditViews)
-            claims.Add(new Claim("EditViews", organizationId.ToString()));
-        if (m_memberModel.CanDeleteViews)
-            claims.Add(new Claim("DeleteViews", organizationId.ToString()));
+            claims.Add(new Claim(OrganizationClaims.EditViewClaim, organizationId.ToString()));
         if (m_memberModel.CanEditConfigurations)
-            claims.Add(new Claim("EditConfigurations", organizationId.ToString()));
-        if (m_memberModel.CanDeleteConfigurations)
-            claims.Add(new Claim("DeleteConfigurations", organizationId.ToString()));
+            claims.Add(new Claim(OrganizationClaims.EditConfigurationsClaim, organizationId.ToString()));
+        if (m_memberModel.CanCreateReports)
+            claims.Add(new Claim(OrganizationClaims.CreateReportsClaim, organizationId.ToString()));
 
         await userManager.AddClaimsAsync(user, claims);
         navManager.NavigateTo("/organizations/" + organizationId, true);
@@ -217,13 +215,13 @@
     {
         FrontEndUser user = await userManager.FindByEmailAsync(userManager.NormalizeEmail(m_memberModel.Email));
         IEnumerable<Claim> claims = (await userManager.GetClaimsAsync(user)).Where(x => x.Value == organizationId.ToString());
-        await CheckClaim(user, claims, "ShowViews", false);
-        await CheckClaim(user, claims, "EditViews", false);
-        await CheckClaim(user, claims, "DeleteViews", false);
-        await CheckClaim(user, claims, "EditConfigurations", false);
-        await CheckClaim(user, claims, "DeleteConfigurations", false);
-        OrganizationMember member = organizationContext.Members.Where(x => x.OrganizationId == organizationId && x.UserName ==
-        user.Email.Normalize()).FirstOrDefault();
+        await CheckClaim(user, claims, OrganizationClaims.ShowViewClaim, false);
+        await CheckClaim(user, claims, OrganizationClaims.EditViewClaim, false);
+        await CheckClaim(user, claims, OrganizationClaims.EditConfigurationsClaim, false);
+        await CheckClaim(user, claims, OrganizationClaims.CreateReportsClaim, false);
+        OrganizationMember member = organizationContext.Members
+        .Where(x => x.OrganizationId == organizationId && x.UserName == user.Email.Normalize())
+        .FirstOrDefault();
         if (member != null)
         {
             organizationContext.Members.Remove(member);

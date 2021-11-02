@@ -9,56 +9,66 @@
 
 @implements IAsyncDisposable
 
-@attribute [Authorize]
+<AuthorizeView Policy=@Policies.ShowViewsPolicy Resource="@ViewId">
+    <Authorized>
+        <div class="center-text">
+            Last Update @m_lastUpdate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+        </div>
 
-<div class="center-text">
-    Last Update @m_lastUpdate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <div class="center-border">
-                @foreach (ViewRow row in m_view.Rows)
-                {
-                    <div class="row">
-                        @foreach (ViewElement element in row.Elements)
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <div class="center-border">
+                        @foreach (ViewRow row in m_view.Rows)
                         {
-                            <div class="col" style="margin:0 auto">
-                                @switch (element.ViewType)
+                            <div class="row">
+                                @foreach (ViewElement element in row.Elements)
                                 {
-                                    case ViewType.Text:
+                                    <div class="col" style="margin:0 auto">
+                                        @switch (element.ViewType)
                                         {
-                                            <TextViewElement View=@element />
-                                            break;
+                                            case ViewType.Text:
+                                                {
+                                                    <TextViewElement View=@element />
+                                                    break;
+                                                }
+                                            case ViewType.Signal:
+                                                {
+                                                    <SignalViewElement View=@element />
+                                                    break;
+                                                }
+                                            case ViewType.Gauge:
+                                                {
+                                                    <GaugeViewElement View=@element />
+                                                    break;
+                                                }
+                                            case ViewType.LineChart:
+                                                {
+                                                    <LineChartViewElement View=@element FirstPass=@m_firstPass />
+                                                    break;
+                                                }
+                                            default:
+                                                break;
                                         }
-                                    case ViewType.Signal:
-                                        {
-                                            <SignalViewElement View=@element />
-                                            break;
-                                        }
-                                    case ViewType.Gauge:
-                                        {
-                                            <GaugeViewElement View=@element />
-                                            break;
-                                        }
-                                    case ViewType.LineChart:
-                                        {
-                                            <LineChartViewElement View=@element FirstPass=@m_firstPass />
-                                            break;
-                                        }
-                                    default:
-                                        break;
+                                    </div>
                                 }
                             </div>
+                            <hr class="container-line side-margin">
                         }
                     </div>
-                    <hr class="container-line side-margin">
-                }
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Sorry</h1>
+        <p>You're not authorized to reach this page.</p>
+        <p>You may need to log in as a different user.</p>
+    </NotAuthorized>
+    <Authorizing>
+        <h1>Authorization in progress!</h1>
+    </Authorizing>
+</AuthorizeView>
 
 @code {
     [Parameter]

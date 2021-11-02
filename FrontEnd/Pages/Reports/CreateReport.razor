@@ -3,76 +3,85 @@
 
 @inject IJSRuntime JS
 
-@attribute [Authorize]
+<AuthorizeView Context="authContext" Policy=@Policies.CreateReportsPolicy Resource="@OrganizationId">
+    <Authorized>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <EditForm Model="@Element" OnValidSubmit="AddToList">
+                        <DataAnnotationsValidator />
+                        <div class="form-group">
+                            <label>
+                                <b>Client Id</b>
+                                <InputNumber class="form-control" @bind-Value="Element.ClientID" />
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <b>Register Type</b>
+                                <InputSelect class="form-control" @bind-Value="Element.Type">
+                                    @foreach (var value in Enum.GetValues(typeof(RegisterType)))
+                                    {
+                                        <option>@value</option>
+                                    }
+                                </InputSelect>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <b>Register address</b>
+                                <InputNumber class="form-control" @bind-Value="Element.Address">0</InputNumber>
+                            </label>
 
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <EditForm Model="@Element" OnValidSubmit="AddToList">
-                <DataAnnotationsValidator />
-                <div class="form-group">
-                    <label>
-                        <b>Client Id</b>
-                        <InputNumber class="form-control" @bind-Value="Element.ClientID" />
-                    </label>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary" type="submit">Add to report</button>
+                        </div>
+                    </EditForm>
                 </div>
-                <div class="form-group">
-                    <label>
-                        <b>Register Type</b>
-                        <InputSelect class="form-control" @bind-Value="Element.Type">
-                            @foreach (var value in Enum.GetValues(typeof(RegisterType)))
-                            {
-                                <option>@value</option>
-                            }
-                        </InputSelect>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label>
-                        <b>Register address</b>
-                        <InputNumber class="form-control" @bind-Value="Element.Address">0</InputNumber>
-                    </label>
+                <div class="col">
+
+                    <div class="text-center">
+                        <button class="btn btn-success" @onclick="@(() => GenerateReportAsync())"
+                            disabled="@IsButtonDisabled">Generate Report</button>
+                        <div class="spinner" hidden="@(!IsButtonDisabled)" />
+                    </div>
+                    <br />
+                    <table class="table text-center" style="width:100%">
+                        <tr>
+                            <th>Client ID</th>
+                            <th>Register Address</th>
+                            <th>Register Type</th>
+                            <th></th>
+                        </tr>
+                        @foreach (ReportElement element in Report.Content)
+                        {
+                            <tr>
+                                <td>@element.ClientID</td>
+                                <td>@element.Address</td>
+                                <td>@element.Type</td>
+                                <th><button class="btn btn-danger"
+                                    @onclick="@(() => Report.Content.Remove(element))">Remove</button></th>
+                            </tr>
+                        }
+                    </table>
 
                 </div>
-                <div class="form-group">
-                    <button class="btn btn-primary" type="submit">Add to report</button>
-                </div>
-            </EditForm>
-        </div>
-        <div class="col">
-
-            <div class="text-center">
-                <button class="btn btn-success" @onclick="@(() => GenerateReportAsync())"
-                    disabled="@IsButtonDisabled">Generate Report</button>
-                <div class="spinner" hidden="@(!IsButtonDisabled)" />
             </div>
-            <br />
-            <table class="table text-center" style="width:100%">
-                <tr>
-                    <th>Client ID</th>
-                    <th>Register Address</th>
-                    <th>Register Type</th>
-                    <th></th>
-                </tr>
-                @foreach (ReportElement element in Report.Content)
-                {
-                    <tr>
-                        <td>@element.ClientID</td>
-                        <td>@element.Address</td>
-                        <td>@element.Type</td>
-                        <th><button class="btn btn-danger"
-                            @onclick="@(() => Report.Content.Remove(element))">Remove</button></th>
-                    </tr>
-                }
-            </table>
-
         </div>
-    </div>
-</div>
-
+    </Authorized>
+        <NotAuthorized>
+        <h1>Sorry</h1>
+        <p>You're not authorized to reach this page.</p>
+        <p>You may need to log in as a different user.</p>
+    </NotAuthorized>
+    <Authorizing>
+        <h1>Authorization in progress!</h1>
+    </Authorizing>
+</AuthorizeView>
 @code {
     [Parameter]
-    public int organizationId { get; set; }
+    public int OrganizationId { get; set; }
 
     private ReportContent Report = new ReportContent();
     private ReportElement Element = new ReportElement();
@@ -89,7 +98,7 @@
 
     private async void GenerateReportAsync()
     {
-        var task = JS.InvokeVoidAsync("getReport", organizationId, JsonConvert.SerializeObject(Report));
+        var task = JS.InvokeVoidAsync("getReport", OrganizationId, JsonConvert.SerializeObject(Report));
         IsButtonDisabled = true;
         await task;
         IsButtonDisabled = false;

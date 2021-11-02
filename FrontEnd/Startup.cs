@@ -17,6 +17,8 @@ using FrontEnd.DataHandlers;
 using FrontEnd.Hubs;
 using Blazored.Modal;
 using Plk.Blazor.DragDrop;
+using Microsoft.AspNetCore.Authorization;
+using FrontEnd.Authorization;
 
 namespace FrontEnd
 {
@@ -48,7 +50,24 @@ namespace FrontEnd
             services.AddScoped<TokenProvider>();
             services.AddScoped<ApiKeyGenerator>();
             services.AddScoped<DatasetContext>();
+
             services.AddSingleton<ConfigHandler>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Policies.ShowViewsPolicy, policy => policy.Requirements.Add(new ShowViewRequirement()));
+                options.AddPolicy(Policies.EditViewsPolicy, policy => policy.Requirements.Add(new EditViewRequirement()));
+                options.AddPolicy(Policies.EditConfigurationsPolicy, policy => policy.Requirements.Add(new EditConfigurationRequirement()));
+                options.AddPolicy(Policies.CreateReportsPolicy, policy => policy.Requirements.Add(new CreateReportRequirement()));
+                options.AddPolicy(Policies.AdminPolicy, policy => policy.Requirements.Add(new AdminRequirement()));
+                options.AddPolicy(Policies.OrganizationPolicy, policy => policy.Requirements.Add(new OrganizationRequirement()));
+            });
+            services.AddTransient<IAuthorizationHandler, ShowViewHandler>();
+            services.AddTransient<IAuthorizationHandler, EditViewHandler>();
+            services.AddTransient<IAuthorizationHandler, EditConfigurationHandler>();
+            services.AddTransient<IAuthorizationHandler, CreateReportHandler>();
+            services.AddTransient<IAuthorizationHandler, AdminHandler>();
+            services.AddTransient<IAuthorizationHandler, OrganizationHandler>();
 
             services.Configure<IdentityOptions>(options =>
             {
