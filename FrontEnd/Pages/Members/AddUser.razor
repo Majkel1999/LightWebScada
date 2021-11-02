@@ -1,6 +1,8 @@
 ﻿@page "/organizations/users/add/{organizationId:int}"
 
 @using System.Text.RegularExpressions
+@using Microsoft.Extensions.Primitives
+@using Newtonsoft.Json
 
 @inject OrganizationContext organizationContext
 @inject NavigationManager navManager
@@ -18,35 +20,67 @@
             </div>
             <br />
         }
-        <EditForm Model="m_memberModel" OnValidSubmit="TryAddUser">
+        <EditForm Model="m_memberModel" OnValidSubmit="Submit">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="form-group">
-                <InputText @bind-Value="m_memberModel.Email" class="form-control" required
+                @if (m_isEdit)
+                {
+                    <InputText @bind-Value="m_memberModel.Email" class="form-control" required placeholder="Email address"
+                    disabled />
+                }
+                else
+                {
+                    <InputText @bind-Value="m_memberModel.Email" class="form-control" required
                     placeholder="Email address" />
+                }
 
                 <label>Grant administrator privileges</label>
                 <InputCheckbox @bind-Value="m_memberModel.Admin" class="form-control" />
 
                 <h3>Permissions</h3>
-                <label>Show views</label>
-                <InputCheckbox @bind-Value="m_memberModel.CanShowViews" class="form-control" />
+                @if (!m_memberModel.Admin)
+                {
+                    <label>Show views</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanShowViews" class="form-control" />
 
-                <label>Add/Edit views</label>
-                <InputCheckbox @bind-Value="m_memberModel.CanEditViews" class="form-control" />
+                    <label>Add/Edit views</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanEditViews" class="form-control" />
 
-                <label>Delete views</label>
-                <InputCheckbox @bind-Value="m_memberModel.CanDeleteViews" class="form-control" />
+                    <label>Delete views</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanDeleteViews" class="form-control" />
 
-                <label>Add/Edit configurations</label>
-                <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" class="form-control" />
+                    <label>Add/Edit configurations</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" class="form-control" />
 
-                <label>Delete configurations</label>
-                <InputCheckbox @bind-Value="m_memberModel.CanDeleteConfigurations" class="form-control" />
+                    <label>Delete configurations</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanDeleteConfigurations" class="form-control" />
+                }
+                else
+                {
+                    <label>Show views</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanShowViews" class="form-control" disabled />
 
-                <button class="btn btn-primary" type="submit">Add</button>
+                    <label>Add/Edit views</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanEditViews" class="form-control" disabled />
+
+                    <label>Delete views</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanDeleteViews" class="form-control" disabled />
+
+                    <label>Add/Edit configurations</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" class="form-control" disabled />
+
+                    <label>Delete configurations</label>
+                    <InputCheckbox @bind-Value="m_memberModel.CanDeleteConfigurations" class="form-control" disabled />
+                }
+
+                <button class="btn btn-primary center" type="submit">Apply</button>
             </div>
         </EditForm>
+        @if (m_isEdit)
+        {
+            <button class="btn btn-danger center" @onclick="RemoveUser">Remove User</button>
+        }
     </div>
 </div>
 
@@ -56,8 +90,71 @@
 
     private string m_registerError;
     private MemberModel m_memberModel = new MemberModel();
+    private bool m_isEdit = false;
 
-    private async void TryAddUser()
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(navManager.Uri).Query);
+        if (query.TryGetValue("User", out StringValues userEmail))
+        {
+            if (!organizationContext.Members.Where(x => x.OrganizationId == organizationId).Any(x => x.UserName == userEmail[0]))
+                navManager.NavigateTo("/organizations/" + organizationId, true);
+            m_memberModel.Email = userEmail[0];
+
+            if (organizationContext.Members.Where(x => x.OrganizationId == organizationId).Any(x => x.UserName == userEmail[0] &&
+            x.isAdmin == true))
+                m_memberModel.Admin = true;
+
+            FrontEndUser user = await userManager.FindByEmailAsync(userManager.NormalizeEmail(userEmail[0]));
+            if (user == null)
+                navManager.NavigateTo("/organizations/" + organizationId, true);
+
+            IEnumerable<Claim> claims = (await userManager.GetClaimsAsync(user)).Where(x => x.Value == organizationId.ToString());
+
+            if (claims.Any(x => x.Type == "ShowViews"))
+                m_memberModel.CanShowViews = true;
+            if (claims.Any(x => x.Type == "EditViews"))
+                m_memberModel.CanEditViews = true;
+            if (claims.Any(x => x.Type == "DeleteViews"))
+                m_memberModel.CanDeleteViews = true;
+            if (claims.Any(x => x.Type == "EditConfigurations"))
+                m_memberModel.CanEditConfigurations = true;
+            if (claims.Any(x => x.Type == "DeleteConfigurations"))
+                m_memberModel.CanDeleteConfigurations = true;
+            m_isEdit = true;
+        }
+    }
+
+    private async void Submit()
+    {
+        if (m_isEdit)
+            await ModifyUser();
+        else
+            await TryAddUser();
+    }
+
+    private async Task ModifyUser()
+    {
+        FrontEndUser user = await userManager.FindByEmailAsync(userManager.NormalizeEmail(m_memberModel.Email));
+        IEnumerable<Claim> claims = (await userManager.GetClaimsAsync(user)).Where(x => x.Value == organizationId.ToString());
+        await CheckClaim(user, claims, "ShowViews", m_memberModel.CanShowViews);
+        await CheckClaim(user, claims, "EditViews", m_memberModel.CanEditViews);
+        await CheckClaim(user, claims, "DeleteViews", m_memberModel.CanDeleteViews);
+        await CheckClaim(user, claims, "EditConfigurations", m_memberModel.CanEditConfigurations);
+        await CheckClaim(user, claims, "DeleteConfigurations", m_memberModel.CanDeleteConfigurations);
+        navManager.NavigateTo("/organizations/" + organizationId, true);
+    }
+
+    private async Task CheckClaim(FrontEndUser user, IEnumerable<Claim> claims, string type, bool shouldBeSet)
+    {
+        if (shouldBeSet && !claims.Any(x => x.Type == type))
+            await userManager.AddClaimAsync(user, new Claim(type, organizationId.ToString()));
+        else if (!shouldBeSet && claims.Any(x => x.Type == type))
+            await userManager.RemoveClaimAsync(user, claims.Where(x => x.Type == type).FirstOrDefault());
+    }
+
+    private async Task TryAddUser()
     {
         m_registerError = "";
         try
@@ -76,9 +173,18 @@
             return;
         }
 
-        if (await userManager.FindByEmailAsync(userManager.NormalizeEmail(m_memberModel.Email)) == null)
+        FrontEndUser user = await userManager.FindByEmailAsync(userManager.NormalizeEmail(m_memberModel.Email));
+
+        if (user == null)
         {
             m_registerError = "Specified user doesn't exist!";
+            return;
+        }
+
+        if (organizationContext.Members.Where(x => x.OrganizationId == organizationId).Any(x => x.UserName ==
+        m_memberModel.Email.Normalize()))
+        {
+            m_registerError = "User is already in organization!";
             return;
         }
 
@@ -89,6 +195,40 @@
             OrganizationId = organizationId
         });
         organizationContext.SaveChanges();
+
+        List<Claim> claims = new List<Claim>();
+
+        if (m_memberModel.CanShowViews)
+            claims.Add(new Claim("ShowViews", organizationId.ToString()));
+        if (m_memberModel.CanEditViews)
+            claims.Add(new Claim("EditViews", organizationId.ToString()));
+        if (m_memberModel.CanDeleteViews)
+            claims.Add(new Claim("DeleteViews", organizationId.ToString()));
+        if (m_memberModel.CanEditConfigurations)
+            claims.Add(new Claim("EditConfigurations", organizationId.ToString()));
+        if (m_memberModel.CanDeleteConfigurations)
+            claims.Add(new Claim("DeleteConfigurations", organizationId.ToString()));
+
+        await userManager.AddClaimsAsync(user, claims);
+        navManager.NavigateTo("/organizations/" + organizationId, true);
+    }
+
+    private async void RemoveUser()
+    {
+        FrontEndUser user = await userManager.FindByEmailAsync(userManager.NormalizeEmail(m_memberModel.Email));
+        IEnumerable<Claim> claims = (await userManager.GetClaimsAsync(user)).Where(x => x.Value == organizationId.ToString());
+        await CheckClaim(user, claims, "ShowViews", false);
+        await CheckClaim(user, claims, "EditViews", false);
+        await CheckClaim(user, claims, "DeleteViews", false);
+        await CheckClaim(user, claims, "EditConfigurations", false);
+        await CheckClaim(user, claims, "DeleteConfigurations", false);
+        OrganizationMember member = organizationContext.Members.Where(x => x.OrganizationId == organizationId && x.UserName ==
+        user.Email.Normalize()).FirstOrDefault();
+        if (member != null)
+        {
+            organizationContext.Members.Remove(member);
+            organizationContext.SaveChanges();
+        }
         navManager.NavigateTo("/organizations/" + organizationId, true);
     }
 }

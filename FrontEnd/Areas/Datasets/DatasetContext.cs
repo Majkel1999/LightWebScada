@@ -24,14 +24,14 @@ namespace FrontEnd.Areas.Datasets
 
         public void CreateNewTable(Organization organization)
         {
-            using (IDbConnection db = new NpgsqlConnection(Startup.Configuration.GetConnectionString("UserContextConnection")))
-                db.Execute("CREATE TABLE IF NOT EXISTS " + GetTableName(organization) + TableArchetype);
+            using IDbConnection db = new NpgsqlConnection(Startup.Configuration.GetConnectionString("UserContextConnection"));
+            db.Execute("CREATE TABLE IF NOT EXISTS " + GetTableName(organization) + TableArchetype);
         }
 
         public void RemoveTable(Organization organization)
         {
-            using (IDbConnection db = new NpgsqlConnection(Startup.Configuration.GetConnectionString("UserContextConnection")))
-                db.Execute("Drop Table IF EXISTS " + GetTableName(organization));
+            using IDbConnection db = new NpgsqlConnection(Startup.Configuration.GetConnectionString("UserContextConnection"));
+            db.Execute("Drop Table IF EXISTS " + GetTableName(organization));
         }
     }
 }

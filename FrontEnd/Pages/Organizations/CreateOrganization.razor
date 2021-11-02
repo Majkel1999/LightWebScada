@@ -50,7 +50,8 @@
         var organization = new Organization
         {
             Name = m_organizationRegistrationModel.OrganizationName,
-            ApiKey = apiKeyGenerator.GenerateNewApiKey()
+            ApiKey = apiKeyGenerator.GenerateNewApiKey(),
+            Owner = user.Identity.Name
         };
         organizationContext.Organizations.Add(organization);
         organizationContext.Members.Add(new OrganizationMember

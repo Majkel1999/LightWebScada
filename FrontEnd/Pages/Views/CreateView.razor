@@ -101,8 +101,9 @@
     private bool m_isEdit = false;
     private int m_viewId = -1;
 
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
+        base.OnInitialized();
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(NavManager.Uri).Query);
         if (query.TryGetValue("ViewId", out StringValues viewId))
         {

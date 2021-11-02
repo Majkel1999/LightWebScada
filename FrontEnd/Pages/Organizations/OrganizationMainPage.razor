@@ -46,6 +46,10 @@
                 {
                     <tr>
                         <td>@user</td>
+                        <td>
+                            <a class="oi oi-share-boxed"
+                            href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -60,6 +64,10 @@
                 {
                     <tr>
                         <td>@user</td>
+                        <td>
+                            <a class="oi oi-share-boxed"
+                            href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -85,8 +93,7 @@
                     <tr>
                         <td class="text-center">@config.ConfigName</td>
                         <td>
-                            <a class="oi oi-share-boxed"
-                            href=@String.Concat("/configurations/edit/",config.ID)>Edit</a>
+                            <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>Edit</a>
                         </td>
                     </tr>
                 }
@@ -105,8 +112,7 @@
 </div>
 
 <div class="text-center">
-    <a class="btn btn-primary"
-        href=@String.Concat("/organizations/manage/",organizationId)>Advanced settings</a>
+    <a class="btn btn-primary" href=@String.Concat("/organizations/manage/",organizationId)>Advanced settings</a>
 </div>
 
 @code {
@@ -134,28 +140,28 @@
     private void InitParams()
     {
         m_views = organizationContext.Views
-            .Where(x => x.OrganizationId == organizationId)
-            .ToList();
+        .Where(x => x.OrganizationId == organizationId)
+        .ToList();
         m_organizationName = organizationContext.Organizations
-            .Where(x => x.OrganizationId == organizationId)
-            .Select(x => x.Name)
-            .FirstOrDefault();
+        .Where(x => x.OrganizationId == organizationId)
+        .Select(x => x.Name)
+        .FirstOrDefault();
         m_organizationConfigs = organizationContext.Configurations
-            .Where(x => x.OrganizationId == organizationId)
-            .ToList();
+        .Where(x => x.OrganizationId == organizationId)
+        .ToList();
         m_members = organizationContext.Members
-            .Where(x => x.OrganizationId == organizationId)
-            .ToList();
+        .Where(x => x.OrganizationId == organizationId)
+        .ToList();
         m_apiKey = organizationContext.Organizations
-            .Where(x => x.OrganizationId == organizationId)
-            .Select(x => x.ApiKey)
-            .FirstOrDefault();
+        .Where(x => x.OrganizationId == organizationId)
+        .Select(x => x.ApiKey)
+        .FirstOrDefault();
         if (String.IsNullOrEmpty(m_apiKey))
         {
             m_apiKey = apiKeyGenerator.GenerateNewApiKey();
             var organization = organizationContext.Organizations
-                .Where(x => x.OrganizationId == organizationId)
-                .FirstOrDefault();
+            .Where(x => x.OrganizationId == organizationId)
+            .FirstOrDefault();
             organization.ApiKey = m_apiKey;
             organizationContext.SaveChanges();
         }
