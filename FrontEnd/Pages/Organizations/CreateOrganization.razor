@@ -54,13 +54,13 @@
             Owner = user.Identity.Name
         };
         organizationContext.Organizations.Add(organization);
-        organizationContext.Members.Add(new OrganizationMember
+        @* organizationContext.Members.Add(new OrganizationMember
         {
             Organization = organization,
             OrganizationId = organization.OrganizationId,
             isAdmin = true,
             UserName = user.Identity.Name
-        });
+        }); *@
         await organizationContext.SaveChangesAsync();
         datasetContext.CreateNewTable(organization);
         Navigation.NavigateTo("/organizations/" + organization.OrganizationId, true);

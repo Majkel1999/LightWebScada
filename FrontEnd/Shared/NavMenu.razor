@@ -69,6 +69,9 @@
             List<int> m_organizationsList = organizationContext.Members
             .Where(x => x.UserName == user.Identity.Name.Normalize())
             .Select(x => x.OrganizationId).ToList();
+            m_organizationsList.AddRange(organizationContext.Organizations
+            .Where(x => x.Owner ==user.Identity.Name.Normalize())
+            .Select(x => x.OrganizationId));
             m_userOrganizations = organizationContext.Organizations
             .Where(x => m_organizationsList.Contains(x.OrganizationId))
             .ToList();

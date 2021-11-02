@@ -18,57 +18,14 @@
             <tbody>
                 @foreach (ViewObject view in m_views)
                 {
-                    <tr>
-                        <td class="text-center">@view.Name</td>
-                        <td> <a class="oi oi-eye" href=@String.Concat("/views/show/",view.Id)>View</a></td>
-                        <td>
-                            <a class="oi oi-share-boxed"
+                                    <tr>
+                                        <td class="text-center">@view.Name</td>
+                                        <td> <a class="oi oi-eye" href=@String.Concat("/views/show/",view.Id)>View</a></td>
+                                        <td>
+                                            <a class="oi oi-share-boxed"
                             href=@String.Concat("/views/create/",organizationId,"?ViewId=",view.Id)>Edit</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="container overflow-auto" style="max-width:700px">
-    <div class="border" style="padding: 20px; margin: 10px">
-        <div class="d-flex justify-content-between">
-            <h4>Administrators</h4>
-            <a href=@String.Concat("/organizations/users/add/",organizationId) class="btn-link">
-                ➕ Add user
-            </a>
-        </div>
-        <table class="table text-center">
-            <tbody>
-                @foreach (string user in m_members.Where(x => x.isAdmin).Select(x => x.UserName))
-                {
-                    <tr>
-                        <td>@user</td>
-                        <td>
-                            <a class="oi oi-share-boxed"
-                            href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <hr />
-        <div class="d-flex justify-content-between">
-            <h4>Users</h4>
-        </div>
-        <table class="table text-center">
-            <tbody>
-                @foreach (string user in m_members.Where(x => !x.isAdmin).Select(x => x.UserName))
-                {
-                    <tr>
-                        <td>@user</td>
-                        <td>
-                            <a class="oi oi-share-boxed"
-                            href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
-                        </td>
-                    </tr>
+                                        </td>
+                                    </tr>
                 }
             </tbody>
         </table>
@@ -90,12 +47,56 @@
             <tbody>
                 @foreach (ClientConfigEntity config in m_organizationConfigs)
                 {
-                    <tr>
-                        <td class="text-center">@config.ConfigName</td>
-                        <td>
-                            <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>Edit</a>
-                        </td>
-                    </tr>
+                                    <tr>
+                                        <td class="text-center">@config.ConfigName</td>
+                                        <td>
+                                            <a class="oi oi-share-boxed" href=@String.Concat("/configurations/edit/",config.ID)>Edit</a>
+                                        </td>
+                                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container overflow-auto" style="max-width:700px">
+    <div class="border" style="padding: 20px; margin: 10px">
+        <h3>Owner: @m_owner</h3>
+        <div class="d-flex justify-content-between">
+            <h4>Administrators</h4>
+            <a href=@String.Concat("/organizations/users/add/",organizationId) class="btn-link">
+                ➕ Add user
+            </a>
+        </div>
+        <table class="table text-center">
+            <tbody>
+                @foreach (string user in m_members.Where(x => x.isAdmin).Select(x => x.UserName))
+                {
+                                    <tr>
+                                        <td>@user</td>
+                                        <td>
+                                            <a class="oi oi-share-boxed"
+                            href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
+                                        </td>
+                                    </tr>
+                }
+            </tbody>
+        </table>
+        <hr />
+        <div class="d-flex justify-content-between">
+            <h4>Users</h4>
+        </div>
+        <table class="table text-center">
+            <tbody>
+                @foreach (string user in m_members.Where(x => !x.isAdmin).Select(x => x.UserName))
+                {
+                                    <tr>
+                                        <td>@user</td>
+                                        <td>
+                                            <a class="oi oi-share-boxed"
+                            href=@String.Concat("/organizations/users/add/",organizationId,"?User=",user)>Edit</a>
+                                        </td>
+                                    </tr>
                 }
             </tbody>
         </table>
@@ -122,6 +123,7 @@
     private List<ClientConfigEntity> m_organizationConfigs;
     private List<OrganizationMember> m_members;
     private List<ViewObject> m_views;
+    private string m_owner;
     private string m_organizationName;
     private string m_apiKey;
 
@@ -142,20 +144,25 @@
         m_views = organizationContext.Views
         .Where(x => x.OrganizationId == organizationId)
         .ToList();
+
         m_organizationName = organizationContext.Organizations
         .Where(x => x.OrganizationId == organizationId)
         .Select(x => x.Name)
         .FirstOrDefault();
+
         m_organizationConfigs = organizationContext.Configurations
         .Where(x => x.OrganizationId == organizationId)
         .ToList();
+
         m_members = organizationContext.Members
         .Where(x => x.OrganizationId == organizationId)
         .ToList();
+
         m_apiKey = organizationContext.Organizations
         .Where(x => x.OrganizationId == organizationId)
         .Select(x => x.ApiKey)
         .FirstOrDefault();
+
         if (String.IsNullOrEmpty(m_apiKey))
         {
             m_apiKey = apiKeyGenerator.GenerateNewApiKey();
@@ -165,5 +172,10 @@
             organization.ApiKey = m_apiKey;
             organizationContext.SaveChanges();
         }
+
+        m_owner = organizationContext.Organizations
+        .Where(x => x.OrganizationId == organizationId)
+        .Select(x => x.Owner)
+        .FirstOrDefault();
     }
 }
