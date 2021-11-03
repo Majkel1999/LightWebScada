@@ -72,6 +72,8 @@ namespace FrontEnd.Areas.Organizations.Data
 
         public void SetValue(RegisterFrame value)
         {
+            if(value == null)
+                return;
             if (m_frameValue != null && m_frameValue.Timestamp == value.Timestamp)
                 return;
             m_frameValue = value;
