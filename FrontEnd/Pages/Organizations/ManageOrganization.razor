@@ -84,10 +84,8 @@
 
     private void ChangeOrganizationName()
     {
-        if (m_organizationRegistration.OrganizationName.Trim() == m_organizationName.Trim())
-            m_nameChangeError = "Nazwa jest taka sama!";
-        else if (OrganizationContext.Organizations.Any(x => x.Name == m_organizationRegistration.OrganizationName.Trim()))
-            m_nameChangeError = "Inna organizacja ma już taką samą nazwe!";
+        if (OrganizationContext.Organizations.Any(x => x.Name == m_organizationRegistration.OrganizationName.Trim()))
+            m_nameChangeError = "Name is already taken!";
         else
         {
             OrganizationContext.Organizations
