@@ -21,7 +21,7 @@ namespace FrontEnd.Areas.Identity
 
                 services.AddDefaultIdentity<FrontEndUser>(options =>
                 {
-                    options.SignIn.RequireConfirmedAccount = true;
+                    options.SignIn.RequireConfirmedEmail = false;
                     options.User.RequireUniqueEmail = true;
                 })
                     .AddEntityFrameworkStores<UserContext>()
