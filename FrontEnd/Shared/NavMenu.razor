@@ -2,8 +2,12 @@
 @inject AuthenticationStateProvider authStateProvider
 
 
+<a href="" class="logo-bar">
+    <img class="logo-image" src="/images/LogoText.svg"/>
+</a>
+
+
 <div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Web Scada</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -35,12 +39,12 @@
                 </li>
                 @foreach (Organization organization in m_userOrganizations)
                 {
-                    <li class="nav-item px-3">
-                        <NavLink class="nav-link" href=@String.Concat("/organizations/",organization.OrganizationId)
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href=@String.Concat("/organizations/",organization.OrganizationId)
                         Match="NavLinkMatch.All">
-                            <div class="nav-item-text"> @organization.Name</div>
-                        </NavLink>
-                    </li>
+                                <div class="nav-item-text"> @organization.Name</div>
+                            </NavLink>
+                        </li>
                 }
                 <li class="divider">
                     &nbsp
@@ -70,7 +74,7 @@
             .Where(x => x.UserName == user.Identity.Name.Normalize())
             .Select(x => x.OrganizationId).ToList();
             m_organizationsList.AddRange(organizationContext.Organizations
-            .Where(x => x.Owner ==user.Identity.Name.Normalize())
+            .Where(x => x.Owner == user.Identity.Name.Normalize())
             .Select(x => x.OrganizationId));
             m_userOrganizations = organizationContext.Organizations
             .Where(x => m_organizationsList.Contains(x.OrganizationId))

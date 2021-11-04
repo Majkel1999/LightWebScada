@@ -8,6 +8,7 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Company>Light Web Scada</Company>
     <Platforms>x64</Platforms>
+    <ApplicationIcon>LogoText.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="NewFolder\**" />

@@ -60,9 +60,24 @@
     }
 }
 
+.logo-bar{
+    display: flex;
+}
+
+@media (max-width: 640.98px){
+    .logo-bar{
+        display: none;
+    }
+}
+
 .nav-item-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 180px;
+}
+
+.logo-image{
+    width: 100%;
+    height: auto;
 }
