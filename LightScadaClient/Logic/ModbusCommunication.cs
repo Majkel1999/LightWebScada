@@ -64,7 +64,7 @@ namespace LigthScadaClient.Logic
                     OnError?.Invoke();
                     StatusLogger.Instance.Log(e.Message);
                 }
-                token.WaitHandle.WaitOne(5000);
+                token.WaitHandle.WaitOne(LocalConfiguration.Instance.Interval * 1000);
                 if (!token.IsCancellationRequested)
                     ReadValues(token);
             });

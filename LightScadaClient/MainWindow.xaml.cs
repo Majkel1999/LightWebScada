@@ -145,6 +145,7 @@ namespace LigthScadaClient
             if (m_isInitialized)
             {
                 LocalConfiguration.Instance.ClientId = (int)(IdInputBox.Value ?? 1);
+                LocalConfiguration.Instance.Interval = (int)(IntervalInputBox.Value ?? 5);
                 LocalConfiguration.Instance.ApiKey = ApiKeyTextBox.Text;
                 LocalConfiguration.Instance.IP = IPTextBox.Text;
                 LocalConfiguration.Instance.SlaveID = int.TryParse(SlaveIdTextBox.Text, out int ID) ? ID : 1;

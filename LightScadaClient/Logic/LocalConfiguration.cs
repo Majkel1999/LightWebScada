@@ -19,10 +19,11 @@ namespace LigthScadaClient.Logic
         public int TCPPort;
         public int SlaveID = 1;
         public int Baudrate = 9600;
+        public int Interval = 5;
         public Parity Parity = Parity.None;
         public StopBits StopBits = StopBits.Two;
 
-        [JsonProperty] private ClientConfig m_config;
+        private ClientConfig m_config;
 
         [JsonIgnore] public DataSet DataSet => m_config.Registers;
         [JsonIgnore] public string ConfigurationName => m_config.Name;

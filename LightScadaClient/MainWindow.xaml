@@ -36,8 +36,18 @@
             <mahaaps:NumericUpDown x:Name="IdInputBox" Grid.Column="1" Margin="5" Value="1" Minimum="1" Maximum="99"
                                    NumericInputMode="Numbers" ValueChanged="IdValueChanged"/>
         </Grid>
-
-        <mahaaps:ProgressRing x:Name="WorkingIndicator" Grid.Column="1" Width="30" Height="30" IsActive="False"/>
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.4*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.3*"/>
+            </Grid.ColumnDefinitions>
+            <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                   FontWeight="Bold" FontSize="14">Interval</Label>
+            <mahaaps:NumericUpDown x:Name="IntervalInputBox" Grid.Column="1" Margin="5" Value="5" Minimum="5" Maximum="60"
+                                   NumericInputMode="Numbers" ValueChanged="IdValueChanged"/>
+            <mahaaps:ProgressRing x:Name="WorkingIndicator" Grid.Column="2" Width="30" Height="30" IsActive="False"/>
+        </Grid>
 
         <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
@@ -83,7 +93,7 @@
         </Grid>
 
         <Label Grid.Row="0" Grid.Column="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-               FontWeight="Bold" FontSize="16">Modbus Configuration</Label>
+               FontWeight="Bold" FontSize="16">Local Configuration</Label>
 
         <Grid Grid.Row="1" Grid.Column="3" Grid.RowSpan="3">
             <Grid.ColumnDefinitions>
