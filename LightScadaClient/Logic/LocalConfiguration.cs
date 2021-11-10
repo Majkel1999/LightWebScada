@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -8,32 +9,45 @@ using ScadaCommon;
 
 namespace LigthScadaClient.Logic
 {
-    public class LocalConfiguration : Singleton<LocalConfiguration>
+    public class LocalConfiguration : Singleton<LocalConfiguration>, INotifyPropertyChanged
     {
         private const string ConfigFileName = "config.cfg";
 
-        public int ClientId = 1;
-        public string ApiKey;
-        public string COMPort;
-        public string IP;
-        public int TCPPort;
-        public int SlaveID = 1;
-        public int Baudrate = 9600;
-        public int Interval = 5;
-        public Parity Parity = Parity.None;
-        public StopBits StopBits = StopBits.Two;
-
         private ClientConfig m_config;
+        private int m_clientId = 1;
+        private string m_ApiKey;
+        private string m_ComPort;
+        private string m_Ip;
+        private int m_TcpPort;
+        private int m_SlaveID = 1;
+        private int baudrate = 9600;
+        private int interval = 5;
+        private Parity parity = Parity.None;
+        private StopBits stopBits = StopBits.Two;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         [JsonIgnore] public DataSet DataSet => m_config.Registers;
-        [JsonIgnore] public string ConfigurationName => m_config.Name;
-        [JsonIgnore] public bool IsTCP => m_config.Protocol == Protocol.ModbusTCP;
+        [JsonIgnore] public bool IsTCP => m_config != null && m_config.Protocol == Protocol.ModbusTCP;
+        [JsonIgnore] public bool IsNotTCP => m_config != null && m_config.Protocol != Protocol.ModbusTCP;
+
+        public int ClientId { get => m_clientId; set { m_clientId = value; OnPropertyChanged("ClientId"); } }
+        public string ApiKey { get => m_ApiKey; set { m_ApiKey = value; OnPropertyChanged("ApiKey"); } }
+        public string COMPort { get => m_ComPort; set { m_ComPort = value; OnPropertyChanged("COMPort"); } }
+        public string IP { get => m_Ip; set { m_Ip = value; OnPropertyChanged("IP"); } }
+        public int TCPPort { get => m_TcpPort; set { m_TcpPort = value; OnPropertyChanged("TCPPort"); } }
+        public int SlaveID { get => m_SlaveID; set { m_SlaveID = value; OnPropertyChanged("SlaveID"); } }
+        public int Baudrate { get => baudrate; set { baudrate = value; OnPropertyChanged("Baudrate"); } }
+        public int Interval { get => interval; set { interval = value; OnPropertyChanged("Interval"); } }
+        public Parity Parity { get => parity; set { parity = value; OnPropertyChanged("Parity"); } }
+        public StopBits StopBits { get => stopBits; set { stopBits = value; OnPropertyChanged("StopBits"); } }
 
         public void SaveConfiguration() => SaveConfigToFile();
 
         public void SetConfiguration(ClientConfigEntity configEntity)
         {
             m_config = JsonConvert.DeserializeObject<ClientConfig>(configEntity.ConfigJson);
+            OnPropertyChanged(string.Empty);
         }
 
         public string IsConfigurationCorrect()
@@ -68,6 +82,7 @@ namespace LigthScadaClient.Logic
                 string dataAsJson = theReader.ReadToEnd();
                 theReader.Close();
                 JsonConvert.PopulateObject(dataAsJson, this);
+                OnPropertyChanged(string.Empty);
             }
         }
 
@@ -79,6 +94,11 @@ namespace LigthScadaClient.Logic
                 byte[] info = new UTF8Encoding(true).GetBytes(dataAsJson);
                 file.Write(info, 0, info.Length);
             }
+        }
+
+        private void OnPropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }
 }
