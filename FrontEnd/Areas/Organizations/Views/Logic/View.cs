@@ -35,7 +35,7 @@ namespace FrontEnd.Areas.Organizations.Data
                         x.Item2 == element.ClientId &&
                         x.Item3 == element.RegisterType))
                         continue;
-                    registers.Add((element.RegisterAddress,element.ClientId, element.RegisterType));
+                    registers.Add((element.RegisterAddress, element.ClientId, element.RegisterType));
                 }
             }
             return registers;
@@ -65,22 +65,14 @@ namespace FrontEnd.Areas.Organizations.Data
                     break;
                 }
             }
-            CheckRows();
         }
 
-        private void CheckRows()
+        public void RemoveRow(ViewRow row)
         {
-            for (int i = 0; i < m_viewRows.Count; i++)
-            {
-                if (m_viewRows[i].Elements.Count == 0)
-                {
-                    m_viewRows.RemoveAt(i);
-                    i--;
-                }
-            }
+            m_viewRows.Remove(row);
         }
 
-        private ViewRow AddRow(ViewRow rowItems = null)
+        public ViewRow AddRow(ViewRow rowItems = null)
         {
             ViewRow row = rowItems ?? new ViewRow();
             m_viewRows.Add(row);

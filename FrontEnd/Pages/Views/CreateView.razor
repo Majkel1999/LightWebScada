@@ -80,9 +80,12 @@
                                         </div>
                                     </div>
                                 </Dropzone>
+                                <button class="btn btn-danger" @onclick="() => RemoveRow(row)">Remove row</button>
                             </div>
                         }
                     </div>
+                    <button class="btn btn-success" style="margin:20px" @onclick="() => AddNewRow()">Add new
+                        row</button>
                 </div>
             </div>
         </div>
@@ -128,6 +131,16 @@
     private void AddElement(ViewType type)
     {
         m_view.AddToFirstOpen(new ViewElement(type));
+    }
+
+    private void AddNewRow()
+    {
+        m_view.AddRow();
+    }
+
+    private void RemoveRow(ViewRow row)
+    {
+        m_view.RemoveRow(row);
     }
 
     private void SaveViewConfiguration()
