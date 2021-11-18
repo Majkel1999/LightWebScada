@@ -9,6 +9,11 @@
 
 <AuthorizeView Context="authContext" Policy=@Policies.EditViewsPolicy Resource="@OrganizationId">
     <Authorized>
+        <h3 class="center-text">
+            In order to edit a view, add a new element by clicking one of the buttons "Add ...".
+            <br />
+            To edit a single component click on it, and enter desired values in the correct fields.
+        </h3>
         <div class="container" style="max-width:500px">
             <div class="text-center font-weight-bolder" style="font-size:32px"></div>
             <div class="border" style="padding:20px">
@@ -32,12 +37,12 @@
                     <div class="center-border">
                         @foreach (ViewType type in (ViewType[])Enum.GetValues(typeof(ViewType)))
                         {
-                            <div class="row">
-                                <button class="btn btn-primary" @onclick="() => AddElement(type)"
-                                style="margin:auto;margin-top:10px">
-                                    Add @type.ToString()
-                                </button>
-                            </div>
+                                <div class="row">
+                                    <button class="btn btn-primary" @onclick="() => AddElement(type)"
+                                style="margin:auto;margin-top:10px; width:200px">
+                                        Add @type.ToString()
+                                    </button>
+                                </div>
                         }
                     </div>
                     <div class="row">
@@ -46,9 +51,9 @@
                         </div>
                         @if (m_isEdit)
                         {
-                            <div class="center-text col-6" style="margin-top:10px">
-                                <button class="btn btn-danger" @onclick="() => DeleteViewConfiguration()">Delete</button>
-                            </div>
+                                <div class="center-text col-6" style="margin-top:10px">
+                                    <button class="btn btn-danger" @onclick="() => DeleteViewConfiguration()">Delete</button>
+                                </div>
                         }
                     </div>
 
@@ -62,30 +67,40 @@
                     <div class="center-border">
                         @foreach (var row in m_view.Rows)
                         {
-                            <div class="plk-flex center-border">
-                                <Dropzone Class="flex-container" Items="row.Elements" MaxItems="3" InstantReplace="true">
-                                    <div class="draggable-item" @onclick="() => ShowModal(context)">
-                                        <div>
-                                            <div class="center-text" style="font-size:large;padding-top:15px">
-                                                <b>@context.ViewType.ToString()</b>
-                                            </div>
-                                            <hr class="container-line side-margin">
-                                            <div class="side-margin" style="text-align:center">
-                                                @context.RegisterType.ToString()
-                                            </div>
-                                            <br />
-                                            <div class="side-margin" style="text-align:center">
-                                                @context.RegisterAddress.ToString()
+                                <div class="container">
+                                    <div class="row  align-items-center">
+                                        <div class="col-10">
+                                            <div class="plk-flex center-border">
+                                                <Dropzone Class="flex-container" Items="row.Elements" MaxItems="3"
+                                            InstantReplace="true">
+                                                    <div class="draggable-item" @onclick="() => ShowModal(context)">
+                                                        <div>
+                                                            <div class="center-text" style="font-size:large;padding-top:15px">
+                                                                <b>@context.ViewType.ToString()</b>
+                                                            </div>
+                                                            <hr class="container-line side-margin">
+                                                            <div class="side-margin" style="text-align:center">
+                                                            @context.RegisterType.ToString()
+                                                            </div>
+                                                            <br />
+                                                            <div class="side-margin" style="text-align:center">
+                                                            @context.RegisterAddress.ToString()
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </Dropzone>
                                             </div>
                                         </div>
+                                        <div class="col">
+                                             <button @onclick="() => RemoveRow(row)">
+                                                 <img style="width:50px"  src="/images/trash.png"/>
+                                             </button>
+                                        </div>
                                     </div>
-                                </Dropzone>
-                                <button class="btn btn-danger" @onclick="() => RemoveRow(row)">Remove row</button>
-                            </div>
+                                </div>
                         }
                     </div>
-                    <button class="btn btn-success" style="margin:20px" @onclick="() => AddNewRow()">Add new
-                        row</button>
+                        <button class="btn btn-success" style="margin-left:36%" @onclick="() => AddNewRow()">Add new row</button>
                 </div>
             </div>
         </div>

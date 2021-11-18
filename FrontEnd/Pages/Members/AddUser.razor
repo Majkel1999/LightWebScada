@@ -35,44 +35,108 @@
                 }
 
                 <label>Grant administrator privileges</label>
-                <InputCheckbox @bind-Value="m_memberModel.Admin" class="form-control" />
+                <InputCheckbox @bind-Value="m_memberModel.Admin"/>
 
                 <h3>Permissions</h3>
                 @if (!m_memberModel.Admin)
                 {
-                    <label>Show views</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanShowViews" class="form-control" />
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label>Show views</label>
+                            </div>
+                            <div class="col">
+                                <InputCheckbox @bind-Value="m_memberModel.CanShowViews"/>
+                            </div>
+                        </div>
+                    </div>
 
-                    <label>Add/Edit views</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanEditViews" class="form-control" />
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label>Add/Edit views</label>
+                            </div>
+                            <div class="col">
+                    <InputCheckbox @bind-Value="m_memberModel.CanEditViews" />
+                            </div>
+                        </div>
+                    </div>
 
-                    <label>Add/Edit configurations</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" class="form-control" />
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label>Add/Edit configurations</label>
+                            </div>
+                            <div class="col">
+                    <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" />
+                            </div>
+                        </div>
+                    </div>
 
-                    <label>Create Reports</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanCreateReports" class="form-control" />
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label>Create Reports</label>
+                            </div>
+                            <div class="col">
+                    <InputCheckbox @bind-Value="m_memberModel.CanCreateReports" />
+                            </div>
+                        </div>
+                    </div>
                 }
                 else
                 {
-                    <label>Show views</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanShowViews" class="form-control" disabled />
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label>Show views</label>
+                            </div>
+                            <div class="col">
+                                <InputCheckbox @bind-Value="m_memberModel.CanShowViews" disabled/>
+                            </div>
+                        </div>
+                    </div>
 
-                    <label>Add/Edit views</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanEditViews" class="form-control" disabled />
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label>Add/Edit views</label>
+                            </div>
+                            <div class="col">
+                    <InputCheckbox @bind-Value="m_memberModel.CanEditViews" disabled/>
+                            </div>
+                        </div>
+                    </div>
 
-                    <label>Add/Edit configurations</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" class="form-control" disabled />
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label>Add/Edit configurations</label>
+                            </div>
+                            <div class="col">
+                    <InputCheckbox @bind-Value="m_memberModel.CanEditConfigurations" disabled/>
+                            </div>
+                        </div>
+                    </div>
 
-                    <label>Create Reports</label>
-                    <InputCheckbox @bind-Value="m_memberModel.CanCreateReports" class="form-control" disabled />
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label>Create Reports</label>
+                            </div>
+                            <div class="col">
+                    <InputCheckbox @bind-Value="m_memberModel.CanCreateReports" disabled/>
+                            </div>
+                        </div>
+                    </div>
                 }
 
-                <button class="btn btn-primary center" type="submit">Apply</button>
+                <button class="btn btn-success center" type="submit" style="margin-top:10px">Apply</button>
             </div>
         </EditForm>
         @if (m_isEdit)
         {
-            <button class="btn btn-danger center" @onclick="RemoveUser">Remove User</button>
+            <button class="btn btn-danger center" @onclick="RemoveUser" style="margin-top:10px">Remove User</button>
         }
     </div>
 </div>
